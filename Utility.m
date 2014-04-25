@@ -8,6 +8,7 @@
 #import "Utility.h"
 #import <CommonCrypto/CommonDigest.h>
 #import <CommonCrypto/CommonCryptor.h>
+#import <CommonCrypto/CommonHMAC.h>
 #import "FMPTripleDES.h"
 #import "FMPHexUtil.h"
 #import "GTMBase64.h"
@@ -263,6 +264,37 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
     }
     
     return result;
+}
+
+//-(NSString *)hmac:(NSString *)plaintext withKey:(NSString *)key
+//{
+//    const char *cKey  = [key cStringUsingEncoding:NSASCIIStringEncoding];
+//    const char *cData = [plaintext cStringUsingEncoding:NSASCIIStringEncoding];
+//    unsigned char cHMAC[CC_SHA1_DIGEST_LENGTH];
+//    CCHmac(kCCHmacAlgSHA1, cKey, strlen(cKey), cData, strlen(cData), cHMAC);
+//    NSData *HMACData = [NSData dataWithBytes:cHMAC length:sizeof(cHMAC)];
+//    const unsigned char *buffer = (const unsigned char *)[HMACData bytes];
+//    NSMutableString *HMAC = [NSMutableString stringWithCapacity:HMACData.length * 2];
+//    for (int i = 0; i < HMACData.length; ++i){
+//        [HMAC appendFormat:@"%02x", buffer[i]];
+//    }
+//    return HMAC;
+//}
+
++ (NSString *)hmacSHA1:(NSString *)plant secret:(NSString *)key
+{
+    const char *cKey  = [key cStringUsingEncoding:NSASCIIStringEncoding];
+    const char *cData = [plant cStringUsingEncoding:NSASCIIStringEncoding];
+    
+    unsigned char cHMAC[CC_SHA1_DIGEST_LENGTH];
+    
+    CCHmac(kCCHmacAlgSHA1, cKey, strlen(cKey), cData, strlen(cData), cHMAC);
+    
+    NSData *HMACData = [NSData dataWithBytes:cHMAC length:sizeof(cHMAC)];
+    
+    NSString *hash = [GTMBase64 stringByWebSafeEncodingData:HMACData padded:YES];
+    
+    return hash;
 }
 
 /**
@@ -717,16 +749,24 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
 
 + (NSString *)dateFromTimestamp
 {
-    NSDate* dat = [NSDate dateWithTimeIntervalSinceNow:0];
-    NSTimeInterval a = [dat timeIntervalSince1970];
+    NSDate *date = [NSDate dateWithTimeIntervalSinceNow:0];
+    NSTimeInterval a = [date timeIntervalSince1970];
+    
+    return [NSString stringWithFormat:@"%.0f", a];
+}
+
++ (NSString *)dateFromTimestampInterval:(NSTimeInterval)interval
+{
+    NSDate *date = [NSDate dateWithTimeIntervalSinceNow:interval];
+    NSTimeInterval a = [date timeIntervalSince1970];
     
     return [NSString stringWithFormat:@"%.0f", a];
 }
 
 + (NSString *)dateFrom13lenTimestamp
 {
-    NSDate* dat = [NSDate dateWithTimeIntervalSinceNow:0];
-    NSTimeInterval a = [dat timeIntervalSince1970] * 1000;
+    NSDate *date = [NSDate dateWithTimeIntervalSinceNow:0];
+    NSTimeInterval a = [date timeIntervalSince1970] * 1000;
     
     return [NSString stringWithFormat:@"%.0f", a];
 }

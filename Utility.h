@@ -7,6 +7,12 @@
 
 #import <Foundation/Foundation.h>
 
+#define MN_MINUTE 60.f
+#define MN_HOUR   MN_MINUTE * 60.f
+#define MN_DAY    MN_HOUR * 24.f
+#define MN_WEEK   MN_DAY * 7.f
+#define MN_YEAR   MN_DAY * 365.f
+
 UIImage * getImageAtRect(UIImage *source,CGRect clipRect);
 /**
  程序工具类
@@ -29,6 +35,7 @@ UIImage * getImageAtRect(UIImage *source,CGRect clipRect);
  *  SHA1加密
  */
 + (NSString *)encryptUseSHA1:(NSString *)srcString;
++ (NSString *)hmacSHA1:(NSString *)plant secret:(NSString *)key;
 
 /**
  *  字符串到byte
@@ -180,6 +187,13 @@ UIImage * getImageAtRect(UIImage *source,CGRect clipRect);
  *  返回字符串时间戳
  */
 + (NSString *)dateFromTimestamp;
+
+/**
+ *  返回有间隔的字符串时间戳
+ *
+ *  @param interval 间隔时间
+ */
++ (NSString *)dateFromTimestampInterval:(NSTimeInterval)interval;
 
 /**
  *  返回13位的时间戳

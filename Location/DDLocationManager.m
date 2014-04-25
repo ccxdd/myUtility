@@ -84,7 +84,7 @@
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
 {
-    CLLocation *location = [locations firstObject];
+    CLLocation *location = [locations lastObject];
     if (location) {
         [self geocoderFromLocation:location complete:^{
             [self stop];

@@ -9,7 +9,6 @@
 #import "TWTMainViewController.h"
 #import "TWTSideMenuViewController.h"
 #import "DDPageCV.h"
-#import "BuyViewController.h"
 #import "ScienceDietViewController.h"
 #import "BeautyDishViewController.h"
 #import "MyFavoriteViewController.h"

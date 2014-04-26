@@ -31,8 +31,14 @@
 #define kVIEW_Y                     (IOS7_OR_LATER?64:0)
 #define kTABLE_VIEW_Y               (self.navigationController?0:(IOS7_OR_LATER?64:0))
 #define kTABLE_VIEW_OFFSET          (IOS7_OR_LATER?64:0)
-#define kORIGIN_Y(object)           (object.frame.origin.y+object.frame.size.height)
-#define kORIGIN_X(object)           (object.frame.origin.x+object.frame.size.width)
+#define kORIGIN_Y(object)           (CGRectGetMinY([object frame])+CGRectGetHeight([object frame]))
+#define kORIGIN_X(object)           (CGRectGetMinX([object frame])+CGRectGetWidth([object frame]))
+#define kSelf_X1(object)            (CGRectGetMinX([object frame]))
+#define kSelf_Y1(object)            (CGRectGetMinY([object frame]))
+#define kSelf_X2(object)            (CGRectGetMaxX([object frame]))
+#define kSelf_Y2(object)            (CGRectGetMaxY([object frame]))
+#define kSelf_W(object)             (CGRectGetWidth([object frame]))
+#define kSelf_H(object)             (CGRectGetHeight([object frame]))
 #define kCENTER(LEN, NUM)           ((LEN - NUM)/2)
 
 #define kUIColorHEX(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]

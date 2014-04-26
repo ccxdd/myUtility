@@ -64,6 +64,7 @@
                                                                                    CGRectGetWidth(self.frame),
                                                                                    CGRectGetHeight(self.frame))];
             imageView.image = [UIImage imageNamed:newArrM[i]];
+            imageView.backgroundColor = kUIColorRGB(arc4random()%255, arc4random()%255, arc4random()%255);
             [_scrollView addSubview:imageView];
         }
     }

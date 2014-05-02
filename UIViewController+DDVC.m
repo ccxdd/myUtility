@@ -17,18 +17,18 @@ const char completionHandlerKey;
 {
     UIBarButtonItem *backBtn = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:imageName]
                                                                 style:UIBarButtonItemStyleBordered
-                                                               target:self
-                                                               action:@selector(backAction)];
-    [self.navigationItem setLeftBarButtonItem:backBtn];
+                                                               target:nil
+                                                               action:nil];
+    [self.navigationItem setBackBarButtonItem:backBtn];
 }
 
 - (void)backButtonWithTitle:(NSString *)title
 {
     UIBarButtonItem *backBtn = [[UIBarButtonItem alloc] initWithTitle:title
-                                                                style:UIBarButtonItemStylePlain
-                                                               target:self
-                                                               action:@selector(backAction)];
-    [self.navigationItem setLeftBarButtonItem:backBtn];
+                                                                style:UIBarButtonItemStyleBordered
+                                                               target:nil
+                                                               action:nil];
+    [self.navigationItem setBackBarButtonItem:backBtn];
 }
 
 #pragma mark ------------rightButtonWithImageName---------------

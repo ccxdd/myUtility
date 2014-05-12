@@ -23,6 +23,7 @@ static NSNumber *superViewProperty;
 //
 @property (nonatomic, strong) UIPickerView    *pickerView;
 @property (nonatomic, strong) UIDatePicker    *datePicker;
+@property (nonatomic, strong) UIImageView     *activeImageView;
 
 @end
 
@@ -114,6 +115,7 @@ static NSNumber *superViewProperty;
     DDTextField *textField = (DDTextField*)[notification object];
     
     [self setInputAccessoryView:self.toolbar];
+    self.activeImageView.hidden = NO;
     
     //调整坐标
     CGFloat y = 0;
@@ -150,7 +152,9 @@ static NSNumber *superViewProperty;
         if (fieldPoint.y > space)
         {
             UIView *fullView = [self superFullScreenView:textField];
-            superViewProperty = [NSNumber numberWithFloat:fullView.frame.origin.y];
+            if (!superViewProperty) {
+                superViewProperty = [NSNumber numberWithFloat:fullView.frame.origin.y];
+            }
             y = fieldPoint.y - space;
             [UIView animateWithDuration:0.5 animations:^{
                 fullView.frame = CGRectMake(fullView.frame.origin.x,
@@ -180,9 +184,9 @@ static NSNumber *superViewProperty;
 - (void)textFieldDidEndEditing:(NSNotification *)notification
 {
     DDTextField *textField = (DDTextField*)[notification object];
-    
     BOOL isValid = [self isValid];
     
+    self.activeImageView.hidden = YES;
     [textField resignFirstResponder];
     
     if (self.didEndEditingBlock) {
@@ -487,6 +491,26 @@ static NSNumber *superViewProperty;
     }
     
     return superView;
+}
+
+- (void)setBackground:(UIImage *)background
+{
+    [super setBackground:background];
+    self.borderStyle = UITextBorderStyleNone;
+}
+
+- (void)setActiveBackgroundImage:(UIImage *)activeBackgroundImage
+{
+    _activeBackgroundImage = activeBackgroundImage;
+    
+    if (!_activeImageView) {
+        _activeImageView = [[UIImageView alloc] initWithFrame:self.bounds];
+        _activeImageView.image = _activeBackgroundImage;
+        _activeImageView.hidden = YES;
+        [self addSubview:_activeImageView];
+    } else {
+        _activeImageView.image = _activeBackgroundImage;
+    }
 }
 
 #pragma mark -

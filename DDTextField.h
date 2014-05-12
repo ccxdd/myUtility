@@ -24,11 +24,12 @@ typedef enum {
 
 @interface DDTextField : UITextField
 
-@property (nonatomic, copy            ) NSString         *hitMessage;//提示信息
-@property (nonatomic, assign, readonly) BOOL             isValid;//是否有效
-@property (nonatomic, assign          ) BOOL             required;//是否必填
-@property (nonatomic, assign          ) DDTextField_TYPE fieldType;//输入框类型
+@property (nonatomic, copy            ) NSString         *hitMessage;   //提示信息
+@property (nonatomic, assign, readonly) BOOL             isValid;       //是否有效
+@property (nonatomic, assign          ) BOOL             required;      //是否必填
+@property (nonatomic, assign          ) DDTextField_TYPE fieldType;     //输入框类型
 @property (nonatomic, copy            ) NSString         *textValue;
+@property (nonatomic, strong          ) UIImage          *activeBackgroundImage;
 @property (nonatomic, copy) void(^didEndEditingBlock)(DDTextField *, BOOL);
 //
 @property (nonatomic, copy  ) NSString *keyName;

@@ -11,14 +11,14 @@
 
 @implementation UIViewController (DDVC)
 
-const char completionHandlerKey;
+const char leftHandlerKey, rightHandleKey;
 
 - (void)backButtonWithImageName:(NSString *)imageName
 {
     UIBarButtonItem *backBtn = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:imageName]
                                                                 style:UIBarButtonItemStyleBordered
-                                                               target:nil
-                                                               action:nil];
+                                                               target:self
+                                                               action:@selector(backAction)];
     [self.navigationItem setBackBarButtonItem:backBtn];
 }
 
@@ -26,8 +26,8 @@ const char completionHandlerKey;
 {
     UIBarButtonItem *backBtn = [[UIBarButtonItem alloc] initWithTitle:title
                                                                 style:UIBarButtonItemStyleBordered
-                                                               target:nil
-                                                               action:nil];
+                                                               target:self
+                                                               action:@selector(backAction)];
     [self.navigationItem setBackBarButtonItem:backBtn];
 }
 
@@ -36,7 +36,7 @@ const char completionHandlerKey;
 - (void)rightButtonWithImageName:(NSString *)imageName clickBlock:(void(^)(id))clickBlock
 {
     
-    UIBarButtonItem *rightBtn = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:imageName]
+    UIBarButtonItem *rightBtn = [[UIBarButtonItem alloc] initWithImage:[[UIImage imageNamed:imageName] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal]
                                                                  style:UIBarButtonItemStylePlain
                                                                 target:self
                                                                 action:@selector(rightButtonAction)];
@@ -44,7 +44,7 @@ const char completionHandlerKey;
     
     if(clickBlock != nil)
     {
-        objc_setAssociatedObject(self, &completionHandlerKey, clickBlock, OBJC_ASSOCIATION_COPY);
+        objc_setAssociatedObject(self, &rightHandleKey, clickBlock, OBJC_ASSOCIATION_COPY);
     }
     
 }
@@ -60,7 +60,7 @@ const char completionHandlerKey;
     
     if(clickBlock != nil)
     {
-        objc_setAssociatedObject(self, &completionHandlerKey, clickBlock, OBJC_ASSOCIATION_COPY);
+        objc_setAssociatedObject(self, &rightHandleKey, clickBlock, OBJC_ASSOCIATION_COPY);
     }
     
 }
@@ -70,7 +70,7 @@ const char completionHandlerKey;
 - (void)leftButtonWithImageName:(NSString *)imageName clickBlock:(void(^)(id))clickBlock
 {
     
-    UIBarButtonItem *leftBtn = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:imageName]
+    UIBarButtonItem *leftBtn = [[UIBarButtonItem alloc] initWithImage:[[UIImage imageNamed:imageName] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal]
                                                                 style:UIBarButtonItemStylePlain
                                                                target:self
                                                                action:@selector(leftButtonAction)];
@@ -78,7 +78,7 @@ const char completionHandlerKey;
     
     if(clickBlock != nil)
     {
-        objc_setAssociatedObject(self, &completionHandlerKey, clickBlock, OBJC_ASSOCIATION_COPY);
+        objc_setAssociatedObject(self, &leftHandlerKey, clickBlock, OBJC_ASSOCIATION_COPY);
     }
     
 }
@@ -94,7 +94,7 @@ const char completionHandlerKey;
     
     if(clickBlock != nil)
     {
-        objc_setAssociatedObject(self, &completionHandlerKey, clickBlock, OBJC_ASSOCIATION_COPY);
+        objc_setAssociatedObject(self, &leftHandlerKey, clickBlock, OBJC_ASSOCIATION_COPY);
     }
     
 }
@@ -110,26 +110,22 @@ const char completionHandlerKey;
 
 - (void)rightButtonAction
 {
-    void (^theCompletionHandler)(id) = objc_getAssociatedObject(self, &completionHandlerKey);
+    void (^theCompletionHandler)(id) = objc_getAssociatedObject(self, &rightHandleKey);
     
-    if (theCompletionHandler == nil) {
-        return;
+    if (theCompletionHandler) {
+        theCompletionHandler(self);
     }
-    
-    theCompletionHandler(self);
 }
 
 #pragma mark ------------LeftBtnAction---------------
 
 - (void)leftButtonAction
 {
-    void (^theCompletionHandler)(id) = objc_getAssociatedObject(self, &completionHandlerKey);
+    void (^theCompletionHandler)(id) = objc_getAssociatedObject(self, &leftHandlerKey);
     
-    if (theCompletionHandler == nil) {
-        return;
+    if (theCompletionHandler) {
+        theCompletionHandler(self);
     }
-    
-    theCompletionHandler(self);
 }
 
 

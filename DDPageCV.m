@@ -20,23 +20,37 @@
 
 @implementation DDPageCV
 
+- (void)awakeFromNib
+{
+    [self configPageCV:self.frame];
+    self.imageData = @[@"1", @"1"];
+    self.isCircle = YES;
+}
+
 - (id)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
     if (self) {
         // Initialization code
-        _scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
-        _scrollView.pagingEnabled = YES;
-        _scrollView.delegate = self;
-        _scrollView.showsHorizontalScrollIndicator = NO;
-        _scrollView.showsVerticalScrollIndicator = NO;
-        _isCircle = NO;
-        [self addSubview:_scrollView];
-        
-        pageControl = [[UIPageControl alloc] initWithFrame:CGRectMake(0, frame.size.height-30, frame.size.width, 30)];
-        [self addSubview:pageControl];
+        [self configPageCV:frame];
     }
     return self;
+}
+
+#pragma mark - configPageCV
+
+- (void)configPageCV:(CGRect)frame
+{
+    _scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
+    _scrollView.pagingEnabled = YES;
+    _scrollView.delegate = self;
+    _scrollView.showsHorizontalScrollIndicator = NO;
+    _scrollView.showsVerticalScrollIndicator = NO;
+    _isCircle = NO;
+    [self addSubview:_scrollView];
+    
+    pageControl = [[UIPageControl alloc] initWithFrame:CGRectMake(0, frame.size.height-30, frame.size.width, 30)];
+    [self addSubview:pageControl];
 }
 
 - (void)setImageData:(NSMutableArray *)imageData
@@ -46,13 +60,16 @@
             [obj removeFromSuperview];
         }];
         pageControl.numberOfPages = [imageData count];
-        pageControl.currentPage = 0;
-        _imageData = imageData;
-        NSInteger imageCount = pageControl.numberOfPages;
-        NSMutableArray *newArrM = [imageData mutableCopy];
+        pageControl.currentPage   = 0;
+        _imageData                = imageData;
+        NSInteger imageCount      = pageControl.numberOfPages;
+        NSMutableArray *newArrM   = [imageData mutableCopy];
+        NSMutableArray *colorArrM = [self randomColors:imageCount];
         if (_isCircle) {
-            [newArrM insertObject:imageData[imageCount-1] atIndex:0];
+            [newArrM insertObject:[imageData lastObject] atIndex:0];
             [newArrM addObject:imageData[0]];
+            [colorArrM insertObject:[colorArrM lastObject] atIndex:0];
+            [colorArrM addObject:colorArrM[1]];
             [_scrollView setContentOffset:CGPointMake(CGRectGetWidth(self.frame), 0) animated:NO];
         }
         factImageCount = [newArrM count];
@@ -64,7 +81,7 @@
                                                                                    CGRectGetWidth(self.frame),
                                                                                    CGRectGetHeight(self.frame))];
             imageView.image = [UIImage imageNamed:newArrM[i]];
-            imageView.backgroundColor = kUIColorRGB(arc4random()%255, arc4random()%255, arc4random()%255);
+            imageView.backgroundColor = colorArrM[i];
             [_scrollView addSubview:imageView];
         }
     }
@@ -85,6 +102,8 @@
     _isCircle = isCircle;
     [self setImageData:self.imageData];
 }
+
+#pragma mark scrollView delegate
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
@@ -114,6 +133,19 @@
             [scrollView setContentOffset:CGPointMake((factImageCount-1) * CGRectGetWidth(self.frame), 0) animated:NO];
         }
     }
+}
+
+#pragma mark - randomColors
+
+- (NSMutableArray *)randomColors:(NSInteger)count
+{
+    NSMutableArray *arrayM = [NSMutableArray array];
+    
+    for (NSInteger i = 0; i < count; i++) {
+        [arrayM addObject:kUIColorRGB(arc4random()%255, arc4random()%255, arc4random()%255)];
+    }
+    
+    return arrayM;
 }
 
 /*

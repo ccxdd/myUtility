@@ -301,14 +301,14 @@ static NSUInteger kWaitViewCount = 0;
         if (alertViewFieldBlock) {
             UITextField *field = [alertView textFieldAtIndex:0];
             field.text.length > 0 ? alertViewFieldBlock(field, buttonIndex):nil;
-            alertViewFieldBlock = nil;
+            //alertViewFieldBlock = nil;
         }
     } else {
         if (alertViewBlock) {
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            //dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 alertViewBlock(buttonIndex);
-                alertViewBlock = nil;
-            });
+                //alertViewBlock = nil;
+            //});
         }
     }
 }
@@ -318,10 +318,10 @@ static NSUInteger kWaitViewCount = 0;
 + (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (alertViewBlock) {
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        //dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             alertViewBlock(buttonIndex);
-            alertViewBlock = nil;
-        });
+            //alertViewBlock = nil;
+        //});
     }
 }
 

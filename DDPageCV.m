@@ -142,7 +142,7 @@
     NSMutableArray *arrayM = [NSMutableArray array];
     
     for (NSInteger i = 0; i < count; i++) {
-        [arrayM addObject:kUIColorRGB(arc4random()%255, arc4random()%255, arc4random()%255)];
+        [arrayM addObject:kUIColorRGB(arc4random()%180, arc4random()%180, arc4random()%180)];
     }
     
     return arrayM;

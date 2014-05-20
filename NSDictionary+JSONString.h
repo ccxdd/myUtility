@@ -12,6 +12,6 @@
 
 - (NSString *)JSONString;
 
-- (NSData *)JSONData;
+- (NSData *)JsonUTF8Data;
 
 @end

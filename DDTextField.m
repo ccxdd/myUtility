@@ -29,38 +29,50 @@ static NSNumber *superViewProperty;
 
 @implementation DDTextField
 
+- (void)awakeFromNib
+{
+    [self configDDTextField];
+}
+
 - (id)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
     if (self) {
         // Initialization code
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textFieldDidBeginEditing:)
-                                                     name:UITextFieldTextDidBeginEditingNotification object:self];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textFieldDidEndEditing:)
-                                                     name:UITextFieldTextDidEndEditingNotification object:self];
-        
-        self.borderStyle = UITextBorderStyleRoundedRect;
-        self.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
-        
-        self.toolbar = [[UIToolbar alloc] init];
-        self.toolbar.frame = CGRectMake(0, 0, self.window.frame.size.width, 44);
-        // set style
-        [self.toolbar setBarStyle:UIBarStyleDefault];
-        
-        self.previousBarButton = [[UIBarButtonItem alloc] initWithTitle:@"上一个" style:UIBarButtonItemStyleBordered target:self action:@selector(previousButtonIsClicked:)];
-        self.nextBarButton = [[UIBarButtonItem alloc] initWithTitle:@"下一个" style:UIBarButtonItemStyleBordered target:self action:@selector(nextButtonIsClicked:)];
-        
-        UIBarButtonItem *flexBarButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
-        
-        UIBarButtonItem *doneBarButton = [[UIBarButtonItem alloc] initWithTitle:@"确定" style:UIBarButtonItemStyleBordered target:self action:@selector(doneButtonIsClicked:)];
-        
-        NSArray *barButtonItems = @[self.previousBarButton, self.nextBarButton, flexBarButton, doneBarButton];
-        
-        self.toolbar.items = barButtonItems;
-        
-        _textFields = [[NSMutableArray alloc] initWithCapacity:0];
+        [self configDDTextField];
     }
     return self;
+}
+
+#pragma mark - configDDTextField
+
+- (void)configDDTextField
+{
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textFieldDidBeginEditing:)
+                                                 name:UITextFieldTextDidBeginEditingNotification object:self];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textFieldDidEndEditing:)
+                                                 name:UITextFieldTextDidEndEditingNotification object:self];
+    
+    self.borderStyle = UITextBorderStyleRoundedRect;
+    self.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
+    
+    self.toolbar = [[UIToolbar alloc] init];
+    self.toolbar.frame = CGRectMake(0, 0, self.window.frame.size.width, 44);
+    // set style
+    [self.toolbar setBarStyle:UIBarStyleDefault];
+    
+    self.previousBarButton = [[UIBarButtonItem alloc] initWithTitle:@"上一个" style:UIBarButtonItemStyleBordered target:self action:@selector(previousButtonIsClicked:)];
+    self.nextBarButton = [[UIBarButtonItem alloc] initWithTitle:@"下一个" style:UIBarButtonItemStyleBordered target:self action:@selector(nextButtonIsClicked:)];
+    
+    UIBarButtonItem *flexBarButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+    
+    UIBarButtonItem *doneBarButton = [[UIBarButtonItem alloc] initWithTitle:@"确定" style:UIBarButtonItemStyleBordered target:self action:@selector(doneButtonIsClicked:)];
+    
+    NSArray *barButtonItems = @[self.previousBarButton, self.nextBarButton, flexBarButton, doneBarButton];
+    
+    self.toolbar.items = barButtonItems;
+    
+    _textFields = [[NSMutableArray alloc] initWithCapacity:0];
 }
 
 - (void)dealloc
@@ -122,7 +134,7 @@ static NSNumber *superViewProperty;
     float keyboardHeight = 215;
     float space = kSCREEN_HEIGHT - keyboardHeight - textField.frame.size.height - 44;
     
-    if ([[textField superview] isMemberOfClass:[UIScrollView class]]) {
+    if ([[textField superview] isKindOfClass:[UIScrollView class]]) {
         
         UIScrollView *scrollView = (UIScrollView *)[textField superview];
         float max_offset_y = scrollView.contentSize.height - scrollView.frame.size.height;
@@ -141,7 +153,7 @@ static NSNumber *superViewProperty;
                 [scrollView setContentOffset:CGPointMake(0, y)];
             }];
         }
-    } else if ([[textField superview] isMemberOfClass:[UIView class]]) {
+    } else if ([[textField superview] isKindOfClass:[UIView class]]) {
         
         UIView *superView = [textField superview];
         CGPoint fieldPoint = [superView convertPoint:textField.frame.origin toView:nil];
@@ -251,13 +263,13 @@ static NSNumber *superViewProperty;
 - (void)doneButtonIsClicked:(id)sender
 {
     if (superViewProperty) {
-        if ([[self superview] isMemberOfClass:[UIScrollView class]]) {
+        if ([[self superview] isKindOfClass:[UIScrollView class]]) {
             UIScrollView *scrollView = (UIScrollView *)[self superview];
             [UIView animateWithDuration:0.5 animations:^{
                 scrollView.contentSize = CGSizeMake(scrollView.contentSize.width, [superViewProperty floatValue]);
                 superViewProperty = nil;
             }];
-        } else if ([[self superview] isMemberOfClass:[UIView class]]) {
+        } else if ([[self superview] isKindOfClass:[UIView class]]) {
             UIView *superView = [self superFullScreenView:self];
             [UIView animateWithDuration:0.5 animations:^{
                 superView.frame = CGRectMake(superView.frame.origin.x,
@@ -295,7 +307,7 @@ static NSNumber *superViewProperty;
             
         case DDTextField_TYPE_NUM:
         {
-            self.keyboardType = UIKeyboardTypeNumberPad;
+            self.keyboardType = UIKeyboardTypeDecimalPad;
         }
             break;
             
@@ -314,7 +326,7 @@ static NSNumber *superViewProperty;
         case DDTextField_TYPE_PWD_NUM:
         {
             self.secureTextEntry = YES;
-            self.keyboardType = UIKeyboardTypeNumberPad;
+            self.keyboardType = UIKeyboardTypeDecimalPad;
         }
             break;
             
@@ -423,7 +435,7 @@ static NSNumber *superViewProperty;
     
     if (!result && self.required) {
         
-        self.layer.backgroundColor = kUIColorRGB(180, 0, 0).CGColor;
+        self.layer.backgroundColor = kUIColorRGBA(180, 0, 0, 0.7).CGColor;
         
         if (self.hitMessage) {
             [BMWaitVC showWaitViewWithMessage:self.hitMessage];

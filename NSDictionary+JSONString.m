@@ -27,7 +27,7 @@
 
 }
 
-- (NSData *)JSONData
+- (NSData *)JsonUTF8Data
 {
     return [[self JSONString] dataUsingEncoding:NSUTF8StringEncoding];
 }

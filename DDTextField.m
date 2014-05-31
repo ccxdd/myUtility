@@ -32,6 +32,8 @@ static NSNumber *superViewProperty;
 - (void)awakeFromNib
 {
     [self configDDTextField];
+    self.required = YES;
+    self.fieldType = DDTextField_TYPE_DEFAULT;
 }
 
 - (id)initWithFrame:(CGRect)frame

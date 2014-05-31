@@ -24,6 +24,8 @@ UIImage * getImageAtRect(UIImage *source,CGRect clipRect){
 
 static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
+static void(^ResultBlock)(id);
+
 #define gIv @"01234567"
 
 /**
@@ -1566,7 +1568,56 @@ static CGRect oldframe;
 
 + (NSString *)intToString:(NSInteger)number
 {
-    return [NSString stringWithFormat:@"%ld", number];
+    return [NSString stringWithFormat:@"%ld", (long)number];
+}
+
++ (id)storyboardName:(NSString *)name identifier:(NSString *)identifier
+{
+    UIViewController *classVC = nil;
+    
+    @try {
+        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:name bundle:nil];
+        classVC = [storyboard instantiateViewControllerWithIdentifier:identifier];
+    }
+    @catch (NSException *exception) {
+        DLogError(@"%@", exception);
+    }
+    
+    return classVC;
+}
+
++ (void)modalVC:(UIViewController *)modalVC target:(id)target resultBlock:(void (^)(id))resultBlock
+{
+    if (resultBlock) {
+        ResultBlock = resultBlock;
+    } else {
+        DLogError(@"ResultBlock not Exist!!! %@", ResultBlock);
+    }
+    
+    if (modalVC && target) {
+        [target presentViewController:modalVC animated:YES completion:nil];
+    }
+}
+
++ (void)pushVC:(UIViewController *)pushVC target:(id)target resultBlock:(void (^)(id))resultBlock
+{
+    if (resultBlock) {
+        ResultBlock = resultBlock;
+    } else {
+        DLogError(@"ResultBlock not Exist!!! %@", ResultBlock);
+    }
+    
+    if (pushVC && target) {
+        [[target navigationController] pushViewController:pushVC animated:YES];
+    }
+}
+
++ (void)executeResultBlock:(id)sender
+{
+    if (sender && ResultBlock) {
+        ResultBlock(sender);
+        ResultBlock = nil;
+    }
 }
 
 @end

@@ -463,4 +463,39 @@ UIImage * getImageAtRect(UIImage *source,CGRect clipRect);
  */
 + (NSString *)intToString:(NSInteger)number;
 
+/**
+ *  从storyboard中返回VC
+ *
+ *  @param name       storyboard名字
+ *  @param identifier vc id
+ *
+ *  @return vc
+ */
++ (id)storyboardName:(NSString *)name identifier:(NSString *)identifier;
+
+/**
+ *  执行ResultBlock
+ *
+ *  @param sender 传参
+ */
++ (void)executeResultBlock:(id)sender;
+
+/**
+ *  ModalVC
+ *
+ *  @param modalVC     ModalVC
+ *  @param target      target
+ *  @param resultBlock resultBlock description
+ */
++ (void)modalVC:(UIViewController *)modalVC target:(id)target resultBlock:(void (^)(id))resultBlock;
+
+/**
+ *  PushVC
+ *
+ *  @param pushVC      PushVC
+ *  @param target      target
+ *  @param resultBlock resultBlock description
+ */
++ (void)pushVC:(UIViewController *)pushVC target:(id)target resultBlock:(void (^)(id))resultBlock;
+
 @end

@@ -12,6 +12,9 @@ typedef void (^TableViewCellConfigureBlock)(id cell, id item);
 
 @interface DDDataSource : NSObject <UITableViewDataSource>
 
+@property (nonatomic, strong) NSMutableArray *tableData;
+@property (nonatomic, assign) BOOL           isAllowEdit;
+
 - (id)initWithTableData:(NSArray *)tableData
          cellIdentifier:(NSString *)cellIdentifier
      configureCellBlock:(TableViewCellConfigureBlock)configureCellBlock;

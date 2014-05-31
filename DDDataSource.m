@@ -10,7 +10,6 @@
 
 @interface DDDataSource ()
 
-@property (nonatomic, strong) NSArray                     *tableData;
 @property (nonatomic, copy  ) NSString                    *cellIdentifier;
 @property (nonatomic, copy  ) TableViewCellConfigureBlock configureCellBlock;
 
@@ -25,12 +24,18 @@
     self = [super init];
     
     if (self) {
-        self.tableData          = tableData;
+        self.tableData          = [NSMutableArray arrayWithArray:tableData];
         self.cellIdentifier     = cellIdentifier;
         self.configureCellBlock = configureCellBlock;
+        self.isAllowEdit = NO;
     }
     
     return self;
+}
+
+- (void)setTableData:(NSMutableArray *)tableData
+{
+    _tableData = [NSMutableArray arrayWithArray:tableData];
 }
 
 #pragma mark - TableView DataSource Delegate
@@ -54,6 +59,19 @@
     }
     
     return cell;
+}
+
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (editingStyle == UITableViewCellEditingStyleDelete) {
+        [self.tableData removeObjectAtIndex:indexPath.row];
+        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+    }
+}
+
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return self.isAllowEdit;
 }
 
 - (id)itemAtIndexPath:(NSIndexPath *)indexPath

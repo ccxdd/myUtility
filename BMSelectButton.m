@@ -33,7 +33,7 @@
         
         titleLab = [[UILabel alloc] initWithFrame:CGRectMake(5, 0, frame.size.width-17-5, frame.size.height)];
         [titleLab setFont:[UIFont systemFontOfSize:16]];
-        [titleLab setMinimumFontSize:9];
+        [titleLab setMinimumScaleFactor:9];
         titleLab.adjustsFontSizeToFitWidth = YES;
         titleLab.contentMode = UIViewContentModeScaleToFill;
         [titleLab setBackgroundColor:[UIColor clearColor]];

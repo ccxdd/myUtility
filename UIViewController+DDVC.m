@@ -39,7 +39,7 @@ const char leftHandlerKey, rightHandleKey;
     UIBarButtonItem *rightBtn = [[UIBarButtonItem alloc] initWithImage:[[UIImage imageNamed:imageName] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal]
                                                                  style:UIBarButtonItemStylePlain
                                                                 target:self
-                                                                action:@selector(rightButtonAction)];
+                                                                action:@selector(rightButtonAction:)];
     [self.navigationItem setRightBarButtonItem:rightBtn];
     
     if(clickBlock != nil)
@@ -55,7 +55,7 @@ const char leftHandlerKey, rightHandleKey;
     UIBarButtonItem *rightBtn = [[UIBarButtonItem alloc] initWithTitle:title
                                                                  style:UIBarButtonItemStylePlain
                                                                 target:self
-                                                                action:@selector(rightButtonAction)];
+                                                                action:@selector(rightButtonAction:)];
     [self.navigationItem setRightBarButtonItem:rightBtn];
     
     if(clickBlock != nil)
@@ -73,7 +73,7 @@ const char leftHandlerKey, rightHandleKey;
     UIBarButtonItem *leftBtn = [[UIBarButtonItem alloc] initWithImage:[[UIImage imageNamed:imageName] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal]
                                                                 style:UIBarButtonItemStylePlain
                                                                target:self
-                                                               action:@selector(leftButtonAction)];
+                                                               action:@selector(leftButtonAction:)];
     [self.navigationItem setLeftBarButtonItem:leftBtn];
     
     if(clickBlock != nil)
@@ -89,7 +89,7 @@ const char leftHandlerKey, rightHandleKey;
     UIBarButtonItem *leftBtn = [[UIBarButtonItem alloc] initWithTitle:title
                                                                 style:UIBarButtonItemStylePlain
                                                                target:self
-                                                               action:@selector(leftButtonAction)];
+                                                               action:@selector(leftButtonAction:)];
     [self.navigationItem setLeftBarButtonItem:leftBtn];
     
     if(clickBlock != nil)
@@ -108,23 +108,23 @@ const char leftHandlerKey, rightHandleKey;
 
 #pragma mark ------------RightBtnAction---------------
 
-- (void)rightButtonAction
+- (void)rightButtonAction:(id)sender
 {
     void (^theCompletionHandler)(id) = objc_getAssociatedObject(self, &rightHandleKey);
     
     if (theCompletionHandler) {
-        theCompletionHandler(self);
+        theCompletionHandler(sender);
     }
 }
 
 #pragma mark ------------LeftBtnAction---------------
 
-- (void)leftButtonAction
+- (void)leftButtonAction:(id)sender
 {
     void (^theCompletionHandler)(id) = objc_getAssociatedObject(self, &leftHandlerKey);
     
     if (theCompletionHandler) {
-        theCompletionHandler(self);
+        theCompletionHandler(sender);
     }
 }
 

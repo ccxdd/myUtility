@@ -671,7 +671,7 @@ static void(^ResultBlock)(id);
     NSInteger y = [dd year];
     NSInteger m = [dd month];
     NSInteger d = [dd day];
-    return [NSString stringWithFormat:@"%ld年%ld月%ld日",y,m,d];
+    return [NSString stringWithFormat:@"%ld年%ld月%ld日",(long)y, (long)m, (long)d];
 }
 
 + (NSDateFormatter *)_HTTPDateFormatterHasTime
@@ -862,7 +862,7 @@ static void(^ResultBlock)(id);
             weekDay=@"";
             break;
     }
-    return [NSString stringWithFormat:@"%ld-%02ld-%02ld %@",[comp year],[comp month],[comp day],weekDay];
+    return [NSString stringWithFormat:@"%ld-%02ld-%02ld %@",(long)[comp year],(long)[comp month],(long)[comp day],weekDay];
 }
 + (float)iosVersion{
     return [[UIDevice currentDevice].systemVersion floatValue];

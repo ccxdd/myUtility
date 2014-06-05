@@ -22,8 +22,8 @@
 
 - (void)leftButtonWithTitle:(NSString *)title clickBlock:(void(^)(id object))clickBlock;
 
-- (void)leftButtonAction;
+- (void)leftButtonAction:(id)sender;
 
-- (void)rightButtonAction;
+- (void)rightButtonAction:(id)sender;
 
 @end

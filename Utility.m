@@ -1069,14 +1069,16 @@ static void(^ResultBlock)(id);
     }
     return nil;
 }
+
 + (BOOL)isNumberic:(NSString *)str{
 	if (!str)
 		return NO;
 	
-	NSScanner *scan=[NSScanner scannerWithString:str];
-	int var;
-	return [scan scanInt:&var]&&[scan isAtEnd];
+	NSScanner *scan = [NSScanner scannerWithString:str];
+    double var;
+	return ([scan scanDouble:&var]) && [scan isAtEnd];
 }
+
 + (NSString *)generateUUID{
 	CFUUIDRef   uuid;
     CFStringRef uuidStr;

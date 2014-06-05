@@ -14,12 +14,12 @@
 #import "BMSelectButton.h"
 #import "BMStepper.h"
 #import "UIViewController+DDVC.h"
+#import "UIView+DDView.h"
 #import "UIControl+DDControl.h"
 #import "DDTextView.h"
 #import "DDPageCV.h"
 #import "AFNetworking.h"
 #import "GTMBase64.h"
-#import "DaiGouConfig.h"
 
 #define IS_Simulator ([[UIDevice currentDevice].model isEqualToString:@"iPhone Simulator"])
 

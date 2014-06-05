@@ -10,21 +10,21 @@
 
 @interface UIView (DDView)
 
-- (CGFloat)X1;
+- (CGFloat)x1;
 
-- (CGFloat)X2;
+- (CGFloat)x2;
 
-- (CGFloat)Y1;
+- (CGFloat)y1;
 
-- (CGFloat)Y2;
+- (CGFloat)y2;
 
-- (CGFloat)MidX;
+- (CGFloat)midX;
 
-- (CGFloat)MidY;
+- (CGFloat)midY;
 
-- (CGFloat)Width;
+- (CGFloat)width;
 
-- (CGFloat)Height;
+- (CGFloat)height;
 
 - (void)setX:(CGFloat)x;
 

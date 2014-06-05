@@ -11,42 +11,42 @@
 
 @implementation UIView (DDView)
 
-- (CGFloat)X1
+- (CGFloat)x1
 {
     return CGRectGetMinX(self.frame);
 }
 
-- (CGFloat)X2
+- (CGFloat)x2
 {
     return CGRectGetMaxX(self.frame);
 }
 
-- (CGFloat)Y1
+- (CGFloat)y1
 {
     return CGRectGetMinY(self.frame);
 }
 
-- (CGFloat)Y2
+- (CGFloat)y2
 {
     return CGRectGetMaxY(self.frame);
 }
 
-- (CGFloat)Width
+- (CGFloat)width
 {
     return CGRectGetWidth(self.frame);
 }
 
-- (CGFloat)Height
+- (CGFloat)height
 {
     return CGRectGetHeight(self.frame);
 }
 
-- (CGFloat)MidX
+- (CGFloat)midX
 {
     return CGRectGetMidX(self.frame);
 }
 
-- (CGFloat)MidY
+- (CGFloat)midY
 {
     return CGRectGetMidY(self.frame);
 }

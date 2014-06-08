@@ -18,9 +18,17 @@
 
 - (void)rightButtonWithTitle:(NSString *)title clickBlock:(void(^)(id object))clickBlock;
 
+- (void)rightButtonWithImageName:(NSString *)imageName
+                   renderingMode:(UIImageRenderingMode)renderingMode
+                      clickBlock:(void(^)(id))clickBlock;
+
 - (void)leftButtonWithImageName:(NSString *)imageName clickBlock:(void(^)(id object))clickBlock;
 
 - (void)leftButtonWithTitle:(NSString *)title clickBlock:(void(^)(id object))clickBlock;
+
+- (void)leftButtonWithImageName:(NSString *)imageName
+                  renderingMode:(UIImageRenderingMode)renderingMode
+                     clickBlock:(void(^)(id))clickBlock;
 
 - (void)leftButtonAction:(id)sender;
 

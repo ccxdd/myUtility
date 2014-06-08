@@ -33,10 +33,12 @@ const char leftHandlerKey, rightHandleKey;
 
 #pragma mark ------------rightButtonWithImageName---------------
 
-- (void)rightButtonWithImageName:(NSString *)imageName clickBlock:(void(^)(id))clickBlock
+- (void)rightButtonWithImageName:(NSString *)imageName
+                   renderingMode:(UIImageRenderingMode)renderingMode
+                      clickBlock:(void(^)(id))clickBlock
 {
     
-    UIBarButtonItem *rightBtn = [[UIBarButtonItem alloc] initWithImage:[[UIImage imageNamed:imageName] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal]
+    UIBarButtonItem *rightBtn = [[UIBarButtonItem alloc] initWithImage:[[UIImage imageNamed:imageName] imageWithRenderingMode:renderingMode]
                                                                  style:UIBarButtonItemStylePlain
                                                                 target:self
                                                                 action:@selector(rightButtonAction:)];
@@ -47,6 +49,11 @@ const char leftHandlerKey, rightHandleKey;
         objc_setAssociatedObject(self, &rightHandleKey, clickBlock, OBJC_ASSOCIATION_COPY);
     }
     
+}
+
+- (void)rightButtonWithImageName:(NSString *)imageName clickBlock:(void(^)(id))clickBlock
+{
+    [self rightButtonWithImageName:imageName renderingMode:UIImageRenderingModeAutomatic clickBlock:clickBlock];
 }
 
 - (void)rightButtonWithTitle:(NSString *)title clickBlock:(void(^)(id))clickBlock
@@ -67,10 +74,12 @@ const char leftHandlerKey, rightHandleKey;
 
 #pragma mark ------------leftButtonWithImageName---------------
 
-- (void)leftButtonWithImageName:(NSString *)imageName clickBlock:(void(^)(id))clickBlock
+- (void)leftButtonWithImageName:(NSString *)imageName
+                  renderingMode:(UIImageRenderingMode)renderingMode
+                     clickBlock:(void(^)(id))clickBlock
 {
     
-    UIBarButtonItem *leftBtn = [[UIBarButtonItem alloc] initWithImage:[[UIImage imageNamed:imageName] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal]
+    UIBarButtonItem *leftBtn = [[UIBarButtonItem alloc] initWithImage:[[UIImage imageNamed:imageName] imageWithRenderingMode:renderingMode]
                                                                 style:UIBarButtonItemStylePlain
                                                                target:self
                                                                action:@selector(leftButtonAction:)];
@@ -81,6 +90,11 @@ const char leftHandlerKey, rightHandleKey;
         objc_setAssociatedObject(self, &leftHandlerKey, clickBlock, OBJC_ASSOCIATION_COPY);
     }
     
+}
+
+- (void)leftButtonWithImageName:(NSString *)imageName clickBlock:(void(^)(id))clickBlock
+{
+    [self leftButtonWithImageName:imageName renderingMode:UIImageRenderingModeAutomatic clickBlock:clickBlock];
 }
 
 - (void)leftButtonWithTitle:(NSString *)title clickBlock:(void(^)(id))clickBlock

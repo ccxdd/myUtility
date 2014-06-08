@@ -1557,7 +1557,11 @@ static CGRect oldframe;
     
     @try {
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:name bundle:nil];
-        classVC = [storyboard instantiateViewControllerWithIdentifier:identifier];
+        if (identifier) {
+            classVC = [storyboard instantiateViewControllerWithIdentifier:identifier];
+        } else {
+            classVC = [storyboard instantiateInitialViewController];
+        }
     }
     @catch (NSException *exception) {
         DLogError(@"%@", exception);

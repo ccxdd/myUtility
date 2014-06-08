@@ -307,12 +307,6 @@ UIImage * getImageAtRect(UIImage *source,CGRect clipRect);
  */
 + (UIImage*)getImageFromProject:(NSString*)path;
 
-+ (CGSize) sizeWithLabel : (UILabel*) _label;
-
-+ (CGSize) sizeWithLabel : (UILabel*) _label string : (NSString*) _str;
-
-+ (CGSize) sizeWithString : (NSString*) _str font : (UIFont*) _font width : (int) _width;
-
 /**
  *  返回Document路径
  */
@@ -452,7 +446,7 @@ UIImage * getImageAtRect(UIImage *source,CGRect clipRect);
  *
  *  @return return value description
  */
-+ (CGSize)calculateSizeFromString:(NSString *)str font:(UIFont *)font width:(NSInteger)width;
++ (CGSize)calcSizeFromString:(NSString *)str font:(UIFont *)font width:(NSInteger)width;
 
 /**
  *  数字到字符

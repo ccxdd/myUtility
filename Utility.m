@@ -40,22 +40,22 @@ static void(^ResultBlock)(id);
 //{
 //    const void *vplainText;
 //    size_t plainTextBufferSize;
-//    
+//
 //    //NSData* data = [plainText dataUsingEncoding:NSUTF8StringEncoding];
 //    NSData* data = [FMPHexUtil unhex:plainText];
 //    plainTextBufferSize = [data length];
 //    vplainText = (const void *)[data bytes];
-//    
+//
 //    CCCryptorStatus ccStatus;
 //    uint8_t *bufferPtr = NULL;
 //    size_t bufferPtrSize = 0;
 //    size_t movedBytes = 0;
-//    
+//
 //    bufferPtrSize = (plainTextBufferSize + kCCBlockSize3DES) & ~(kCCBlockSize3DES - 1);
 //    bufferPtr = malloc( bufferPtrSize * sizeof(uint8_t));
 //    memset((void *)bufferPtr, 0x0, bufferPtrSize);
 //    // memset((void *) iv, 0x0, (size_t) sizeof(iv));
-//    
+//
 //    const void *vkey = (const void *)[key UTF8String];//[DESKEY UTF8String];
 //    // NSString *initVec = @"init Vec";
 //    //const void *vinitVec = (const void *) [initVec UTF8String];
@@ -78,15 +78,15 @@ static void(^ResultBlock)(id);
 //     else if (ccStatus == kCCAlignmentError) return @"ALIGNMENT";
 //     else if (ccStatus == kCCDecodeError) return @"DECODE ERROR";
 //     else if (ccStatus == kCCUnimplemented) return @"UNIMPLEMENTED"; */
-//    
-//    
-//    
+//
+//
+//
 //    //NSData *myData = [NSData dataWithBytes:(const void *)bufferPtr length:(NSUInteger)movedBytes];
 //    //NSString *result = [GTMBase64 stringByEncodingData:myData];
 //    NSString *result = [FMPHexUtil hex:nil withBytes:bufferPtr length:movedBytes];
-//    
+//
 //    return result;
-//    
+//
 //    //    NSData* data = [plainText dataUsingEncoding:NSUTF8StringEncoding];
 //    //    size_t plainTextBufferSize = [data length];
 //    //    const void *vplainText = (const void *)[data bytes];
@@ -132,22 +132,22 @@ static void(^ResultBlock)(id);
 //{
 //    const void *vplainText;
 //    size_t plainTextBufferSize;
-//    
+//
 //    //NSData *EncryptData = [GTMBase64 decodeData:[encryptText dataUsingEncoding:NSUTF8StringEncoding]];
 //    NSData *EncryptData = [FMPHexUtil unhex:encryptText];
 //    plainTextBufferSize = [EncryptData length];
 //    vplainText = [EncryptData bytes];
-//    
+//
 //    CCCryptorStatus ccStatus;
 //    uint8_t *bufferPtr = NULL;
 //    size_t bufferPtrSize = 0;
 //    size_t movedBytes = 0;
-//    
+//
 //    bufferPtrSize = (plainTextBufferSize + kCCBlockSize3DES) & ~(kCCBlockSize3DES - 1);
 //    bufferPtr = malloc( bufferPtrSize * sizeof(uint8_t));
 //    memset((void *)bufferPtr, 0x0, bufferPtrSize);
 //    // memset((void *) iv, 0x0, (size_t) sizeof(iv));
-//    
+//
 //    const void *vkey = (const void *)[key UTF8String];//[DESKEY UTF8String];
 //    // NSString *initVec = @"init Vec";
 //    //const void *vinitVec = (const void *) [initVec UTF8String];
@@ -170,14 +170,14 @@ static void(^ResultBlock)(id);
 //     else if (ccStatus == kCCAlignmentError) return @"ALIGNMENT";
 //     else if (ccStatus == kCCDecodeError) return @"DECODE ERROR";
 //     else if (ccStatus == kCCUnimplemented) return @"UNIMPLEMENTED"; */
-//    
-//    
+//
+//
 //    //    NSString *result = [[NSString alloc] initWithData:[NSData dataWithBytes:(const void *)bufferPtr
 //    //                                                                     length:(NSUInteger)movedBytes]
 //    //                                             encoding:NSUTF8StringEncoding];
-//    
+//
 //    NSString *result = [FMPHexUtil hex:nil withBytes:bufferPtr length:movedBytes];
-//    
+//
 //    return result;
 //}
 
@@ -624,16 +624,16 @@ static void(^ResultBlock)(id);
 + (NSString *)stringWithMD5:(NSString *)source{
 	
 	
-//	const char *cStr = [source UTF8String];
-//    unsigned char result[32];
-//    CC_MD5( cStr, strlen(cStr), result );
-//    return [NSString stringWithFormat:
-//            @"%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X",
-//            result[0], result[1], result[2], result[3],
-//            result[4], result[5], result[6], result[7],
-//            result[8], result[9], result[10], result[11],
-//            result[12], result[13], result[14], result[15]
-//            ];
+    //	const char *cStr = [source UTF8String];
+    //    unsigned char result[32];
+    //    CC_MD5( cStr, strlen(cStr), result );
+    //    return [NSString stringWithFormat:
+    //            @"%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X",
+    //            result[0], result[1], result[2], result[3],
+    //            result[4], result[5], result[6], result[7],
+    //            result[8], result[9], result[10], result[11],
+    //            result[12], result[13], result[14], result[15]
+    //            ];
     
     const char *cStr = [source UTF8String];
     unsigned char result[CC_MD5_DIGEST_LENGTH];
@@ -1184,36 +1184,6 @@ static void(^ResultBlock)(id);
     return [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:path ofType:@"png"]];
 }
 
-#pragma mark - string
-+ (CGSize) sizeWithLabel : (UILabel*) _label
-{
-    NSString *str = [_label text];
-    if (!str) {
-        return CGSizeMake(0, 0);
-    }
-    [_label setNumberOfLines:0];
-    [_label setLineBreakMode:NSLineBreakByTruncatingTail];
-    return [str sizeWithFont:_label.font constrainedToSize:CGSizeMake(_label.frame.size.width, MAXFLOAT)];
-}
-
-+ (CGSize) sizeWithLabel : (UILabel*) _label string : (NSString*) _str
-{
-    if (!_str) {
-        return CGSizeMake(0, 0);
-    }
-    [_label setNumberOfLines:0];
-    [_label setLineBreakMode:NSLineBreakByTruncatingTail];
-    return [_str sizeWithFont:_label.font constrainedToSize:CGSizeMake(_label.frame.size.width, MAXFLOAT)];
-}
-
-+ (CGSize) sizeWithString : (NSString*) _str font : (UIFont*) _font width : (int) _width
-{
-    if (!_str) {
-        return CGSizeMake(0, 0);
-    }
-    return [_str sizeWithFont:_font constrainedToSize:CGSizeMake(_width, MAXFLOAT)];
-}
-
 + (NSString *)documentPath
 {
     return NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
@@ -1559,11 +1529,19 @@ static CGRect oldframe;
     }
 }
 
-+ (CGSize)calculateSizeFromString:(NSString *)str font:(UIFont *)font width:(NSInteger)width
++ (CGSize)calcSizeFromString:(NSString *)str font:(UIFont *)font width:(NSInteger)width
 {
-    CGSize calcSize = CGSizeMake(width,2000);
+    CGSize calcSize = CGSizeMake(width,MAXFLOAT);
+    CGSize labelsize = CGSizeZero;
     
-    CGSize labelsize = [str sizeWithFont:font constrainedToSize:calcSize lineBreakMode:NSLineBreakByWordWrapping];
+    if (IOS7_OR_LATER) {
+        labelsize = [str boundingRectWithSize:calcSize
+                                      options:NSStringDrawingTruncatesLastVisibleLine|NSStringDrawingUsesLineFragmentOrigin
+                                   attributes:@{NSFontAttributeName: font}
+                                      context:nil].size;
+    } else {
+        labelsize = [str sizeWithFont:font constrainedToSize:calcSize lineBreakMode:NSLineBreakByWordWrapping];
+    }
     
     return labelsize;
 }

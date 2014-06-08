@@ -34,14 +34,6 @@
 
 - (void)clickAction
 {
-    if (self.checked) {
-        [self setImage:[UIImage imageNamed:dBgUnSelName] forState:UIControlStateNormal];
-    }
-    else
-    {
-        [self setImage:[UIImage imageNamed:dBgSelName] forState:UIControlStateNormal];
-    }
-
     self.checked = !self.checked;
 }
 

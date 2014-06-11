@@ -14,6 +14,7 @@
 #define kUN_SELECTED_IMAGE       @"radio_unselected"
 #define kBUTTON_TEXT_COLOR       kVcTextColor
 #define kBUTTON_FONT             [UIFont systemFontOfSize:16]
+#define kIS_SELECTED_IMAGE       (i == selfView.selectedIndex) ? kSELECTED_IMAGE : kUN_SELECTED_IMAGE
 
 @interface ButtonGroup ()
 
@@ -61,7 +62,7 @@
         [btn setTitleColor:kBUTTON_TEXT_COLOR forState:UIControlStateNormal];
         [btn.titleLabel setFont:kBUTTON_FONT];
         if (itemSize.width == 0) {
-            btnSize = CGSizeMake([Utility calculateSizeFromString:title font:btn.titleLabel.font width:self_width].width, itemSize.height);
+            btnSize = CGSizeMake([Utility calcSizeFromString:title font:btn.titleLabel.font width:self_width].width, itemSize.height);
             if (x + btnSize.width > self_width) {
                 x = 0;
                 y += itemSize.height + gap;
@@ -73,7 +74,7 @@
         [btn setTag:i];
         [btn setImage:[UIImage imageNamed:kUN_SELECTED_IMAGE] forState:UIControlStateNormal];
         [btn setTitleEdgeInsets:UIEdgeInsetsMake(2, 5, 0, 0)];
-        //btn.backgroundColor = (i == selfView.selectedIndex) ? selfView.selectedColor : selfView.unSelectedColor;
+        [btn setImage:[UIImage imageNamed:kIS_SELECTED_IMAGE] forState:UIControlStateNormal];
         [selfView addSubview:btn];
         [btn handleControlEvent:UIControlEventTouchUpInside withBlock:^(id sender) {
             [[selfView subviews] enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
@@ -98,7 +99,7 @@
             [btn setBackgroundColor:selfView.selectedColor];
             selfView.selectedIndex = btn.tag;
             if (selfView.buttonGroupSelectHandler) {
-                selfView.buttonGroupSelectHandler(sender);
+                selfView.buttonGroupSelectHandler(selfView.selectedIndex, titles[selfView.selectedIndex]);
             }
             
         }];

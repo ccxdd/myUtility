@@ -743,6 +743,14 @@ static void(^ResultBlock)(id);
     return [dateFormatter stringFromDate:date];
 }
 
++ (NSString *)stringFromDateString:(NSString *)dateString
+{
+    NSDateFormatter *dateFormatter = [Utility _HTTPDateFormatterHasTime];
+    NSDate *date = [dateFormatter dateFromString:dateString];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd"];
+    return [dateFormatter stringFromDate:date];
+}
+
 + (NSString *)dateHasTimeToString:(NSDate *)date
 {
     NSDateFormatter *dateFormatter = [Utility _HTTPDateFormatterHasTime];

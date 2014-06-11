@@ -23,6 +23,6 @@ typedef enum {
                           key:(NSString *)key
                      selected:(NSInteger)selectedIndex;
 
-@property (nonatomic, copy) void(^buttonGroupSelectHandler)(id sender);
+@property (nonatomic, copy) void(^buttonGroupSelectHandler)(NSInteger index, id item);
 
 @end

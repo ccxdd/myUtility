@@ -161,6 +161,15 @@ UIImage * getImageAtRect(UIImage *source,CGRect clipRect);
 + (NSString *)dateToString:(NSDate *)date;
 
 /**
+ *  DateTime字符转Date字符
+ *
+ *  @param dateString dateTimeString
+ *
+ *  @return string
+ */
++ (NSString *)stringFromDateString:(NSString *)dateString;
+
+/**
  日期和时间对象转换为字符串
  @param date 日期对象
  @return 日期字符串格式

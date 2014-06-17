@@ -9,6 +9,8 @@
 #import "UIView+DDView.h"
 #import <QuartzCore/QuartzCore.h>
 
+#define kDuation    0.3f
+
 @implementation UIView (DDView)
 
 - (CGFloat)x1
@@ -53,32 +55,128 @@
 
 - (void)setX:(CGFloat)x
 {
-    self.frame = CGRectMake(x, CGRectGetMinY(self.frame), CGRectGetWidth(self.frame), CGRectGetHeight(self.frame));
+    [self setFrame:CGRectMake(x, CGRectGetMinY(self.frame), CGRectGetWidth(self.frame), CGRectGetHeight(self.frame))
+          animated:NO
+          duration:kDuation];
+}
+
+- (void)setX:(CGFloat)x animated:(BOOL)animated
+{
+    [self setFrame:CGRectMake(x, CGRectGetMinY(self.frame), CGRectGetWidth(self.frame), CGRectGetHeight(self.frame))
+          animated:animated
+          duration:kDuation];
+}
+
+- (void)setX:(CGFloat)x animated:(BOOL)animated duration:(NSTimeInterval)duration
+{
+    [self setFrame:CGRectMake(x, CGRectGetMinY(self.frame), CGRectGetWidth(self.frame), CGRectGetHeight(self.frame))
+          animated:animated
+          duration:duration];
 }
 
 - (void)setY:(CGFloat)y
 {
-    self.frame = CGRectMake(CGRectGetMinX(self.frame), y, CGRectGetWidth(self.frame), CGRectGetHeight(self.frame));
+    [self setFrame:CGRectMake(CGRectGetMinX(self.frame), y, CGRectGetWidth(self.frame), CGRectGetHeight(self.frame))
+          animated:NO
+          duration:kDuation];
+}
+
+- (void)setY:(CGFloat)y animated:(BOOL)animated
+{
+    [self setFrame:CGRectMake(CGRectGetMinX(self.frame), y, CGRectGetWidth(self.frame), CGRectGetHeight(self.frame))
+          animated:animated
+          duration:kDuation];
+}
+
+- (void)setY:(CGFloat)y animated:(BOOL)animated duration:(NSTimeInterval)duration
+{
+    [self setFrame:CGRectMake(CGRectGetMinX(self.frame), y, CGRectGetWidth(self.frame), CGRectGetHeight(self.frame))
+          animated:animated
+          duration:duration];
 }
 
 - (void)setX:(CGFloat)x y:(CGFloat)y;
 {
-    self.frame = CGRectMake(x, y, CGRectGetWidth(self.frame), CGRectGetHeight(self.frame));
+    [self setFrame:CGRectMake(x, y, CGRectGetWidth(self.frame), CGRectGetHeight(self.frame))
+          animated:NO
+          duration:kDuation];
+}
+
+- (void)setX:(CGFloat)x y:(CGFloat)y animated:(BOOL)animated
+{
+    [self setFrame:CGRectMake(x, y, CGRectGetWidth(self.frame), CGRectGetHeight(self.frame))
+          animated:animated
+          duration:kDuation];
+}
+
+- (void)setX:(CGFloat)x y:(CGFloat)y animated:(BOOL)animated duration:(NSTimeInterval)duration
+{
+    [self setFrame:CGRectMake(x, y, CGRectGetWidth(self.frame), CGRectGetHeight(self.frame))
+          animated:animated
+          duration:duration];
 }
 
 - (void)setWidth:(CGFloat)width
 {
-    self.frame = CGRectMake(CGRectGetMinX(self.frame), CGRectGetMinY(self.frame), width, CGRectGetHeight(self.frame));
+    [self setFrame:CGRectMake(CGRectGetMinX(self.frame), CGRectGetMinY(self.frame), width, CGRectGetHeight(self.frame))
+          animated:NO
+          duration:kDuation];
+}
+
+- (void)setWidth:(CGFloat)width animated:(BOOL)animated
+{
+    [self setFrame:CGRectMake(CGRectGetMinX(self.frame), CGRectGetMinY(self.frame), width, CGRectGetHeight(self.frame))
+          animated:animated
+          duration:kDuation];
+}
+
+- (void)setWidth:(CGFloat)width animated:(BOOL)animated duration:(NSTimeInterval)duration
+{
+    [self setFrame:CGRectMake(CGRectGetMinX(self.frame), CGRectGetMinY(self.frame), width, CGRectGetHeight(self.frame))
+          animated:animated
+          duration:duration];
 }
 
 - (void)setHeight:(CGFloat)height
 {
-    self.frame = CGRectMake(CGRectGetMinX(self.frame), CGRectGetMinY(self.frame), CGRectGetWidth(self.frame), height);
+    [self setFrame:CGRectMake(CGRectGetMinX(self.frame), CGRectGetMinY(self.frame), CGRectGetWidth(self.frame), height)
+          animated:NO
+          duration:kDuation];
 }
 
-- (void)setWidth:(CGFloat)width height:(CGFloat)height;
+- (void)setHeight:(CGFloat)height animated:(BOOL)animated
 {
-    self.frame = CGRectMake(CGRectGetMinX(self.frame), CGRectGetMinY(self.frame), width, height);
+    [self setFrame:CGRectMake(CGRectGetMinX(self.frame), CGRectGetMinY(self.frame), CGRectGetWidth(self.frame), height)
+          animated:animated
+          duration:kDuation];
+}
+
+- (void)setHeight:(CGFloat)height animated:(BOOL)animated duration:(NSTimeInterval)duration
+{
+    [self setFrame:CGRectMake(CGRectGetMinX(self.frame), CGRectGetMinY(self.frame), CGRectGetWidth(self.frame), height)
+          animated:animated
+          duration:duration];
+}
+
+- (void)setWidth:(CGFloat)width height:(CGFloat)height
+{
+    [self setFrame:CGRectMake(CGRectGetMinX(self.frame), CGRectGetMinY(self.frame), width, height)
+          animated:NO
+          duration:kDuation];
+}
+
+- (void)setWidth:(CGFloat)width height:(CGFloat)height animated:(BOOL)animated
+{
+    [self setFrame:CGRectMake(CGRectGetMinX(self.frame), CGRectGetMinY(self.frame), width, height)
+          animated:animated
+          duration:kDuation];
+}
+
+- (void)setWidth:(CGFloat)width height:(CGFloat)height animated:(BOOL)animated duration:(NSTimeInterval)duration
+{
+    [self setFrame:CGRectMake(CGRectGetMinX(self.frame), CGRectGetMinY(self.frame), width, height)
+          animated:animated
+          duration:duration];
 }
 
 - (void)setCornerRadius:(CGFloat)radius
@@ -90,6 +188,21 @@
 {
     self.layer.borderColor = borderColor.CGColor;
     self.layer.borderWidth = width;
+}
+
+#pragma mark - setFrame:animated:
+
+- (void)setFrame:(CGRect)frame animated:(BOOL)animated duration:(NSTimeInterval)duration
+{
+    if (animated) {
+        [UIView animateWithDuration:duration animations:^{
+            [self setFrame:frame];
+        } completion:^(BOOL finished) {
+            
+        }];
+    } else {
+        [self setFrame:frame];
+    }
 }
 
 @end

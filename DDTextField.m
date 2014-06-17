@@ -55,7 +55,7 @@ static NSNumber *superViewProperty;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textFieldDidEndEditing:)
                                                  name:UITextFieldTextDidEndEditingNotification object:self];
     
-    self.borderStyle = UITextBorderStyleRoundedRect;
+    self.hitMessage = self.placeholder;
     self.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
     
     self.toolbar = [[UIToolbar alloc] init];

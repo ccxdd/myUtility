@@ -67,16 +67,30 @@
 - (CGFloat)height;
 
 - (void)setX:(CGFloat)x;
+- (void)setX:(CGFloat)x animated:(BOOL)animated;
+- (void)setX:(CGFloat)x animated:(BOOL)animated duration:(NSTimeInterval)duration;
 
 - (void)setY:(CGFloat)y;
+- (void)setY:(CGFloat)y animated:(BOOL)animated;
+- (void)setY:(CGFloat)y animated:(BOOL)animated duration:(NSTimeInterval)duration;
 
 - (void)setX:(CGFloat)x y:(CGFloat)y;
+- (void)setX:(CGFloat)x y:(CGFloat)y animated:(BOOL)animated;
+- (void)setX:(CGFloat)x y:(CGFloat)y animated:(BOOL)animated duration:(NSTimeInterval)duration;
 
 - (void)setWidth:(CGFloat)width;
+- (void)setWidth:(CGFloat)width animated:(BOOL)animated;
+- (void)setWidth:(CGFloat)width animated:(BOOL)animated duration:(NSTimeInterval)duration;
 
 - (void)setHeight:(CGFloat)height;
+- (void)setHeight:(CGFloat)height animated:(BOOL)animated;
+- (void)setHeight:(CGFloat)height animated:(BOOL)animated duration:(NSTimeInterval)duration;
 
 - (void)setWidth:(CGFloat)width height:(CGFloat)height;
+- (void)setWidth:(CGFloat)width height:(CGFloat)height animated:(BOOL)animated;
+- (void)setWidth:(CGFloat)width height:(CGFloat)height animated:(BOOL)animated duration:(NSTimeInterval)duration;
+
+- (void)setFrame:(CGRect)frame animated:(BOOL)animated duration:(NSTimeInterval)duration;
 
 /**
  *  设置边角半径

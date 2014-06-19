@@ -100,11 +100,33 @@
 - (void)setCornerRadius:(CGFloat)radius;
 
 /**
+ *  设置边角半径、边框颜色及边框宽度
+ *
+ *  @param radius      半径
+ *  @param borderColor 边框颜色
+ *  @param width       线条宽度
+ */
+- (void)setCornerRadius:(CGFloat)radius borderColor:(UIColor *)borderColor width:(CGFloat)width;
+
+/**
  *   设置边框颜色和边框宽度
  *
  *  @param borderColor 边框颜色
  *  @param width       线条宽度
  */
 - (void)setBorderColor:(UIColor *)borderColor width:(CGFloat)width;
+
+/**
+ *  设置阴影
+ *
+ *  @param x       x偏移量
+ *  @param y       y偏移量
+ *  @param color   阴影颜色
+ *  @param opacity 透明度
+ *  @param radius  阴影半径
+ *  @param usePath 使用阴影路径
+ */
+- (void)setShadowX:(CGFloat)x y:(CGFloat)y color:(UIColor *)color opacity:(float)opacity radius:(CGFloat)radius
+           usePath:(BOOL)usePath;
 
 @end

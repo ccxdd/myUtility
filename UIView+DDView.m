@@ -190,6 +190,29 @@
     self.layer.borderWidth = width;
 }
 
+- (void)setCornerRadius:(CGFloat)radius borderColor:(UIColor *)borderColor width:(CGFloat)width
+{
+    self.layer.cornerRadius = radius;
+    self.layer.borderColor = borderColor.CGColor;
+    self.layer.borderWidth = width;
+}
+
+#pragma mark - setShadowX:y:color:opacity:radius:usePath
+
+- (void)setShadowX:(CGFloat)x y:(CGFloat)y color:(UIColor *)color opacity:(float)opacity radius:(CGFloat)radius
+           usePath:(BOOL)usePath
+{
+    self.layer.shadowColor   = color.CGColor;
+    self.layer.shadowOffset  = CGSizeMake(x, y);
+    self.layer.shadowOpacity = opacity;
+    self.layer.shadowRadius  = radius;
+    self.clipsToBounds = NO;
+    
+    if (usePath) {
+        self.layer.shadowPath = [UIBezierPath bezierPathWithRect:self.bounds].CGPath;
+    }
+}
+
 #pragma mark - setFrame:animated:
 
 - (void)setFrame:(CGRect)frame animated:(BOOL)animated duration:(NSTimeInterval)duration

@@ -17,6 +17,11 @@
 
 @implementation DDCheckBox
 
+- (void)awakeFromNib
+{
+    [self configCheckBox];
+}
+
 + (instancetype)checkBoxWithFrame:(CGRect)frame title:(NSString *)title checked:(BOOL)checked
 {
     DDCheckBox *checkBox = [super buttonWithType:UIButtonTypeCustom];
@@ -53,6 +58,18 @@
     {
         [self setImage:[UIImage imageNamed:dBgUnSelName] forState:UIControlStateNormal];
     }
+}
+
+#pragma mark - configCheckBox
+
+- (void)configCheckBox
+{
+    [self setTitleEdgeInsets:UIEdgeInsetsMake(0, 5, 0, 0)];
+    [self setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [self addTarget:self action:@selector(clickAction) forControlEvents:UIControlEventTouchUpInside];
+    [self setContentHorizontalAlignment:UIControlContentHorizontalAlignmentLeft];
+    [self setContentVerticalAlignment:UIControlContentVerticalAlignmentCenter];
+    [self setChecked:NO];
 }
 
 /*

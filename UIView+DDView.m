@@ -13,6 +13,27 @@
 
 @implementation UIView (DDView)
 
++ (id)viewForXibName:(NSString *)xibName
+{
+    return [self viewForXibName:xibName atIndex:0];
+}
+
++ (id)viewForXibName:(NSString *)xibName atIndex:(NSInteger)index
+{
+    @try {
+        if (xibName) {
+            NSArray *xibArr = [[NSBundle mainBundle] loadNibNamed:xibName owner:nil options:nil];
+            return xibArr[index];
+        } else {
+            NSLog(@"\n Error: viewForXibName:atIndex:");
+            return nil;
+        }
+    }
+    @catch (NSException *exception) {
+        NSLog(@"\n exception: %@ \n %@",NSStringFromSelector(_cmd), exception);
+    }
+}
+
 - (CGFloat)x1
 {
     return CGRectGetMinX(self.frame);

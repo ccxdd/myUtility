@@ -11,6 +11,20 @@
 @interface UIView (DDView)
 
 /**
+ *  返回Xib中首个View
+ *
+ *  @return view
+ */
++ (id)viewForXibName:(NSString *)xibName;
+
+/**
+ *  返回Xib中指定的索引View
+ *
+ *  @return view
+ */
++ (id)viewForXibName:(NSString *)xibName atIndex:(NSInteger)index;
+
+/**
  *  返回x1
  *
  *  @return CGFloat

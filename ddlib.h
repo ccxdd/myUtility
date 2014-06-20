@@ -17,6 +17,7 @@
 #import "UIViewController+DDVC.h"
 #import "UIView+DDView.h"
 #import "UIControl+DDControl.h"
+#import "DDSimpleTableViewController.h"
 #import "DDTextView.h"
 #import "DDPageCV.h"
 #import "ButtonGroup.h"

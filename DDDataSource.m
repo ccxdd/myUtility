@@ -51,7 +51,7 @@
     }
 }
 
-#pragma mark - TableView DataSource Delegate
+#pragma mark - TableView DataSource && Delegate
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -74,6 +74,7 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *cell;
+    id cellItem;
     
     if (self.registerCellDict.count == 0) {
         cell = [tableView dequeueReusableCellWithIdentifier:self.cellIdentifier forIndexPath:indexPath];
@@ -85,11 +86,18 @@
         DLog(@"Error Cell !");
     }
     
+    @try {
+        cellItem = self.numberOfSectionsInTableView ?
+        self.tableData[indexPath.section][indexPath.row] : self.tableData[indexPath.row];
+    }
+    @catch (NSException *exception) {
+        cellItem = nil;
+    }
+
     if (self.cellForRowAtIndexPath) {
         self.cellForRowAtIndexPath(cell,
                                    indexPath,
-                                   self.numberOfSectionsInTableView ?
-                                   self.tableData[indexPath.section][indexPath.row] : self.tableData[indexPath.row]
+                                   cellItem
                                    );
     }
     
@@ -124,6 +132,53 @@
         return self.titleForFooterInSection(section);
     } else {
         return nil;
+    }
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section;
+{
+    if (self.heightForHeaderInSection) {
+        return self.heightForHeaderInSection(section);
+    } else {
+        return 0;
+    }
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
+{
+    if (self.heightForFooterInSection) {
+        return self.heightForFooterInSection(section);
+    } else {
+        return 0;
+    }
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+    if (self.viewForHeaderInSection) {
+        return self.viewForHeaderInSection(section);
+    } else {
+        return nil;
+    }
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
+{
+    if (self.viewForFooterInSection) {
+        return self.viewForFooterInSection(section);
+    } else {
+        return nil;
+    }
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (!tableView.allowsMultipleSelection) {
+        [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    }
+    
+    if (self.didSelectRowAtIndexPath) {
+        self.didSelectRowAtIndexPath(indexPath);
     }
 }
 

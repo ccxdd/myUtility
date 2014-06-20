@@ -8,16 +8,21 @@
 
 #import <Foundation/Foundation.h>
 
-@interface DDDataSource : NSObject <UITableViewDataSource>
+@interface DDDataSource : NSObject <UITableViewDataSource, UITableViewDelegate>
 
 @property (nonatomic, strong) NSMutableArray *tableData;
 @property (nonatomic, assign) BOOL           isAllowEdit;
 
-@property (copy, nonatomic) NSInteger (^numberOfSectionsInTableView)(void);
-@property (copy, nonatomic) NSInteger (^numberOfRowsInSection)(NSInteger section);
-@property (copy, nonatomic) NSString* (^titleForHeaderInSection)(NSInteger section);
-@property (copy, nonatomic) NSString* (^titleForFooterInSection)(NSInteger section);
-@property (copy, nonatomic) NSString* (^classNameForIndexPath)(NSIndexPath *indexPath);
+@property (nonatomic, copy) NSInteger (^numberOfSectionsInTableView)(void);
+@property (nonatomic, copy) NSInteger (^numberOfRowsInSection)(NSInteger section);
+@property (nonatomic, copy) NSString* (^titleForHeaderInSection)(NSInteger section);
+@property (nonatomic, copy) NSString* (^titleForFooterInSection)(NSInteger section);
+@property (nonatomic, copy) NSString* (^classNameForIndexPath)(NSIndexPath *indexPath);
+@property (nonatomic, copy) CGFloat   (^heightForHeaderInSection)(NSInteger section);
+@property (nonatomic, copy) CGFloat   (^heightForFooterInSection)(NSInteger section);
+@property (nonatomic, copy) UIView*   (^viewForHeaderInSection)(NSInteger section);
+@property (nonatomic, copy) UIView*   (^viewForFooterInSection)(NSInteger section);
+@property (nonatomic, copy) void      (^didSelectRowAtIndexPath)(NSIndexPath *indexPath);
 
 - (id)initWithTableData:(NSArray *)tableData
          cellIdentifier:(NSString *)cellIdentifier

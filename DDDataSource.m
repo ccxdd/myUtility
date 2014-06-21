@@ -12,7 +12,6 @@
 
 @property (strong, nonatomic) NSMutableDictionary        *registerCellDict;
 @property (nonatomic, copy  ) NSString                   *cellIdentifier;
-@property (nonatomic, copy  ) void (^cellForRowAtIndexPath)(id cell, NSIndexPath *indexPath, id item);
 
 @end
 
@@ -92,6 +91,7 @@
     }
     @catch (NSException *exception) {
         cellItem = nil;
+        DLog(@"\n exception:%@", exception);
     }
 
     if (self.cellForRowAtIndexPath) {
@@ -173,12 +173,23 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    id cellItem;
+    
     if (!tableView.allowsMultipleSelection) {
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
     }
     
+    @try {
+        cellItem = self.numberOfSectionsInTableView ?
+        self.tableData[indexPath.section][indexPath.row] : self.tableData[indexPath.row];
+    }
+    @catch (NSException *exception) {
+        cellItem = nil;
+        DLog(@"\n exception:%@", exception);
+    }
+    
     if (self.didSelectRowAtIndexPath) {
-        self.didSelectRowAtIndexPath(indexPath);
+        self.didSelectRowAtIndexPath(indexPath, cellItem);
     }
 }
 

@@ -14,6 +14,18 @@
 
 @implementation DDSimpleTableViewController
 
+- (void)awakeFromNib
+{
+    self.isNib         = NO;
+    self.cellClassName = @"UITableViewCell";
+    self.rowHeight     = 44;
+    
+    _tableDataDS = [[DDDataSource alloc] initWithTableData:nil
+                                            cellIdentifier:self.cellClassName
+                                     cellForRowAtIndexPath:nil];
+    [_tableDataDS setDidSelectRowAtIndexPath:nil];
+}
+
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -24,19 +36,21 @@
 }
 
 + (instancetype)simpleWithTitle:(NSString *)title
-                    cellXibName:(NSString *)cellXibName
+                  cellClassName:(NSString *)cellClassName
+                          isNib:(BOOL)isNib
                       tableData:(NSArray *)tableData
                       rowHeight:(CGFloat)rowHeight
           cellForRowAtIndexPath:(void(^)(UITableViewCell *cell, NSIndexPath *indexPath, id item))cellForRowAtIndexPath
-        didSelectRowAtIndexPath:(void(^)(NSIndexPath *indexPath))didSelectRowAtIndexPath
+        didSelectRowAtIndexPath:(void(^)(NSIndexPath *indexPath, id item))didSelectRowAtIndexPath
 {
     DDSimpleTableViewController *stvc = [[DDSimpleTableViewController alloc] init];
-    stvc.title       = title;
-    stvc.cellXibName = cellXibName;
-    stvc.rowHeight   = rowHeight;
+    stvc.title         = title;
+    stvc.cellClassName = cellClassName;
+    stvc.rowHeight     = rowHeight;
+    stvc.isNib         = isNib;
     
     stvc.tableDataDS = [[DDDataSource alloc] initWithTableData:tableData
-                                                cellIdentifier:cellXibName
+                                                cellIdentifier:cellClassName
                                          cellForRowAtIndexPath:cellForRowAtIndexPath];
     [stvc.tableDataDS setDidSelectRowAtIndexPath:didSelectRowAtIndexPath];
     
@@ -56,8 +70,14 @@
     [_tableView setBackgroundColor:[UIColor clearColor]];
     [_tableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
     [_tableView setRowHeight:_rowHeight];
-    [_tableView registerNib:[UINib nibWithNibName:self.cellXibName bundle:nil]
-     forCellReuseIdentifier:self.cellXibName];
+    if (self.isNib) {
+        [_tableView registerNib:[UINib nibWithNibName:self.cellClassName bundle:nil]
+         forCellReuseIdentifier:self.cellClassName];
+    } else {
+        [_tableView registerClass:NSClassFromString(self.cellClassName)
+           forCellReuseIdentifier:self.cellClassName];
+    }
+
     [self.view addSubview:_tableView];
 }
 
@@ -65,6 +85,14 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+#pragma mark - setRowHeight:
+
+- (void)setRowHeight:(CGFloat)rowHeight
+{
+    _rowHeight = rowHeight;
+    self.tableView.rowHeight = rowHeight;
 }
 
 /*

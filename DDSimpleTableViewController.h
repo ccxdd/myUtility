@@ -10,16 +10,18 @@
 
 @interface DDSimpleTableViewController : UIViewController
 
-@property (nonatomic, strong) UITableView    *tableView;
-@property (nonatomic, strong) DDDataSource   *tableDataDS;
-@property (nonatomic, copy  ) NSString       *cellXibName;
-@property (nonatomic, assign) CGFloat        rowHeight;
+@property (nonatomic, strong) UITableView  *tableView;
+@property (nonatomic, strong) DDDataSource *tableDataDS;
+@property (nonatomic, copy  ) NSString     *cellClassName;
+@property (nonatomic, assign) CGFloat      rowHeight;
+@property (nonatomic, assign) BOOL         isNib;
 
 + (instancetype)simpleWithTitle:(NSString *)title
-                    cellXibName:(NSString *)cellXibName
+                  cellClassName:(NSString *)cellClassName
+                          isNib:(BOOL)isNib
                       tableData:(NSArray *)tableData
                       rowHeight:(CGFloat)rowHeight
           cellForRowAtIndexPath:(void(^)(UITableViewCell *cell, NSIndexPath *indexPath, id item))cellForRowAtIndexPath
-        didSelectRowAtIndexPath:(void(^)(NSIndexPath *indexPath))didSelectRowAtIndexPath;
+        didSelectRowAtIndexPath:(void(^)(NSIndexPath *indexPath, id item))didSelectRowAtIndexPath;
 
 @end

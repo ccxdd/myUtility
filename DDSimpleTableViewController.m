@@ -54,6 +54,23 @@
                                          cellForRowAtIndexPath:cellForRowAtIndexPath];
     [stvc.tableDataDS setDidSelectRowAtIndexPath:didSelectRowAtIndexPath];
     
+    stvc.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, 320, kSCREEN_HEIGHT)
+                                              style:UITableViewStylePlain];
+    [stvc.tableView setDelegate:stvc.tableDataDS];
+    [stvc.tableView setDataSource:stvc.tableDataDS];
+    [stvc.tableView setBackgroundColor:[UIColor clearColor]];
+    [stvc.tableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
+    [stvc.tableView setRowHeight:stvc.rowHeight];
+    if (stvc.isNib) {
+        [stvc.tableView registerNib:[UINib nibWithNibName:stvc.cellClassName bundle:nil]
+         forCellReuseIdentifier:stvc.cellClassName];
+    } else {
+        [stvc.tableView registerClass:NSClassFromString(stvc.cellClassName)
+           forCellReuseIdentifier:stvc.cellClassName];
+    }
+    
+    [stvc.view addSubview:stvc.tableView];
+    
     return stvc;
 }
 
@@ -62,23 +79,6 @@
     [super viewDidLoad];
     self.view.backgroundColor = kVcBackgroundColor;
     // Do any additional setup after loading the view.
-    
-    _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, 320, kSCREEN_HEIGHT)
-                                              style:UITableViewStylePlain];
-    [_tableView setDelegate:_tableDataDS];
-    [_tableView setDataSource:_tableDataDS];
-    [_tableView setBackgroundColor:[UIColor clearColor]];
-    [_tableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
-    [_tableView setRowHeight:_rowHeight];
-    if (self.isNib) {
-        [_tableView registerNib:[UINib nibWithNibName:self.cellClassName bundle:nil]
-         forCellReuseIdentifier:self.cellClassName];
-    } else {
-        [_tableView registerClass:NSClassFromString(self.cellClassName)
-           forCellReuseIdentifier:self.cellClassName];
-    }
-
-    [self.view addSubview:_tableView];
 }
 
 - (void)didReceiveMemoryWarning

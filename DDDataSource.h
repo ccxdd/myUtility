@@ -12,6 +12,7 @@
 
 @property (nonatomic, strong) NSMutableArray *tableData;
 @property (nonatomic, assign) BOOL           isAllowEdit;
+@property (nonatomic, copy  ) NSString       *sectionKey;
 
 @property (nonatomic, copy) NSInteger (^numberOfSectionsInTableView)(void);
 @property (nonatomic, copy) NSInteger (^numberOfRowsInSection)(NSInteger section);
@@ -22,6 +23,7 @@
 @property (nonatomic, copy) CGFloat   (^heightForFooterInSection)(NSInteger section);
 @property (nonatomic, copy) UIView*   (^viewForHeaderInSection)(NSInteger section);
 @property (nonatomic, copy) UIView*   (^viewForFooterInSection)(NSInteger section);
+@property (nonatomic, copy) UITableViewCellEditingStyle (^editingStyleForRowAtIndexPath)(NSIndexPath *indexPath);
 @property (nonatomic, copy) void      (^cellForRowAtIndexPath)(id cell, NSIndexPath *indexPath, id item);
 @property (nonatomic, copy) void      (^didSelectRowAtIndexPath)(NSIndexPath *indexPath, id item);
 

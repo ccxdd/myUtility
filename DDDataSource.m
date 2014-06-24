@@ -86,12 +86,19 @@
     }
     
     @try {
-        cellItem = self.numberOfSectionsInTableView ?
-        self.tableData[indexPath.section][indexPath.row] : self.tableData[indexPath.row];
+        if (self.numberOfSectionsInTableView) {
+            if (self.sectionKey) {
+                cellItem = self.tableData[indexPath.section][self.sectionKey][indexPath.row];
+            } else {
+                cellItem = self.tableData[indexPath.section][indexPath.row];
+            }
+        } else {
+            cellItem = self.tableData[indexPath.row];
+        }
     }
     @catch (NSException *exception) {
         cellItem = nil;
-        DLog(@"\n exception:%@", exception);
+        DLog(@"\n exception:%@", NSStringFromSelector(_cmd));
     }
 
     if (self.cellForRowAtIndexPath) {
@@ -180,17 +187,33 @@
     }
     
     @try {
-        cellItem = self.numberOfSectionsInTableView ?
-        self.tableData[indexPath.section][indexPath.row] : self.tableData[indexPath.row];
+        if (self.numberOfSectionsInTableView) {
+            if (self.sectionKey) {
+                cellItem = self.tableData[indexPath.section][self.sectionKey][indexPath.row];
+            } else {
+                cellItem = self.tableData[indexPath.section][indexPath.row];
+            }
+        } else {
+            cellItem = self.tableData[indexPath.row];
+        }
     }
     @catch (NSException *exception) {
         cellItem = nil;
-        DLog(@"\n exception:%@", exception);
+        DLog(@"\n exception:%@", NSStringFromSelector(_cmd));
     }
     
     if (self.didSelectRowAtIndexPath) {
         self.didSelectRowAtIndexPath(indexPath, cellItem);
     }
+}
+
+- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (self.editingStyleForRowAtIndexPath) {
+        return self.editingStyleForRowAtIndexPath(indexPath);
+    }
+    
+    return UITableViewCellEditingStyleDelete;
 }
 
 - (id)itemAtIndexPath:(NSIndexPath *)indexPath

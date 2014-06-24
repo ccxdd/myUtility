@@ -212,7 +212,8 @@ static NSNumber *superViewProperty;
 - (void)setConfirmField:(id)field
 {
     confirmField = field;
-    [self setFieldType:_fieldType];
+    self.keyboardType = [confirmField keyboardType];
+    [self setFieldType:DDTextField_TYPE_CONFIRM];
 }
 
 - (void)nextButtonIsClicked:(id)sender

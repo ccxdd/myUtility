@@ -241,7 +241,7 @@
             break;
     }
     
-    [BMWaitVC showWaitViewWithMessage:message];
+    [BMWaitVC showMessage:message];
 }
 
 @end

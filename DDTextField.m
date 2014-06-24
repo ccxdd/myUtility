@@ -441,7 +441,7 @@ static NSNumber *superViewProperty;
         self.layer.backgroundColor = kUIColorRGBA(180, 0, 0, 0.7).CGColor;
         
         if (self.hitMessage) {
-            [BMWaitVC showWaitViewWithMessage:self.hitMessage];
+            [BMWaitVC showMessage:self.hitMessage];
         }
         return NO;
     } else {

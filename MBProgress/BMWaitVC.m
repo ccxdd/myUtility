@@ -82,7 +82,7 @@ static NSUInteger kWaitViewCount = 0;
     });
 }
 
-+ (void)showWaitViewWithMessage:(NSString *)message
++ (void)showMessage:(NSString *)message
 {
     [self showMessage:message afterDelay:2];
 }

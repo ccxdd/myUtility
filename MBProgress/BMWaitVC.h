@@ -25,7 +25,7 @@
 
 + (instancetype)sharedInstance;
 //显示自义定文字
-+ (void)showWaitViewWithMessage:(NSString *)message;
++ (void)showMessage:(NSString *)message;
 //显示
 + (void)showWaitView;
 //消失

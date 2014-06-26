@@ -47,7 +47,7 @@
         self.backgroundColor = kNavigationBarColor;
 		[self.contentView addSubview:self.displayLabel];
         
-        self.bottomView = [[UIView alloc] initWithFrame:CGRectMake(0, kSelf_H(self)-20, kSelf_W(self), 20)];
+        self.bottomView = [[UIView alloc] initWithFrame:CGRectMake(0, self.height - 20, self.width, 20)];
         self.bottomView.backgroundColor = [UIColor whiteColor];
         [self.contentView addSubview:self.bottomView];
         
@@ -59,7 +59,7 @@
 {
     [super layoutSubviews];
     self.displayLabel.frame = CGRectMake(0, 0, self.frame.size.width, 25);
-    self.bottomView.frame = CGRectMake(0, kSelf_H(self)-20, kSelf_W(self), 20);
+    self.bottomView.frame = CGRectMake(0, self.height - 20, self.width, 20);
 }
 
 @end

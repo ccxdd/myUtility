@@ -6,9 +6,9 @@
 //  Copyright (c) 2014年 ccxdd. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import "ParentViewController.h"
 
-@interface DDSimpleTableViewController : UIViewController
+@interface DDSimpleTableViewController : ParentViewController
 
 @property (nonatomic, strong) UITableView  *tableView;
 @property (nonatomic, strong) DDDataSource *tableDataDS;

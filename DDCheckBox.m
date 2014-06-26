@@ -42,11 +42,6 @@
     self.checked = !self.checked;
 }
 
-- (BOOL)isChecked
-{
-    return self.isChecked;
-}
-
 - (void)setChecked:(BOOL)checked
 {
     _checked = checked;
@@ -69,7 +64,7 @@
     [self addTarget:self action:@selector(clickAction) forControlEvents:UIControlEventTouchUpInside];
     [self setContentHorizontalAlignment:UIControlContentHorizontalAlignmentLeft];
     [self setContentVerticalAlignment:UIControlContentVerticalAlignmentCenter];
-    [self setChecked:NO];
+    [self setChecked:self.checked];
 }
 
 /*

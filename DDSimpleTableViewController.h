@@ -15,6 +15,7 @@
 @property (nonatomic, copy  ) NSString     *cellClassName;
 @property (nonatomic, assign) CGFloat      rowHeight;
 @property (nonatomic, assign) BOOL         isNib;
+@property (nonatomic, assign) BOOL         allowsMultipleSelection;
 
 + (instancetype)simpleWithTitle:(NSString *)title
                   cellClassName:(NSString *)cellClassName
@@ -23,5 +24,9 @@
                       rowHeight:(CGFloat)rowHeight
           cellForRowAtIndexPath:(void(^)(UITableViewCell *cell, NSIndexPath *indexPath, id item))cellForRowAtIndexPath
         didSelectRowAtIndexPath:(void(^)(NSIndexPath *indexPath, id item))didSelectRowAtIndexPath;
+
+- (id)selectedRowValueWithSectionKey:(NSString *)sectionKey rowKey:(NSString *)rowKey;
+
+- (NSArray *)selectedRowsValuesWithSectionKey:(NSString *)sectionKey rowKey:(NSString *)rowKey;
 
 @end

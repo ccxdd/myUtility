@@ -55,7 +55,7 @@
     [stvc.tableDataDS setDidSelectRowAtIndexPath:didSelectRowAtIndexPath];
     
     stvc.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, 320, kSCREEN_HEIGHT)
-                                              style:UITableViewStylePlain];
+                                                  style:UITableViewStylePlain];
     [stvc.tableView setDelegate:stvc.tableDataDS];
     [stvc.tableView setDataSource:stvc.tableDataDS];
     [stvc.tableView setBackgroundColor:[UIColor clearColor]];
@@ -63,10 +63,10 @@
     [stvc.tableView setRowHeight:stvc.rowHeight];
     if (stvc.isNib) {
         [stvc.tableView registerNib:[UINib nibWithNibName:stvc.cellClassName bundle:nil]
-         forCellReuseIdentifier:stvc.cellClassName];
+             forCellReuseIdentifier:stvc.cellClassName];
     } else {
         [stvc.tableView registerClass:NSClassFromString(stvc.cellClassName)
-           forCellReuseIdentifier:stvc.cellClassName];
+               forCellReuseIdentifier:stvc.cellClassName];
     }
     
     [stvc.view addSubview:stvc.tableView];
@@ -93,6 +93,58 @@
 {
     _rowHeight = rowHeight;
     self.tableView.rowHeight = rowHeight;
+}
+
+#pragma mark - allowsMultipleSelection
+
+- (void)setAllowsMultipleSelection:(BOOL)allowsMultipleSelection
+{
+    _allowsMultipleSelection = allowsMultipleSelection;
+    _tableDataDS.isAllowEdit = YES;
+    _tableView.editing = _allowsMultipleSelection;
+    _tableView.allowsMultipleSelection = _allowsMultipleSelection;
+}
+
+- (id)indexPath:(NSIndexPath *)indexPath sectionKey:(NSString *)sectionKey rowKey:(NSString *)rowKey
+{
+    id value;
+    if (_tableDataDS.numberOfSectionsInTableView) {
+        if (sectionKey && rowKey) {
+            value = _tableDataDS.tableData[indexPath.section][sectionKey][indexPath.row][rowKey];
+        } else if (sectionKey) {
+            value = _tableDataDS.tableData[indexPath.section][sectionKey][indexPath.row];
+        } else if (rowKey) {
+            value = _tableDataDS.tableData[indexPath.section][indexPath.row][rowKey];
+        } else {
+            value = _tableDataDS.tableData[indexPath.section][indexPath.row];
+        }
+    } else if (rowKey) {
+        value = _tableDataDS.tableData[indexPath.row][rowKey];
+    } else {
+        value = _tableDataDS.tableData[indexPath.row];
+    }
+    
+    return value;
+}
+
+#pragma mark - selectedRowValueWithSectionKey:rowKey:
+
+- (id)selectedRowValueWithSectionKey:(NSString *)sectionKey rowKey:(NSString *)rowKey
+{
+    return [self indexPath:_tableView.indexPathForSelectedRow sectionKey:sectionKey rowKey:rowKey];
+}
+
+#pragma mark - selectedRowsValuesWithSectionKey:rowKey:
+
+- (NSArray *)selectedRowsValuesWithSectionKey:(NSString *)sectionKey rowKey:(NSString *)rowKey
+{
+    NSArray *indexPaths = _tableView.indexPathsForSelectedRows;
+    NSMutableArray *values = [NSMutableArray array];
+    for (NSIndexPath *indexPath in indexPaths) {
+        [values addObject:[self indexPath:indexPath sectionKey:sectionKey rowKey:rowKey]];
+    }
+    
+    return values;
 }
 
 /*

@@ -142,5 +142,30 @@ const char leftHandlerKey, rightHandleKey;
     }
 }
 
+- (void)popVC
+{
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+- (void)popToRootVC
+{
+    [self.navigationController popToRootViewControllerAnimated:YES];
+}
+
+- (void)popToClass:(NSString *)className
+{
+    NSArray *vcArr = self.navigationController.viewControllers;
+    for (id vc in vcArr) {
+        if ([NSStringFromClass([vc class]) isEqualToString:className]) {
+            [self.navigationController popToViewController:vc animated:YES];
+        }
+    }
+}
+
+- (void)pushToVC:(UIViewController *)vc
+{
+    [self.navigationController pushViewController:vc animated:YES];
+}
+
 
 @end

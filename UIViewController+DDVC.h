@@ -34,4 +34,12 @@
 
 - (void)rightButtonAction:(id)sender;
 
+- (void)popVC;
+
+- (void)popToRootVC;
+
+- (void)popToClass:(NSString *)className;
+
+- (void)pushToVC:(UIViewController *)vc;
+
 @end

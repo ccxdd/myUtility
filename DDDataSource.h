@@ -13,6 +13,7 @@
 @property (nonatomic, strong) NSMutableArray *tableData;
 @property (nonatomic, assign) BOOL           isAllowEdit;
 @property (nonatomic, copy  ) NSString       *sectionKey;
+@property (nonatomic, copy  ) NSString       *rowKey;
 
 @property (nonatomic, copy) NSInteger (^numberOfSectionsInTableView)(void);
 @property (nonatomic, copy) NSInteger (^numberOfRowsInSection)(NSInteger section);
@@ -31,7 +32,7 @@
          cellIdentifier:(NSString *)cellIdentifier
   cellForRowAtIndexPath:(void (^)(id cell, NSIndexPath *indexPath, id item))cellForRowAtIndexPath;
 
-- (id)itemAtIndexPath:(NSIndexPath *)indexPath;
+- (id)itemAtIndexPath:(NSIndexPath *)indexPath sectionKey:(NSString *)sectionKey rowKey:(NSString *)rowKey;
 
 - (void)registerCellWithClassName:(NSString *)className;
 

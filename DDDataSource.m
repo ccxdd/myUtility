@@ -85,22 +85,8 @@
         DLog(@"Error Cell !");
     }
     
-    @try {
-        if (self.numberOfSectionsInTableView) {
-            if (self.sectionKey) {
-                cellItem = self.tableData[indexPath.section][self.sectionKey][indexPath.row];
-            } else {
-                cellItem = self.tableData[indexPath.section][indexPath.row];
-            }
-        } else {
-            cellItem = self.tableData[indexPath.row];
-        }
-    }
-    @catch (NSException *exception) {
-        cellItem = nil;
-        DLog(@"\n exception:%@", NSStringFromSelector(_cmd));
-    }
-
+    cellItem = [self itemAtIndexPath:indexPath sectionKey:self.sectionKey rowKey:nil];
+    
     if (self.cellForRowAtIndexPath) {
         self.cellForRowAtIndexPath(cell,
                                    indexPath,
@@ -186,21 +172,7 @@
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
     }
     
-    @try {
-        if (self.numberOfSectionsInTableView) {
-            if (self.sectionKey) {
-                cellItem = self.tableData[indexPath.section][self.sectionKey][indexPath.row];
-            } else {
-                cellItem = self.tableData[indexPath.section][indexPath.row];
-            }
-        } else {
-            cellItem = self.tableData[indexPath.row];
-        }
-    }
-    @catch (NSException *exception) {
-        cellItem = nil;
-        DLog(@"\n exception:%@", NSStringFromSelector(_cmd));
-    }
+    cellItem = [self itemAtIndexPath:indexPath sectionKey:self.sectionKey rowKey:self.rowKey];
     
     if (self.didSelectRowAtIndexPath) {
         self.didSelectRowAtIndexPath(indexPath, cellItem);
@@ -213,12 +185,36 @@
         return self.editingStyleForRowAtIndexPath(indexPath);
     }
     
-    return UITableViewCellEditingStyleDelete;
+    return UITableViewCellEditingStyleDelete|UITableViewCellEditingStyleInsert;
 }
 
-- (id)itemAtIndexPath:(NSIndexPath *)indexPath
+- (id)itemAtIndexPath:(NSIndexPath *)indexPath sectionKey:(NSString *)sectionKey rowKey:(NSString *)rowKey
 {
-    return self.tableData[indexPath.row];
+    id value;
+    
+    @try {
+        if (self.numberOfSectionsInTableView) {
+            if (sectionKey && rowKey) {
+                value = self.tableData[indexPath.section][sectionKey][indexPath.row][rowKey];
+            } else if (sectionKey) {
+                value = self.tableData[indexPath.section][sectionKey][indexPath.row];
+            } else if (rowKey) {
+                value = self.tableData[indexPath.section][indexPath.row][rowKey];
+            } else {
+                value = self.tableData[indexPath.section][indexPath.row];
+            }
+        } else if (rowKey) {
+            value = self.tableData[indexPath.row][rowKey];
+        } else {
+            value = self.tableData[indexPath.row];
+        }
+    }
+    @catch (NSException *exception) {
+        value = nil;
+        DLog(@"\n exception:%@", NSStringFromSelector(_cmd));
+    }
+    
+    return value;
 }
 
 @end

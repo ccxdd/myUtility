@@ -100,38 +100,16 @@
 - (void)setAllowsMultipleSelection:(BOOL)allowsMultipleSelection
 {
     _allowsMultipleSelection = allowsMultipleSelection;
-    _tableDataDS.isAllowEdit = YES;
+    _tableDataDS.isAllowEdit = _allowsMultipleSelection;
     _tableView.editing = _allowsMultipleSelection;
     _tableView.allowsMultipleSelection = _allowsMultipleSelection;
-}
-
-- (id)indexPath:(NSIndexPath *)indexPath sectionKey:(NSString *)sectionKey rowKey:(NSString *)rowKey
-{
-    id value;
-    if (_tableDataDS.numberOfSectionsInTableView) {
-        if (sectionKey && rowKey) {
-            value = _tableDataDS.tableData[indexPath.section][sectionKey][indexPath.row][rowKey];
-        } else if (sectionKey) {
-            value = _tableDataDS.tableData[indexPath.section][sectionKey][indexPath.row];
-        } else if (rowKey) {
-            value = _tableDataDS.tableData[indexPath.section][indexPath.row][rowKey];
-        } else {
-            value = _tableDataDS.tableData[indexPath.section][indexPath.row];
-        }
-    } else if (rowKey) {
-        value = _tableDataDS.tableData[indexPath.row][rowKey];
-    } else {
-        value = _tableDataDS.tableData[indexPath.row];
-    }
-    
-    return value;
 }
 
 #pragma mark - selectedRowValueWithSectionKey:rowKey:
 
 - (id)selectedRowValueWithSectionKey:(NSString *)sectionKey rowKey:(NSString *)rowKey
 {
-    return [self indexPath:_tableView.indexPathForSelectedRow sectionKey:sectionKey rowKey:rowKey];
+    return [self.tableDataDS itemAtIndexPath:_tableView.indexPathForSelectedRow sectionKey:sectionKey rowKey:rowKey];
 }
 
 #pragma mark - selectedRowsValuesWithSectionKey:rowKey:
@@ -141,10 +119,28 @@
     NSArray *indexPaths = _tableView.indexPathsForSelectedRows;
     NSMutableArray *values = [NSMutableArray array];
     for (NSIndexPath *indexPath in indexPaths) {
-        [values addObject:[self indexPath:indexPath sectionKey:sectionKey rowKey:rowKey]];
+        [values addObject:[self.tableDataDS itemAtIndexPath:indexPath sectionKey:sectionKey rowKey:rowKey]];
     }
     
     return values;
+}
+
+#pragma mark - selectedRowsForArray:key:targetKey:
+
+- (void)selectedRowsForArray:(NSArray *)array key:(NSString *)key targetKey:(NSString *)targetKey
+{
+    [array enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        NSString *keyValue = [NSString stringWithFormat:@"%@", key ? obj[key] : obj];
+        [self.tableDataDS.tableData enumerateObjectsUsingBlock:^(id tableDataObj, NSUInteger idx, BOOL *stop) {
+            NSString *targetValue = [NSString stringWithFormat:@"%@", targetKey?tableDataObj[targetKey]:tableDataObj];
+            if ([keyValue isEqualToString:targetValue]) {
+                NSIndexPath *indexPath = [NSIndexPath indexPathForRow:idx inSection:0];
+                [self.tableView selectRowAtIndexPath:indexPath
+                                            animated:NO
+                                      scrollPosition:UITableViewScrollPositionNone];
+            }
+        }];
+    }];
 }
 
 /*

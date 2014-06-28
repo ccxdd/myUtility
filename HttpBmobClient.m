@@ -84,7 +84,7 @@
         [self uploadFilePath:filePath className:tCategory resultBlock:^(BmobFile *fileObj){
             [object setObject:name forKey:@"name"];
             [object setObject:fileObj forKey:@"imageFile"];
-            [object addUniqueObjectsFromArray:sub forKey:@"sub"];
+            [object setObject:sub forKey:@"sub"];
             [object saveInBackgroundWithResultBlock:^(BOOL isSuccessful, NSError *error) {
                 if (isSuccessful) {
                     success(@YES);
@@ -98,7 +98,7 @@
         [self uploadFilePath:filePath className:tCategory resultBlock:^(BmobFile *fileObj){
             [object setObject:name forKey:@"name"];
             [object setObject:fileObj forKey:@"imageFile"];
-            [object addUniqueObjectsFromArray:sub forKey:@"sub"];
+            [object setObject:sub forKey:@"sub"];
             [object updateInBackgroundWithResultBlock:^(BOOL isSuccessful, NSError *error) {
                 if (isSuccessful) {
                     success(@YES);
@@ -122,7 +122,6 @@
         [self uploadFilePath:filePath className:tSubCategory resultBlock:^(BmobFile *fileObj){
             [object setObject:name forKey:@"name"];
             [object setObject:fileObj forKey:@"imageFile"];
-            [object addUniqueObjectsFromArray:main forKey:@"main"];
             [object saveInBackgroundWithResultBlock:^(BOOL isSuccessful, NSError *error) {
                 if (isSuccessful) {
                     success(@YES);
@@ -136,7 +135,6 @@
         [self uploadFilePath:filePath className:tSubCategory resultBlock:^(BmobFile *fileObj){
             [object setObject:name forKey:@"name"];
             [object setObject:fileObj forKey:@"imageFile"];
-            [object addUniqueObjectsFromArray:main forKey:@"main"];
             [object updateInBackgroundWithResultBlock:^(BOOL isSuccessful, NSError *error) {
                 if (isSuccessful) {
                     success(@YES);
@@ -184,7 +182,6 @@
         
         dict[@"name"] = [obj objectForKey:@"name"];
         [self joinObj:[obj objectForKey:@"imageFile"] toContainer:dict key:@"imageFile"];
-        [self joinObj:[obj objectForKey:@"main"] toContainer:dict key:@"main"];
     }
     
     return dict;

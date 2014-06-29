@@ -23,7 +23,6 @@
 - (void)awakeFromNib
 {
     [self configPageCV:self.frame];
-    self.imageData = @[@"1", @"1"];
     self.isCircle = YES;
 }
 
@@ -49,11 +48,15 @@
     _isCircle = NO;
     [self addSubview:_scrollView];
     
+    UITapGestureRecognizer *tapGes = [[UITapGestureRecognizer alloc] initWithTarget:self
+                                                                             action:@selector(tapAction)];
+    [_scrollView addGestureRecognizer:tapGes];
+    
     pageControl = [[UIPageControl alloc] initWithFrame:CGRectMake(0, frame.size.height-30, frame.size.width, 30)];
     [self addSubview:pageControl];
 }
 
-- (void)setImageData:(NSMutableArray *)imageData
+- (void)setImageData:(NSArray *)imageData placeholderImageName:(NSString *)placeholderImageName key:(NSString *)key
 {
     if (imageData) {
         [_scrollView.subviews enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
@@ -76,11 +79,13 @@
         _scrollView.contentSize = CGSizeMake(CGRectGetWidth(self.frame)*factImageCount, CGRectGetHeight(self.frame));
         
         for (NSInteger i = 0; i < factImageCount; i++) {
+            NSString *urlString = key ? newArrM[i][key] : newArrM[i];
             UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(i*CGRectGetWidth(self.frame),
                                                                                    0,
                                                                                    CGRectGetWidth(self.frame),
                                                                                    CGRectGetHeight(self.frame))];
-            imageView.image = [UIImage imageNamed:newArrM[i]];
+            [imageView setImageWithURL:urlString.toURL
+                      placeholderImage:[UIImage imageNamed:placeholderImageName]];
             imageView.backgroundColor = colorArrM[i];
             [_scrollView addSubview:imageView];
         }
@@ -132,6 +137,16 @@
         } else if (offsetX < CGRectGetWidth(self.frame)) {
             [scrollView setContentOffset:CGPointMake((factImageCount-1) * CGRectGetWidth(self.frame), 0) animated:NO];
         }
+    }
+}
+
+#pragma mark - tapAction
+
+- (void)tapAction
+{
+    if (self.pageControlViewBlock) {
+        NSInteger page = pageControl.currentPage;
+        self.pageControlViewBlock(page, _imageData[page]);
     }
 }
 

@@ -38,6 +38,20 @@
 
 - (void)popToRootVC;
 
+/**
+ *  是否存在pop栈中
+ *
+ *  @param className 类名
+ *
+ *  @return BOOL
+ */
+- (BOOL)isInPopArrayWithClass:(NSString *)className;
+
+/**
+ *  返回到指定的类名中
+ *
+ *  @param className 类名
+ */
 - (void)popToClass:(NSString *)className;
 
 - (void)pushToVC:(UIViewController *)vc;

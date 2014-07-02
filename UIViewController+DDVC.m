@@ -152,6 +152,30 @@ const char leftHandlerKey, rightHandleKey;
     [self.navigationController popToRootViewControllerAnimated:YES];
 }
 
+/**
+ *  是否存在pop栈中
+ *
+ *  @param className 类名
+ *
+ *  @return BOOL
+ */
+- (BOOL)isInPopArrayWithClass:(NSString *)className
+{
+    NSArray *vcArr = self.navigationController.viewControllers;
+    for (id vc in vcArr) {
+        if ([NSStringFromClass([vc class]) isEqualToString:className]) {
+            return YES;
+        }
+    }
+    
+    return NO;
+}
+
+/**
+ *  返回到指定的类名中
+ *
+ *  @param className 类名
+ */
 - (void)popToClass:(NSString *)className
 {
     NSArray *vcArr = self.navigationController.viewControllers;
@@ -161,6 +185,8 @@ const char leftHandlerKey, rightHandleKey;
         }
     }
 }
+
+
 
 - (void)pushToVC:(UIViewController *)vc
 {

@@ -16,6 +16,10 @@
 
 @property (nonatomic, strong) UIScrollView *scrollView;
 
+@property (nonatomic, strong) NSTimer  *timer;
+@property (nonatomic, copy  ) NSString *placeholderImageName;
+@property (nonatomic, copy  ) NSString *imageNameKey;
+
 @end
 
 @implementation DDPageCV
@@ -23,7 +27,6 @@
 - (void)awakeFromNib
 {
     [self configPageCV:self.frame];
-    self.isCircle = YES;
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -45,7 +48,6 @@
     _scrollView.delegate = self;
     _scrollView.showsHorizontalScrollIndicator = NO;
     _scrollView.showsVerticalScrollIndicator = NO;
-    _isCircle = NO;
     [self addSubview:_scrollView];
     
     UITapGestureRecognizer *tapGes = [[UITapGestureRecognizer alloc] initWithTarget:self
@@ -54,10 +56,17 @@
     
     pageControl = [[UIPageControl alloc] initWithFrame:CGRectMake(0, frame.size.height-30, frame.size.width, 30)];
     [self addSubview:pageControl];
+    //timer
+    _timeInterval = 5;
+    self.startup = YES;
+    self.isCircle = YES;
 }
 
 - (void)setImageData:(NSArray *)imageData placeholderImageName:(NSString *)placeholderImageName key:(NSString *)key
 {
+    self.placeholderImageName = placeholderImageName;
+    self.imageNameKey = key;
+    
     if (imageData) {
         [_scrollView.subviews enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
             [obj removeFromSuperview];
@@ -92,6 +101,27 @@
     }
 }
 
+- (void)setStartup:(BOOL)startup
+{
+    _startup = startup;
+    
+    if (startup) {
+        _isCircle = YES;
+        _timer = [self pageControlTimer];
+    } else {
+        [_timer invalidate];
+        _timer = nil;
+    }
+}
+
+- (void)setTimeInterval:(NSTimeInterval)timeInterval
+{
+    _timeInterval = timeInterval;
+    [_timer invalidate];
+    _timer = nil;
+    _timer = [self pageControlTimer];
+}
+
 #pragma mark - setShowPageControl
 
 - (void)setShowPageControl:(BOOL)showPageControl
@@ -105,14 +135,45 @@
 - (void)setIsCircle:(BOOL)isCircle
 {
     _isCircle = isCircle;
-    [self setImageData:self.imageData];
+    [self setImageData:_imageData placeholderImageName:_placeholderImageName key:_imageNameKey];
 }
 
 #pragma mark scrollView delegate
 
-- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
-    NSInteger offsetX = scrollView.contentOffset.x;
+    if (_isCircle) {
+        NSInteger offsetX = scrollView.contentOffset.x;
+        if (offsetX > (factImageCount-1) * CGRectGetWidth(self.frame)) {
+            [scrollView setContentOffset:CGPointMake(CGRectGetWidth(self.frame), 0) animated:NO];
+        } else if (offsetX < CGRectGetWidth(self.frame)) {
+            [scrollView setContentOffset:CGPointMake((factImageCount-1) * CGRectGetWidth(self.frame), 0) animated:NO];
+        }
+    }
+    
+    [self updatePageIndex];
+}
+
+#pragma mark - tapAction
+
+- (void)tapAction
+{
+    if (self.pageControlViewBlock) {
+        NSInteger page = pageControl.currentPage;
+        self.pageControlViewBlock(page, _imageData[page]);
+    }
+}
+
+#pragma mark - timerAction
+
+- (void)timerAction:(NSTimer *)sender
+{
+    [_scrollView setContentOffset:CGPointMake(self.scrollView.contentOffset.x+self.width+1, 0) animated:YES];
+}
+
+- (void)updatePageIndex
+{
+    NSInteger offsetX = _scrollView.contentOffset.x;
     
     if (!_isCircle) {
         pageControl.currentPage = offsetX / CGRectGetWidth(self.frame);
@@ -128,26 +189,13 @@
     }
 }
 
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+- (NSTimer *)pageControlTimer
 {
-    if (_isCircle) {
-        NSInteger offsetX = scrollView.contentOffset.x;
-        if (offsetX > (factImageCount-1) * CGRectGetWidth(self.frame)) {
-            [scrollView setContentOffset:CGPointMake(CGRectGetWidth(self.frame), 0) animated:NO];
-        } else if (offsetX < CGRectGetWidth(self.frame)) {
-            [scrollView setContentOffset:CGPointMake((factImageCount-1) * CGRectGetWidth(self.frame), 0) animated:NO];
-        }
-    }
-}
-
-#pragma mark - tapAction
-
-- (void)tapAction
-{
-    if (self.pageControlViewBlock) {
-        NSInteger page = pageControl.currentPage;
-        self.pageControlViewBlock(page, _imageData[page]);
-    }
+    return [NSTimer scheduledTimerWithTimeInterval:self.timeInterval
+                                     target:self
+                                   selector:@selector(timerAction:)
+                                   userInfo:nil
+                                    repeats:YES];
 }
 
 #pragma mark - randomColors

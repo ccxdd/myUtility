@@ -479,26 +479,36 @@ UIImage * getImageAtRect(UIImage *source,CGRect clipRect);
 /**
  *  执行ResultBlock
  *
- *  @param sender 传参
+ *  @param sender     传参
+ *  @param identifier 识别串
  */
-+ (void)executeResultBlock:(id)sender;
++ (void)executeResultBlock:(id)sender identifier:(NSString *)identifier;
++ (void)executeResultBlock:(id)sender after:(NSTimeInterval)secs identifier:(NSString *)identifier;
 
 /**
  *  ModalVC
  *
  *  @param modalVC     ModalVC
  *  @param target      target
+ *  @param identifier  识别串
  *  @param resultBlock resultBlock description
  */
-+ (void)modalVC:(UIViewController *)modalVC target:(id)target resultBlock:(void (^)(id))resultBlock;
++ (void)modalVC:(UIViewController *)modalVC
+         target:(id)target
+     identifier:(NSString *)identifier
+    resultBlock:(void (^)(id))resultBlock;
 
 /**
  *  PushVC
  *
  *  @param pushVC      PushVC
  *  @param target      target
+ *  @param identifier  识别串
  *  @param resultBlock resultBlock description
  */
-+ (void)pushVC:(UIViewController *)pushVC target:(id)target resultBlock:(void (^)(id))resultBlock;
++ (void)pushVC:(UIViewController *)pushVC
+        target:(id)target
+    identifier:(NSString *)identifier
+   resultBlock:(void (^)(id))resultBlock;
 
 @end

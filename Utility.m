@@ -11,7 +11,7 @@
 #import <CommonCrypto/CommonHMAC.h>
 //#import "FMPTripleDES.h"
 //#import "FMPHexUtil.h"
-#import "GTMBase64.h"
+//#import "GTMBase64.h"
 
 UIImage * getImageAtRect(UIImage *source,CGRect clipRect){
 	UIGraphicsBeginImageContext(clipRect.size);
@@ -24,7 +24,7 @@ UIImage * getImageAtRect(UIImage *source,CGRect clipRect){
 
 static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-static void(^ResultBlock)(id);
+static NSMutableDictionary *executeBlockDict;
 
 #define gIv @"01234567"
 
@@ -283,21 +283,21 @@ static void(^ResultBlock)(id);
 //    return HMAC;
 //}
 
-+ (NSString *)hmacSHA1:(NSString *)plant secret:(NSString *)key
-{
-    const char *cKey  = [key cStringUsingEncoding:NSASCIIStringEncoding];
-    const char *cData = [plant cStringUsingEncoding:NSASCIIStringEncoding];
-    
-    unsigned char cHMAC[CC_SHA1_DIGEST_LENGTH];
-    
-    CCHmac(kCCHmacAlgSHA1, cKey, strlen(cKey), cData, strlen(cData), cHMAC);
-    
-    NSData *HMACData = [NSData dataWithBytes:cHMAC length:sizeof(cHMAC)];
-    
-    NSString *hash = [GTMBase64 stringByWebSafeEncodingData:HMACData padded:YES];
-    
-    return hash;
-}
+//+ (NSString *)hmacSHA1:(NSString *)plant secret:(NSString *)key
+//{
+//    const char *cKey  = [key cStringUsingEncoding:NSASCIIStringEncoding];
+//    const char *cData = [plant cStringUsingEncoding:NSASCIIStringEncoding];
+//    
+//    unsigned char cHMAC[CC_SHA1_DIGEST_LENGTH];
+//    
+//    CCHmac(kCCHmacAlgSHA1, cKey, strlen(cKey), cData, strlen(cData), cHMAC);
+//    
+//    NSData *HMACData = [NSData dataWithBytes:cHMAC length:sizeof(cHMAC)];
+//    
+//    NSString *hash = [GTMBase64 stringByWebSafeEncodingData:HMACData padded:YES];
+//    
+//    return hash;
+//}
 
 /**
  *  字符串转换到byte
@@ -1544,7 +1544,7 @@ static CGRect oldframe;
     
     if (IOS7_OR_LATER) {
         labelsize = [str boundingRectWithSize:calcSize
-                                      options:NSStringDrawingTruncatesLastVisibleLine|NSStringDrawingUsesLineFragmentOrigin
+                                      options:NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesLineFragmentOrigin
                                    attributes:@{NSFontAttributeName: font}
                                       context:nil].size;
     } else {
@@ -1578,12 +1578,19 @@ static CGRect oldframe;
     return classVC;
 }
 
-+ (void)modalVC:(UIViewController *)modalVC target:(id)target resultBlock:(void (^)(id))resultBlock
++ (void)modalVC:(UIViewController *)modalVC
+         target:(id)target
+     identifier:(NSString *)identifier
+    resultBlock:(void (^)(id))resultBlock
 {
-    if (resultBlock) {
-        ResultBlock = resultBlock;
+    if (!executeBlockDict) {
+        executeBlockDict = [NSMutableDictionary dictionary];
+    }
+    
+    if (resultBlock && identifier) {
+        executeBlockDict[identifier] = [resultBlock copy];
     } else {
-        DLogError(@"ResultBlock not Exist!!! %@", ResultBlock);
+        DLogError(@"ResultBlock or resultBlock not Exist!!! %@", resultBlock);
     }
     
     if (modalVC && target) {
@@ -1591,12 +1598,19 @@ static CGRect oldframe;
     }
 }
 
-+ (void)pushVC:(UIViewController *)pushVC target:(id)target resultBlock:(void (^)(id))resultBlock
++ (void)pushVC:(UIViewController *)pushVC
+        target:(id)target
+    identifier:(NSString *)identifier
+   resultBlock:(void (^)(id))resultBlock
 {
-    if (resultBlock) {
-        ResultBlock = resultBlock;
+    if (!executeBlockDict) {
+        executeBlockDict = [NSMutableDictionary dictionary];
+    }
+    
+    if (resultBlock && identifier) {
+        executeBlockDict[identifier] = [resultBlock copy];
     } else {
-        DLogError(@"ResultBlock not Exist!!! %@", ResultBlock);
+        DLogError(@"ResultBlock or resultBlock not Exist!!! %@", resultBlock);
     }
     
     if (pushVC && target) {
@@ -1604,12 +1618,26 @@ static CGRect oldframe;
     }
 }
 
-+ (void)executeResultBlock:(id)sender
++ (void)executeResultBlock:(id)sender identifier:(NSString *)identifier
 {
-    if (sender && ResultBlock) {
-        ResultBlock(sender);
-        ResultBlock = nil;
+    void(^blockObj)(id) = executeBlockDict[identifier];
+    
+    if (sender && blockObj) {
+        blockObj(sender);
+        [executeBlockDict removeObjectForKey:identifier];
     }
+}
+
++ (void)executeResultBlock:(id)sender after:(NSTimeInterval)secs identifier:(NSString *)identifier
+{
+    void(^blockObj)(id) = executeBlockDict[identifier];
+    
+    [self dispatch_afterDelayTime:secs block:^{
+        if (sender && blockObj) {
+            blockObj(sender);
+            [executeBlockDict removeObjectForKey:identifier];
+        }
+    }];
 }
 
 @end

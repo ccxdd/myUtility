@@ -8,6 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
+typedef NS_ENUM(NSInteger, DDPageType) {
+    DDPage_Type_UIImage,
+    DDPage_Type_Image_Name,
+    DDPage_Type_Dictionary
+};
+
 @interface DDPageCV : UIView
 
 @property (nonatomic, strong) NSArray        *imageData;
@@ -15,11 +21,9 @@
 @property (nonatomic, assign) BOOL           isCircle;
 @property (nonatomic, assign) NSTimeInterval timeInterval;
 @property (nonatomic, assign) BOOL           startup;
+@property (nonatomic, copy  ) NSString       *nameOrKey;
 @property (nonatomic, copy) void(^pageControlViewBlock)(NSInteger page, id item);
 
-- (void)setImageData:(NSArray *)imageData
-placeholderImageName:(NSString *)placeholderImageName
-                 key:(NSString *)key;
-
+- (void)setImageData:(NSArray *)imageData type:(DDPageType)type key:(NSString *)key;
 
 @end

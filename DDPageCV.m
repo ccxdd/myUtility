@@ -9,16 +9,13 @@
 #import "DDPageCV.h"
 
 @interface DDPageCV () <UIScrollViewDelegate>
-{
-    UIPageControl *pageControl;
-    NSInteger factImageCount;
-}
 
-@property (nonatomic, strong) UIScrollView *scrollView;
-
-@property (nonatomic, strong) NSTimer  *timer;
-@property (nonatomic, copy  ) NSString *placeholderImageName;
-@property (nonatomic, copy  ) NSString *imageNameKey;
+@property (nonatomic, strong) UIScrollView  *scrollView;
+@property (nonatomic, strong) UIPageControl *pageControl;
+@property (nonatomic, strong) NSTimer       *timer;
+@property (nonatomic, copy  ) NSString      *imageNameKey;
+@property (nonatomic, assign) NSInteger     factImageCount;
+@property (nonatomic, assign) DDPageType    type;
 
 @end
 
@@ -54,50 +51,82 @@
                                                                              action:@selector(tapAction)];
     [_scrollView addGestureRecognizer:tapGes];
     
-    pageControl = [[UIPageControl alloc] initWithFrame:CGRectMake(0, frame.size.height-30, frame.size.width, 30)];
-    [self addSubview:pageControl];
+    _pageControl = [[UIPageControl alloc] initWithFrame:CGRectMake(0, frame.size.height-30, frame.size.width, 30)];
+    [self addSubview:_pageControl];
     //timer
     _timeInterval = 5;
-    self.startup = YES;
-    self.isCircle = YES;
+    _startup = YES;
+    _isCircle = YES;
 }
 
-- (void)setImageData:(NSArray *)imageData placeholderImageName:(NSString *)placeholderImageName key:(NSString *)key
+- (void)setImageData:(NSArray *)imageData
 {
-    self.placeholderImageName = placeholderImageName;
-    self.imageNameKey = key;
+    _imageData = imageData;
     
-    if (imageData) {
-        [_scrollView.subviews enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-            [obj removeFromSuperview];
-        }];
-        pageControl.numberOfPages = [imageData count];
-        pageControl.currentPage   = 0;
-        _imageData                = imageData;
-        NSInteger imageCount      = pageControl.numberOfPages;
-        NSMutableArray *newArrM   = [imageData mutableCopy];
-        NSMutableArray *colorArrM = [self randomColors:imageCount];
-        if (_isCircle) {
-            [newArrM insertObject:[imageData lastObject] atIndex:0];
-            [newArrM addObject:imageData[0]];
-            [colorArrM insertObject:[colorArrM lastObject] atIndex:0];
-            [colorArrM addObject:colorArrM[1]];
-            [_scrollView setContentOffset:CGPointMake(CGRectGetWidth(self.frame), 0) animated:NO];
+    if ([[imageData firstObject] isKindOfClass:[UIImage class]]) {
+        [self setImageData:_imageData type:DDPage_Type_UIImage key:nil];
+    }
+    else if ([[imageData firstObject] isKindOfClass:[NSDictionary class]]) {
+        [self setImageData:_imageData type:DDPage_Type_Dictionary key:self.nameOrKey];
+    }
+    else {
+        [self setImageData:_imageData type:DDPage_Type_Image_Name key:self.nameOrKey];
+    }
+}
+
+- (void)setImageData:(NSArray *)imageData type:(DDPageType)type key:(NSString *)key
+{
+    NSAssert([imageData count] > 0, @"DDPageCV imageData Error!");
+    
+    self.imageNameKey = key;
+    self.type = type;
+    
+    [_scrollView.subviews enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        [obj removeFromSuperview];
+    }];
+    _pageControl.numberOfPages = [imageData count];
+    _pageControl.currentPage   = 0;
+    _imageData                = imageData;
+    NSMutableArray *newArrM   = [imageData mutableCopy];
+    if (_isCircle) {
+        [newArrM insertObject:[imageData lastObject] atIndex:0];
+        [newArrM addObject:imageData[0]];
+        [_scrollView setContentOffset:CGPointMake(self.width, 0) animated:NO];
+    }
+    _factImageCount = [newArrM count];
+    _scrollView.contentSize = CGSizeMake(self.width * _factImageCount, self.height);
+    
+    for (NSInteger i = 0; i < _factImageCount; i++) {
+        UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(i * self.width,
+                                                                               0,
+                                                                               self.width,
+                                                                               self.height)];
+        switch (type) {
+            case DDPage_Type_UIImage: //
+            {
+                [imageView setImage:newArrM[i]];
+            }
+                break;
+            case DDPage_Type_Image_Name: //
+            {
+                [imageView setImage:[UIImage imageNamed:key]];
+            }
+                break;
+            case DDPage_Type_Dictionary: //
+            {
+                NSString *urlString = key ? newArrM[i][key] : newArrM[i];
+                [imageView setImageWithURL:urlString.toURL
+                          placeholderImage:[UIImage imageNamed:self.nameOrKey]];
+            }
+                break;
         }
-        factImageCount = [newArrM count];
-        _scrollView.contentSize = CGSizeMake(CGRectGetWidth(self.frame)*factImageCount, CGRectGetHeight(self.frame));
-        
-        for (NSInteger i = 0; i < factImageCount; i++) {
-            NSString *urlString = key ? newArrM[i][key] : newArrM[i];
-            UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(i*CGRectGetWidth(self.frame),
-                                                                                   0,
-                                                                                   CGRectGetWidth(self.frame),
-                                                                                   CGRectGetHeight(self.frame))];
-            [imageView setImageWithURL:urlString.toURL
-                      placeholderImage:[UIImage imageNamed:placeholderImageName]];
-            imageView.backgroundColor = colorArrM[i];
-            [_scrollView addSubview:imageView];
-        }
+
+        imageView.contentMode = UIViewContentModeScaleAspectFit;
+        [_scrollView addSubview:imageView];
+    }
+    
+    if (_startup) {
+        [self setStartup:YES];
     }
 }
 
@@ -127,7 +156,7 @@
 - (void)setShowPageControl:(BOOL)showPageControl
 {
     _showPageControl = showPageControl;
-    pageControl.hidden = !showPageControl;
+    _pageControl.hidden = !showPageControl;
 }
 
 #pragma mark - isCircle
@@ -135,7 +164,7 @@
 - (void)setIsCircle:(BOOL)isCircle
 {
     _isCircle = isCircle;
-    [self setImageData:_imageData placeholderImageName:_placeholderImageName key:_imageNameKey];
+    [self setImageData:self.imageData type:self.type key:self.imageNameKey];
 }
 
 #pragma mark scrollView delegate
@@ -144,10 +173,10 @@
 {
     if (_isCircle) {
         NSInteger offsetX = scrollView.contentOffset.x;
-        if (offsetX > (factImageCount-1) * CGRectGetWidth(self.frame)) {
-            [scrollView setContentOffset:CGPointMake(CGRectGetWidth(self.frame), 0) animated:NO];
-        } else if (offsetX < CGRectGetWidth(self.frame)) {
-            [scrollView setContentOffset:CGPointMake((factImageCount-1) * CGRectGetWidth(self.frame), 0) animated:NO];
+        if (offsetX > (_factImageCount-1) * self.width) {
+            [scrollView setContentOffset:CGPointMake(self.width, 0) animated:NO];
+        } else if (offsetX < self.width) {
+            [scrollView setContentOffset:CGPointMake((_factImageCount-1) * self.width, 0) animated:NO];
         }
     }
     
@@ -159,7 +188,7 @@
 - (void)tapAction
 {
     if (self.pageControlViewBlock) {
-        NSInteger page = pageControl.currentPage;
+        NSInteger page = _pageControl.currentPage;
         self.pageControlViewBlock(page, _imageData[page]);
     }
 }
@@ -176,15 +205,15 @@
     NSInteger offsetX = _scrollView.contentOffset.x;
     
     if (!_isCircle) {
-        pageControl.currentPage = offsetX / CGRectGetWidth(self.frame);
+        _pageControl.currentPage = offsetX / self.width;
     } else {
-        NSInteger index = offsetX / CGRectGetWidth(self.frame);
+        NSInteger index = offsetX / self.width;
         if (index == 1) {
-            pageControl.currentPage = 0;
-        } else if (index > factImageCount-2) {
-            pageControl.currentPage = 0;
+            _pageControl.currentPage = 0;
+        } else if (index > _factImageCount-2) {
+            _pageControl.currentPage = 0;
         } else {
-            pageControl.currentPage = index - 1;
+            _pageControl.currentPage = index - 1;
         }
     }
 }
@@ -192,23 +221,10 @@
 - (NSTimer *)pageControlTimer
 {
     return [NSTimer scheduledTimerWithTimeInterval:self.timeInterval
-                                     target:self
-                                   selector:@selector(timerAction:)
-                                   userInfo:nil
-                                    repeats:YES];
-}
-
-#pragma mark - randomColors
-
-- (NSMutableArray *)randomColors:(NSInteger)count
-{
-    NSMutableArray *arrayM = [NSMutableArray array];
-    
-    for (NSInteger i = 0; i < count; i++) {
-        [arrayM addObject:kUIColorRGB(arc4random()%180, arc4random()%180, arc4random()%180)];
-    }
-    
-    return arrayM;
+                                            target:self
+                                          selector:@selector(timerAction:)
+                                          userInfo:nil
+                                           repeats:YES];
 }
 
 /*

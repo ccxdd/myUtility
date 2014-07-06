@@ -7,11 +7,11 @@
 
 #import <Foundation/Foundation.h>
 
-#define MN_MINUTE 60.f
-#define MN_HOUR   MN_MINUTE * 60.f
-#define MN_DAY    MN_HOUR * 24.f
-#define MN_WEEK   MN_DAY * 7.f
-#define MN_YEAR   MN_DAY * 365.f
+#define MN_MINUTE 60
+#define MN_HOUR   (MN_MINUTE * 60)
+#define MN_DAY    (MN_HOUR * 24)
+#define MN_WEEK   (MN_DAY * 7)
+#define MN_YEAR   (MN_DAY * 365)
 
 UIImage * getImageAtRect(UIImage *source,CGRect clipRect);
 /**

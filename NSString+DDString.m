@@ -33,4 +33,14 @@
     return nil;
 }
 
+- (NSString *)addString:(NSString *)appendString
+{
+    return [NSString stringWithFormat:@"%@%@", self, appendString];
+}
+
++ (NSString *)fromInt:(NSInteger)intValue
+{
+    return [NSString stringWithFormat:@"%ld", (long)intValue];
+}
+
 @end

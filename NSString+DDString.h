@@ -16,4 +16,8 @@
 
 - (id)toJSON;
 
+- (NSString *)addString:(NSString *)appendString;
+
++ (NSString *)fromInt:(NSInteger)intValue;
+
 @end

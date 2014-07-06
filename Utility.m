@@ -1624,7 +1624,7 @@ static CGRect oldframe;
     
     if (sender && blockObj) {
         blockObj(sender);
-        [executeBlockDict removeObjectForKey:identifier];
+        //[executeBlockDict removeObjectForKey:identifier];
     }
 }
 
@@ -1635,7 +1635,7 @@ static CGRect oldframe;
     [self dispatch_afterDelayTime:secs block:^{
         if (sender && blockObj) {
             blockObj(sender);
-            [executeBlockDict removeObjectForKey:identifier];
+            //[executeBlockDict removeObjectForKey:identifier];
         }
     }];
 }

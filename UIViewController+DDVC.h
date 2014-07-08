@@ -38,6 +38,8 @@
 
 - (void)popToRootVC;
 
+- (void)pushToVC:(UIViewController *)vc;
+
 /**
  *  是否存在pop栈中
  *
@@ -54,6 +56,25 @@
  */
 - (void)popToClass:(NSString *)className;
 
-- (void)pushToVC:(UIViewController *)vc;
+/**
+ *  返回所有属性名
+ *
+ *  @return 属性列表
+ */
+- (NSArray *)getPropertyNames;
+
+/**
+ *  返回属性字典
+ *
+ *  @return 字典
+ */
+- (NSMutableDictionary *)getPropertyObjects;
+
+/**
+ *  返回所有属性值
+ *
+ *  @return 字典
+ */
+- (NSMutableDictionary *)getPropertyValues;
 
 @end

@@ -186,12 +186,72 @@ const char leftHandlerKey, rightHandleKey;
     }
 }
 
-
-
 - (void)pushToVC:(UIViewController *)vc
 {
     [self.navigationController pushViewController:vc animated:YES];
 }
 
+/**
+ *  返回所有属性名
+ *
+ *  @return 属性列表
+ */
+- (NSArray *)getPropertyNames
+{
+    unsigned int propertyCount = 0;
+    objc_property_t *properties = class_copyPropertyList([self class], &propertyCount);
+    NSMutableArray *propertyArr = [NSMutableArray array];
+    
+    for (int i = 0; i < propertyCount; i++) {
+        
+        const char *name = property_getName(properties[i]);
+        [propertyArr addObject:[NSString stringWithUTF8String:name]];
+    }
+    
+    return propertyArr;
+}
+
+/**
+ *  返回属性字典
+ *
+ *  @return 字典
+ */
+- (NSMutableDictionary *)getPropertyObjects
+{
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    NSArray *list = [self getPropertyNames];
+    for (NSString *name in list) {
+        [dict setValue:[self valueForKey:name] forKey:name];
+    }
+    
+    return dict;
+}
+
+/**
+ *  返回所有属性值
+ *
+ *  @return 字典
+ */
+- (NSMutableDictionary *)getPropertyValues
+{
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    [self.getPropertyObjects enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        if ([obj isKindOfClass:[UILabel class]] ||
+            [obj isKindOfClass:[UITextField class]] ||
+            [obj isKindOfClass:[UITextView class]])
+        {
+            [dict setValue:[obj text] forKey:key];
+        }
+        else if ([obj isKindOfClass:[NSArray class]] ||
+                 [obj isKindOfClass:[NSDictionary class]] ||
+                 [obj isKindOfClass:[NSString class]] ||
+                 [obj isKindOfClass:[NSNumber class]])
+        {
+            [dict setValue:obj forKey:key];
+        }
+    }];
+    
+    return dict;
+}
 
 @end

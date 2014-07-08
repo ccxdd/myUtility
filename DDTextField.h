@@ -8,8 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-typedef enum {
-    
+typedef NS_ENUM(NSInteger, DDTextField_TYPE) {
     DDTextField_TYPE_DEFAULT = 0,
     DDTextField_TYPE_MOBILE  = 1,
     DDTextField_TYPE_NUM     = 2,
@@ -18,9 +17,8 @@ typedef enum {
     DDTextField_TYPE_EMAIL   = 5,
     DDTextField_TYPE_PWD     = 6,
     DDTextField_TYPE_PWD_NUM = 7,
-    DDTextField_TYPE_PICKER  = 8,
-    
-} DDTextField_TYPE;
+    DDTextField_TYPE_PICKER  = 8
+};
 
 @interface DDTextField : UITextField
 

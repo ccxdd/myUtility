@@ -33,7 +33,6 @@ static NSNumber *superViewProperty;
 {
     [self configDDTextField];
     self.required = YES;
-    self.fieldType = DDTextField_TYPE_DEFAULT;
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -287,7 +286,7 @@ static NSNumber *superViewProperty;
     if (self.fieldType == DDTextField_TYPE_PICKER) {
         [self pickerView:_pickerView didSelectRow:[_pickerView selectedRowInComponent:0] inComponent:0];
     } else if (self.fieldType == DDTextField_TYPE_DATE) {
-        self.text = [Utility dateToString:[sender date]];
+        self.text = [Utility dateToString:[_datePicker date]];
     }
     
     [self resignFirstResponder];
@@ -350,7 +349,7 @@ static NSNumber *superViewProperty;
                 [_datePicker handleControlEvent:UIControlEventValueChanged withBlock:^(id sender) {
                     self.text = [Utility dateToString:[sender date]];
                 }];
-                self.inputView = _pickerView;
+                self.inputView = _datePicker;
             }
         }
             break;

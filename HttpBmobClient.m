@@ -9,17 +9,30 @@
 #import "HttpBmobClient.h"
 #import "BMWaitVC.h"
 
-@implementation HttpBmobClient
+@interface BmobClassField : NSObject
 
-+ (instancetype)sharedInstance
+@property (nonatomic, strong) NSArray *fields;
+@property (nonatomic, strong) NSArray *uploadFields;
+
++ (instancetype)classWithFields:(NSArray *)fields uploadFields:(NSArray *)uploadFields;
+
+@end
+
+@implementation BmobClassField
+
++ (instancetype)classWithFields:(NSArray *)fields uploadFields:(NSArray *)uploadFields
 {
-    static dispatch_once_t pred = 0;
-    __strong static id _sharedObject = nil;
-    dispatch_once(&pred, ^{
-        _sharedObject = [[self alloc] init];
-    });
-    return _sharedObject;
+    BmobClassField *classField = [super alloc];
+    if (classField) {
+        classField.fields = fields;
+        classField.uploadFields = uploadFields;
+    }
+    return classField;
 }
+
+@end
+
+@implementation HttpBmobClient
 
 + (void)query:(BmobQuery *)query findWithSuccess:(void(^)(id responseObject))success
 {
@@ -50,118 +63,84 @@
 {
     BmobQuery *query = [BmobQuery queryWithClassName:className];
     [query orderByAscending:@"createdAt"];
-    [query findObjectsInBackgroundWithBlock:^(NSArray *array, NSError *error) {
-        if (!error) {
-            
-            NSMutableArray *responseArrayM = [NSMutableArray array];
-            
-            if ([array count] > 0) {
-                for (BmobObject *obj in array) {
-                    [responseArrayM addObject:[self convertObject:obj className:className]];
+    [self query:query findWithSuccess:success];
+}
+
++ (void)saveClassName:(NSString *)className
+           parameters:(NSDictionary *)parameters
+              success:(void(^)(id responseObject))success
+{
+    BmobClassField *classField = [self classFields][className];
+    NSDictionary *normalFields = [parameters filterWithKeys:classField.fields non:NO];
+    NSDictionary *uploadFields = [parameters filterWithKeys:classField.uploadFields non:NO];
+    
+    BmobObject *object = [BmobObject objectWithoutDatatWithClassName:className objectId:normalFields[@"objectId"]];
+    [object saveAllWithDictionary:normalFields];
+    
+    [self uploadFields:uploadFields className:tCategory resultBlock:^(NSDictionary *files){
+        [object saveAllWithDictionary:files];
+        if (normalFields[@"objectId"]) {
+            [object updateInBackgroundWithResultBlock:^(BOOL isSuccessful, NSError *error) {
+                if (isSuccessful) {
+                    success(@YES);
+                } else {
+                    [self errorHandle:error];
                 }
-                
-                success(responseArrayM);
-                
-            } else {
-                [self errorHandle:nil];
-            }
-            
+            }];
         } else {
-            [self errorHandle:error];
+            [object saveInBackgroundWithResultBlock:^(BOOL isSuccessful, NSError *error) {
+                if (isSuccessful) {
+                    success(@YES);
+                } else {
+                    [self errorHandle:error];
+                }
+            }];
         }
     }];
+    
 }
 
-+ (void)categoryWithName:(NSString *)name
-                filePath:(NSString *)filePath
-                objectId:(NSString *)objectId
-                     sub:(NSArray *)sub
-                   isNew:(BOOL)isNew
-                 success:(void(^)(id responseObject))success
++ (void)uploadFields:(NSDictionary *)fields
+           className:(NSString *)className
+         resultBlock:(void(^)(NSDictionary *files))resultBlock
 {
-    if (isNew) {
-        BmobObject *object = [BmobObject objectWithClassName:tCategory];
-        [self uploadFilePath:filePath className:tCategory resultBlock:^(BmobFile *fileObj){
-            [object setObject:name forKey:@"name"];
-            [object setObject:fileObj forKey:@"imageFile"];
-            [object setObject:sub forKey:@"sub"];
-            [object saveInBackgroundWithResultBlock:^(BOOL isSuccessful, NSError *error) {
-                if (isSuccessful) {
-                    success(@YES);
-                } else {
-                    [self errorHandle:error];
+    if ([fields count]) {
+        __block NSMutableDictionary *files = [NSMutableDictionary dictionary];
+        
+        [fields enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+            [self uploadFilePath:obj className:className resultBlock:^(BmobFile *fileObj) {
+                [files setValue:fileObj forKeyPath:key];
+                
+                if ([files count] == [fields count]) {
+                    resultBlock(files);
                 }
             }];
         }];
     } else {
-        BmobObject *object = [BmobObject objectWithoutDatatWithClassName:tCategory objectId:objectId];
-        [self uploadFilePath:filePath className:tCategory resultBlock:^(BmobFile *fileObj){
-            [object setObject:name forKey:@"name"];
-            [object setObject:fileObj forKey:@"imageFile"];
-            [object setObject:sub forKey:@"sub"];
-            [object updateInBackgroundWithResultBlock:^(BOOL isSuccessful, NSError *error) {
-                if (isSuccessful) {
-                    success(@YES);
-                } else {
-                    [self errorHandle:error];
-                }
-            }];
-        }];
+        resultBlock(nil);
     }
 }
 
-+ (void)subCategoryWithName:(NSString *)name
-                   filePath:(NSString *)filePath
-                   objectId:(NSString *)objectId
-                       main:(NSArray *)main
-                      isNew:(BOOL)isNew
-                    success:(void(^)(id responseObject))success
-{
-    if (isNew) {
-        BmobObject *object = [BmobObject objectWithClassName:tSubCategory];
-        [self uploadFilePath:filePath className:tSubCategory resultBlock:^(BmobFile *fileObj){
-            [object setObject:name forKey:@"name"];
-            [object setObject:fileObj forKey:@"imageFile"];
-            [object saveInBackgroundWithResultBlock:^(BOOL isSuccessful, NSError *error) {
-                if (isSuccessful) {
-                    success(@YES);
-                } else {
-                    [self errorHandle:error];
-                }
-            }];
-        }];
-    } else {
-        BmobObject *object = [BmobObject objectWithoutDatatWithClassName:tSubCategory objectId:objectId];
-        [self uploadFilePath:filePath className:tSubCategory resultBlock:^(BmobFile *fileObj){
-            [object setObject:name forKey:@"name"];
-            [object setObject:fileObj forKey:@"imageFile"];
-            [object updateInBackgroundWithResultBlock:^(BOOL isSuccessful, NSError *error) {
-                if (isSuccessful) {
-                    success(@YES);
-                } else {
-                    [self errorHandle:error];
-                }
-            }];
-        }];
-    }
-}
-
-+ (void)uploadFilePath:(NSString *)path className:(NSString *)className
++ (void)uploadFilePath:(NSString *)path
+             className:(NSString *)className
            resultBlock:(void(^)(BmobFile *fileObj))resultBlock
 {
     if (path) {
-        BmobFile *fileObj = [[BmobFile alloc] initWithClassName:className withFilePath:path];
-        [fileObj saveInBackgroundByDataSharding:^(BOOL isSuccessful, NSError *error) {
+        BmobFile *fileObj = [[BmobFile alloc] initWithClassName:className
+                                                   withFilePath:path];
+        [fileObj saveInBackground:^(BOOL isSuccessful, NSError *error) {
             if (isSuccessful) {
                 resultBlock(fileObj);
             } else {
                 [self errorHandle:error];
             }
+        } withProgressBlock:^(float progress) {
+            DLog(@"%@ : progress = %f", className, progress);
+            [BMWaitVC showProgress:progress message:nil];
         }];
     } else {
         resultBlock(nil);
     }
-    
 }
 
 + (NSMutableDictionary *)convertObject:(BmobObject *)obj className:(NSString *)className
@@ -174,35 +153,45 @@
     
     if ([className isEqualToString:tCategory]) {           //分类
         
-        dict[@"name"] = [obj objectForKey:@"name"];
-        [self joinObj:[obj objectForKey:@"imageFile"] toContainer:dict key:@"imageFile"];
-        [self joinObj:[obj objectForKey:@"sub"] toContainer:dict key:@"sub"];
+        [dict setValue:[obj objectForKey:@"name"] forKey:@"name"];
+        [dict setValue:[obj objectForKey:@"sub"] forKey:@"sub"];
+        [dict setValue:[self getObjFromBmob:[obj objectForKey:@"imageFile"]]
+                forKey:@"imageFile"];;
         
     } else if ([className isEqualToString:tSubCategory]) { //子类
         
-        dict[@"name"] = [obj objectForKey:@"name"];
-        [self joinObj:[obj objectForKey:@"imageFile"] toContainer:dict key:@"imageFile"];
+        [dict setValue:[obj objectForKey:@"name"] forKey:@"name"];
+        [dict setValue:[self getObjFromBmob:[obj objectForKey:@"imageFile"]]
+                forKey:@"imageFile"];
     }
     
     return dict;
 }
 
-+ (void)joinObj:(id)obj toContainer:(id)container key:(NSString *)key
++ (id)getObjFromBmob:(id)obj
 {
     if ([obj isKindOfClass:[BmobFile class]]) {
-        if ([container isKindOfClass:[NSMutableDictionary class]] && key) {
-            container[key] = [obj url];
-        } else if ([container isKindOfClass:[NSMutableDictionary class]] && key) {
-            [container addObject:[obj url]];
-        }
-    } else if (obj) {
-        if ([container isKindOfClass:[NSMutableDictionary class]] && key) {
-            container[key] = obj;
-        } else if ([container isKindOfClass:[NSMutableDictionary class]] && key) {
-            [container addObject:obj];
-        }
+        return [obj url];
     }
     
+    return nil;
+}
+
++ (NSDictionary *)classFields
+{
+    static dispatch_once_t pred;
+    static NSMutableDictionary *classFields;
+    dispatch_once(&pred, ^{
+        classFields = [NSMutableDictionary dictionary];
+        
+        classFields[tCategory] = [BmobClassField classWithFields:@[@"objectId", @"name", @"sub"]
+                                                    uploadFields:@[@"imageFile"]];
+        
+        classFields[tSubCategory] = [BmobClassField classWithFields:@[@"objectId", @"name"]
+                                                       uploadFields:@[@"imageFile"]];
+    });
+    
+    return classFields;
 }
 
 + (void)errorHandle:(NSError *)error

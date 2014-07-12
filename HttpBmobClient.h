@@ -11,26 +11,18 @@
 
 @interface HttpBmobClient : NSObject
 
-+ (instancetype)sharedInstance;
-
 + (void)query:(BmobQuery *)query findWithSuccess:(void(^)(id responseObject))success;
 
 + (void)queryWithClassName:(NSString *)className
                    success:(void(^)(id responseObject))success;
 
-+ (void)categoryWithName:(NSString *)name
-                filePath:(NSString *)filePath
-                objectId:(NSString *)objectId
-                     sub:(NSArray *)sub
-                   isNew:(BOOL)isNew
-                 success:(void(^)(id responseObject))success;
++ (void)saveClassName:(NSString *)className
+           parameters:(NSDictionary *)parameters
+              success:(void(^)(id responseObject))success;
 
-+ (void)subCategoryWithName:(NSString *)name
-                   filePath:(NSString *)filePath
-                   objectId:(NSString *)objectId
-                       main:(NSArray *)main
-                      isNew:(BOOL)isNew
-                    success:(void(^)(id responseObject))success;
++ (void)uploadFields:(NSDictionary *)fields
+           className:(NSString *)className
+         resultBlock:(void(^)(NSDictionary *files))resultBlock;
 
 + (void)uploadFilePath:(NSString *)path
              className:(NSString *)className

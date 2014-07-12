@@ -287,15 +287,15 @@ static NSMutableDictionary *executeBlockDict;
 //{
 //    const char *cKey  = [key cStringUsingEncoding:NSASCIIStringEncoding];
 //    const char *cData = [plant cStringUsingEncoding:NSASCIIStringEncoding];
-//    
+//
 //    unsigned char cHMAC[CC_SHA1_DIGEST_LENGTH];
-//    
+//
 //    CCHmac(kCCHmacAlgSHA1, cKey, strlen(cKey), cData, strlen(cData), cHMAC);
-//    
+//
 //    NSData *HMACData = [NSData dataWithBytes:cHMAC length:sizeof(cHMAC)];
-//    
+//
 //    NSString *hash = [GTMBase64 stringByWebSafeEncodingData:HMACData padded:YES];
-//    
+//
 //    return hash;
 //}
 
@@ -697,6 +697,8 @@ static NSMutableDictionary *executeBlockDict;
         [df setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
     } else if (timeType == 12) {
         [df setDateFormat:@"yyyy-MM-dd hh:mm:ss"];
+    } else {
+        [df setDateFormat:@"yyyy-MM-dd-hh-mm-SSS"];
     }
     NSString *str = [df stringFromDate:[NSDate date]];
     return str;
@@ -748,7 +750,8 @@ static NSMutableDictionary *executeBlockDict;
     NSDateFormatter *dateFormatter = [Utility _HTTPDateFormatterHasTime];
     NSDate *date = [dateFormatter dateFromString:dateString];
     [dateFormatter setDateFormat:@"yyyy-MM-dd"];
-    return [dateFormatter stringFromDate:date];
+    NSString *resultStr = [dateFormatter stringFromDate:date];
+    return resultStr.length ? resultStr : @"";
 }
 
 + (NSString *)dateHasTimeToString:(NSDate *)date
@@ -872,11 +875,12 @@ static NSMutableDictionary *executeBlockDict;
     }
     return [NSString stringWithFormat:@"%ld-%02ld-%02ld %@",(long)[comp year],(long)[comp month],(long)[comp day],weekDay];
 }
+
 + (float)iosVersion{
     return [[UIDevice currentDevice].systemVersion floatValue];
 }
 
-+ (BOOL) validatePass : (NSString *) str
++ (BOOL)validatePass:(NSString *)str
 {
     NSString *patternStr = [NSString stringWithFormat:@"^[A-Za-z0-9]{6,16}$"];
     NSRegularExpression *regularexpression = [[NSRegularExpression alloc]
@@ -896,7 +900,7 @@ static NSMutableDictionary *executeBlockDict;
 }
 
 //验证身份证
-+ (BOOL) validateIdCard : (NSString *) str
++ (BOOL)validateIdCard:(NSString *)str
 {
     //    NSString *patternStr = [NSString stringWithFormat:@"(^[1-9]\\d{7}((0\\d)|(1[0-2]))(([0|1|2]\\d)|3[0-1])\\d{3}$)|(^[1-9]\\d{5}[1-9]\\d{3}((0\\d)|(1[0-2]))(([0|1|2]\\d)|3[0-1])\\d{4}$)"];
     NSString *patternStr = [NSString stringWithFormat:@"^\\d{15}$|^\\d{17}([0-9]|X)$"];
@@ -946,7 +950,7 @@ static NSMutableDictionary *executeBlockDict;
 }
 
 //校验姓或名
-+ (BOOL) validateName : (NSString *) str
++ (BOOL)validateName:(NSString *)str
 {
     if (!str) {
         return NO;
@@ -960,8 +964,6 @@ static NSMutableDictionary *executeBlockDict;
     NSUInteger numberofMatch = [regularexpression numberOfMatchesInString:str
                                                                   options:NSMatchingReportProgress
                                                                     range:NSMakeRange(0, str.length)];
-	
-	
     if(numberofMatch > 0)
     {
         return YES;
@@ -970,7 +972,7 @@ static NSMutableDictionary *executeBlockDict;
 }
 
 //校验用户名
-+ (BOOL) validateUserName : (NSString *) str
++ (BOOL)validateUserName:(NSString *)str
 {
     if (!str) {
         return NO;
@@ -984,8 +986,6 @@ static NSMutableDictionary *executeBlockDict;
     NSUInteger numberofMatch = [regularexpression numberOfMatchesInString:str
                                                                   options:NSMatchingReportProgress
                                                                     range:NSMakeRange(0, str.length)];
-	
-	
     if(numberofMatch > 0)
     {
         return YES;
@@ -993,27 +993,53 @@ static NSMutableDictionary *executeBlockDict;
     return NO;
 }
 
-+ (BOOL) validateUserPhone : (NSString *) str
++ (BOOL)validateUserPhone:(NSString *) str
 {
-    if (!str) {
-        return NO;
-    }
+    /**
+     * 手机号码
+     * 移动：134[0-8],135,136,137,138,139,150,151,157,158,159,182,187,188
+     * 联通：130,131,132,152,155,156,185,186
+     * 电信：133,1349,153,180,189
+     */
+    NSString * MOBILE = @"^1(3[0-9]|5[0-35-9]|8[025-9])\\d{8}$";
+    /**
+     10         * 中国移动：China Mobile
+     11         * 134[0-8],135,136,137,138,139,150,151,157,158,159,182,187,188
+     12         */
+    NSString * CM = @"^1(34[0-8]|(3[5-9]|5[017-9]|8[278])\\d)\\d{7}$";
+    /**
+     15         * 中国联通：China Unicom
+     16         * 130,131,132,152,155,156,185,186
+     17         */
+    NSString * CU = @"^1(3[0-2]|5[256]|8[56])\\d{8}$";
+    /**
+     20         * 中国电信：China Telecom
+     21         * 133,1349,153,180,189
+     22         */
+    NSString * CT = @"^1((33|53|8[09])[0-9]|349)\\d{7}$";
+    /**
+     25         * 大陆地区固话及小灵通
+     26         * 区号：010,020,021,022,023,024,025,027,028,029
+     27         * 号码：七位或八位
+     28         */
+    // NSString * PHS = @"^0(10|2[0-5789]|\\d{3})\\d{7,8}$";
     
-    NSRegularExpression *regularexpression = [[NSRegularExpression alloc]
-                                              initWithPattern:@"^(1(([35][0-9])|(47)|[8][01236789]))\\d{8}$"
-                                              options:NSRegularExpressionCaseInsensitive
-                                              error:nil];
-    NSUInteger numberofMatch = [regularexpression numberOfMatchesInString:str
-                                                                  options:NSMatchingReportProgress
-                                                                    range:NSMakeRange(0, str.length)];
-    if(numberofMatch > 0)
+    NSPredicate *regextestmobile = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", MOBILE];
+    NSPredicate *regextestcm = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", CM];
+    NSPredicate *regextestcu = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", CU];
+    NSPredicate *regextestct = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", CT];
+    
+    if (([regextestmobile evaluateWithObject:str] == YES)
+        || ([regextestcm evaluateWithObject:str] == YES)
+        || ([regextestct evaluateWithObject:str] == YES)
+        || ([regextestcu evaluateWithObject:str] == YES))
     {
-        DLog(@"%@ isNumbericString: YES", str);
         return YES;
     }
-	
-    DLog(@"%@ isNumbericString: NO", str);
-    return NO;
+    else
+    {
+        return NO;
+    }
 }
 
 + (BOOL)validateUserId:(NSString *)str {
@@ -1622,9 +1648,8 @@ static CGRect oldframe;
 {
     void(^blockObj)(id) = executeBlockDict[identifier];
     
-    if (sender && blockObj) {
+    if (blockObj) {
         blockObj(sender);
-        //[executeBlockDict removeObjectForKey:identifier];
     }
 }
 
@@ -1632,12 +1657,11 @@ static CGRect oldframe;
 {
     void(^blockObj)(id) = executeBlockDict[identifier];
     
-    [self dispatch_afterDelayTime:secs block:^{
-        if (sender && blockObj) {
+    if (blockObj) {
+        [self dispatch_afterDelayTime:secs block:^{
             blockObj(sender);
-            //[executeBlockDict removeObjectForKey:identifier];
-        }
-    }];
+        }];
+    }
 }
 
 @end

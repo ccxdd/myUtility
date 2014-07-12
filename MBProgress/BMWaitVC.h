@@ -24,15 +24,47 @@
 @property (nonatomic, assign) id<WaitViewDelegate> waitViewDelegate;
 
 + (instancetype)sharedInstance;
-//显示自义定文字
+
+/**
+ *  显示文字提示框
+ *
+ *  @param message 显示文字
+ */
 + (void)showMessage:(NSString *)message;
-//显示
+
+/**
+ *  显示文字提示框
+ *
+ *  @param message 显示文字
+ *  @param delay   显示时间
+ */
++ (void)showMessage:(NSString *)message afterDelay:(NSTimeInterval)delay;
+
+/**
+ *  显示等待框
+ */
 + (void)showWaitView;
-//消失
+
+/**
+ *  关闭等待框
+ */
 + (void)closeWaitView;
 
+/**
+ *  显示alertView
+ *
+ *  @param message    显示文字
+ *  @param alertBlock 回调block
+ */
 + (void)showAlertMessage:(NSString *)message alertBlock:(void(^)(NSInteger buttonIndex))alertBlock;
 
+/**
+ *  显示自定义按钮标题alertView
+ *
+ *  @param message      显示的文字
+ *  @param buttonTitles 按钮标题
+ *  @param alertBlock   回调block
+ */
 + (void)showAlertMessage:(NSString *)message
             buttonTitles:(NSArray *)buttonTitles
               alertBlock:(void(^)(NSInteger buttonIndex))alertBlock;
@@ -43,14 +75,33 @@
                  keyboardType:(UIKeyboardType)keyboardType
                    alertBlock:(void(^)(UITextField *field, NSInteger buttonIndex))alertBlock;
 
+/**
+ *  显示actionSheet
+ *
+ *  @param message      显示文字
+ *  @param buttonTitles 按钮标题
+ *  @param keyName      字典类型的key若不是填nil
+ *  @param alertBlock   回调block
+ */
 + (void)showActionSheet:(NSString *)message
            buttonTitles:(NSArray *)buttonTitles
                 keyName:(NSString *)keyName
              alertBlock:(void(^)(NSInteger buttonIndex))alertBlock;
 
-+ (void)showWaitViewProgress:(double)progress;
+/**
+ *  显示进度条
+ *
+ *  @param progress 进度指数
+ */
++ (void)showProgress:(double)progress;
 
-+ (void)showMessage:(NSString *)message afterDelay:(NSTimeInterval)delay;
+/**
+ *  显示进度条
+ *
+ *  @param progress 进度指数
+ *  @param message  提示文字
+ */
++ (void)showProgress:(double)progress message:(NSString *)message;
 
 @end
 

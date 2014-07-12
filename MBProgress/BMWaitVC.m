@@ -69,16 +69,6 @@ static NSUInteger kWaitViewCount = 0;
         
         UITapGestureRecognizer *hudGes = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissAction)];
         [HUD addGestureRecognizer:hudGes];
-        
-        //            UILabel *lab = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 120, 20)];
-        //            [lab setText:@"点击取消"];
-        //            [lab setFont:[UIFont systemFontOfSize:14]];
-        //            [lab setBackgroundColor:[UIColor clearColor]];
-        //            [lab setTextColor:[UIColor lightGrayColor]];
-        //            [lab setTextAlignment:NSTextAlignmentCenter];
-        //            [lab setTag:dHUD_TAG+1];
-        //            lab.center = CGPointMake(HUD.center.x, HUD.center.y+50);
-        //            [HUD addSubview:lab];
     });
 }
 
@@ -91,12 +81,8 @@ static NSUInteger kWaitViewCount = 0;
 {
     if (message) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            MBProgressHUD *HUD = [[MBProgressHUD alloc] initWithView:[self AppDelegateWindow]];
-            [[self AppDelegateWindow] addSubview:HUD];
+            MBProgressHUD *HUD = [self MBProgressHUDFormWindows];
             [HUD setMode:MBProgressHUDModeText];
-            HUD.userInteractionEnabled = NO;
-            HUD.detailsLabelFont = HUD_FONT;
-            HUD.labelFont = HUD_FONT;
             HUD.detailsLabelText = message;
             [HUD show:YES];
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -107,7 +93,12 @@ static NSUInteger kWaitViewCount = 0;
     }
 }
 
-+ (void)showWaitViewProgress:(double)progress
++ (void)showProgress:(double)progress
+{
+    [self showProgress:progress message:@"请稍后"];
+}
+
++ (void)showProgress:(double)progress message:(NSString *)message
 {
     if (progress < 1) {
         
@@ -117,7 +108,7 @@ static NSUInteger kWaitViewCount = 0;
             MBProgressHUD *HUD = [self MBProgressHUDFormWindows];
             HUD.mode = MBProgressHUDModeDeterminate;
             HUD.progress = progress;
-            HUD.labelText = @"请稍后";
+            HUD.labelText = message;
             UITapGestureRecognizer *hudGes = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissAction)];
             [HUD addGestureRecognizer:hudGes];
         });

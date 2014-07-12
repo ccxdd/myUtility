@@ -77,4 +77,11 @@
  */
 - (NSMutableDictionary *)getPropertyValues;
 
+/**
+ *  设置所有属性值
+ *
+ *  @param values values
+ */
+- (void)setPropertyValues:(NSDictionary *)values;
+
 @end

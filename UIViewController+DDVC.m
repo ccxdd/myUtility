@@ -31,15 +31,15 @@ const char leftHandlerKey, rightHandleKey;
     [self.navigationItem setBackBarButtonItem:backBtn];
 }
 
-#pragma mark ------------rightButtonWithImageName---------------
+#pragma mark - rightButtonWithImageName
 
 - (void)rightButtonWithImageName:(NSString *)imageName
                    renderingMode:(UIImageRenderingMode)renderingMode
                       clickBlock:(void(^)(id))clickBlock
 {
     
-    UIBarButtonItem *rightBtn = [[UIBarButtonItem alloc] initWithImage:[[UIImage imageNamed:imageName] imageWithRenderingMode:renderingMode]
-                                                                 style:UIBarButtonItemStylePlain
+    UIBarButtonItem *rightBtn = [[UIBarButtonItem alloc] initWithImage:[self imageWithName:imageName renderingMode:renderingMode]
+                                                                 style:UIBarButtonItemStyleBordered
                                                                 target:self
                                                                 action:@selector(rightButtonAction:)];
     [self.navigationItem setRightBarButtonItem:rightBtn];
@@ -53,14 +53,14 @@ const char leftHandlerKey, rightHandleKey;
 
 - (void)rightButtonWithImageName:(NSString *)imageName clickBlock:(void(^)(id))clickBlock
 {
-    [self rightButtonWithImageName:imageName renderingMode:UIImageRenderingModeAutomatic clickBlock:clickBlock];
+    [self rightButtonWithImageName:imageName renderingMode:UIImageRenderingModeAlwaysOriginal clickBlock:clickBlock];
 }
 
 - (void)rightButtonWithTitle:(NSString *)title clickBlock:(void(^)(id))clickBlock
 {
     
     UIBarButtonItem *rightBtn = [[UIBarButtonItem alloc] initWithTitle:title
-                                                                 style:UIBarButtonItemStylePlain
+                                                                 style:UIBarButtonItemStyleBordered
                                                                 target:self
                                                                 action:@selector(rightButtonAction:)];
     [self.navigationItem setRightBarButtonItem:rightBtn];
@@ -72,15 +72,15 @@ const char leftHandlerKey, rightHandleKey;
     
 }
 
-#pragma mark ------------leftButtonWithImageName---------------
+#pragma mark - leftButtonWithImageName
 
 - (void)leftButtonWithImageName:(NSString *)imageName
                   renderingMode:(UIImageRenderingMode)renderingMode
                      clickBlock:(void(^)(id))clickBlock
 {
     
-    UIBarButtonItem *leftBtn = [[UIBarButtonItem alloc] initWithImage:[[UIImage imageNamed:imageName] imageWithRenderingMode:renderingMode]
-                                                                style:UIBarButtonItemStylePlain
+    UIBarButtonItem *leftBtn = [[UIBarButtonItem alloc] initWithImage:[self imageWithName:imageName renderingMode:renderingMode]
+                                                                style:UIBarButtonItemStyleBordered
                                                                target:self
                                                                action:@selector(leftButtonAction:)];
     [self.navigationItem setLeftBarButtonItem:leftBtn];
@@ -94,14 +94,14 @@ const char leftHandlerKey, rightHandleKey;
 
 - (void)leftButtonWithImageName:(NSString *)imageName clickBlock:(void(^)(id))clickBlock
 {
-    [self leftButtonWithImageName:imageName renderingMode:UIImageRenderingModeAutomatic clickBlock:clickBlock];
+    [self leftButtonWithImageName:imageName renderingMode:UIImageRenderingModeAlwaysOriginal clickBlock:clickBlock];
 }
 
 - (void)leftButtonWithTitle:(NSString *)title clickBlock:(void(^)(id))clickBlock
 {
     
     UIBarButtonItem *leftBtn = [[UIBarButtonItem alloc] initWithTitle:title
-                                                                style:UIBarButtonItemStylePlain
+                                                                style:UIBarButtonItemStyleBordered
                                                                target:self
                                                                action:@selector(leftButtonAction:)];
     [self.navigationItem setLeftBarButtonItem:leftBtn];
@@ -113,14 +113,14 @@ const char leftHandlerKey, rightHandleKey;
     
 }
 
-#pragma mark ------------backAction---------------
+#pragma mark - backAction
 
 - (void)backAction
 {
     [self.navigationController popViewControllerAnimated:YES];
 }
 
-#pragma mark ------------RightBtnAction---------------
+#pragma mark - rightButtonAction
 
 - (void)rightButtonAction:(id)sender
 {
@@ -131,7 +131,7 @@ const char leftHandlerKey, rightHandleKey;
     }
 }
 
-#pragma mark ------------LeftBtnAction---------------
+#pragma mark - leftButtonAction
 
 - (void)leftButtonAction:(id)sender
 {
@@ -141,6 +141,18 @@ const char leftHandlerKey, rightHandleKey;
         theCompletionHandler(sender);
     }
 }
+
+- (UIImage *)imageWithName:(NSString *)name renderingMode:(UIImageRenderingMode)renderingMode
+{   //iOS7_OR_LATER
+    UIImage *image = [UIImage imageNamed:name];
+    if ([image respondsToSelector:@selector(imageWithRenderingMode:)]) {
+        return [image imageWithRenderingMode:renderingMode];
+    }
+    
+    return image;
+}
+
+#pragma mark - navigation
 
 - (void)popVC
 {
@@ -191,6 +203,7 @@ const char leftHandlerKey, rightHandleKey;
     [self.navigationController pushViewController:vc animated:YES];
 }
 
+#pragma mark - 返回所有属性名
 /**
  *  返回所有属性名
  *
@@ -211,6 +224,7 @@ const char leftHandlerKey, rightHandleKey;
     return propertyArr;
 }
 
+#pragma mark - 返回属性字典
 /**
  *  返回属性字典
  *
@@ -227,6 +241,7 @@ const char leftHandlerKey, rightHandleKey;
     return dict;
 }
 
+#pragma mark - 返回所有属性值
 /**
  *  返回所有属性值
  *
@@ -252,6 +267,37 @@ const char leftHandlerKey, rightHandleKey;
     }];
     
     return dict;
+}
+
+#pragma mark - 设置所有属性值
+/**
+ *  设置所有属性值
+ *
+ *  @param values values
+ */
+- (void)setPropertyValues:(NSDictionary *)propertyObjects
+{
+    NSMutableDictionary *uiClassDict = self.getPropertyObjects;
+    NSMutableDictionary *objcClassDict = [NSMutableDictionary dictionaryWithDictionary:propertyObjects];
+    
+    [uiClassDict enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        if ([obj isKindOfClass:[UILabel class]] ||
+            [obj isKindOfClass:[UITextField class]] ||
+            [obj isKindOfClass:[UITextView class]])
+        {
+            [obj setText:[propertyObjects objectForKey:key]];
+            [objcClassDict removeObjectForKey:key];
+        }
+    }];
+    
+    [objcClassDict enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        @try {
+            [self setValue:[propertyObjects objectForKey:key] forKey:key];
+        }
+        @catch (NSException *exception) {
+            DLogBlue(@"key: %@ not found", key);
+        }
+    }];
 }
 
 @end

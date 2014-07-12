@@ -13,6 +13,8 @@
 #import "BMWaitVC.h"
 #import "BMStepper.h"
 #import "DDCheckBox.h"
+#import "DDRadioBox.h"
+#import "NSString+DDString.h"
 #import "UIViewController+DDVC.h"
 #import "UIView+DDView.h"
 #import "UIControl+DDControl.h"
@@ -29,19 +31,13 @@
 
 #define NLSystemVersionGreaterOrEqualThan(version) ([[[UIDevice currentDevice] systemVersion] floatValue] >= version)
 #define IOS7_OR_LATER NLSystemVersionGreaterOrEqualThan(7.0)
-#define kSCREEN_HEIGHT              (IS_IPHONE_5?(IOS7_OR_LATER?568:504):(IOS7_OR_LATER?480:416))
-#define kVIEW_HEIGHT                kSCREEN_HEIGHT - kVIEW_Y
-#define kVIEW_Y                     (IOS7_OR_LATER?64:0)
-#define kTABLE_VIEW_Y               (self.navigationController?0:(IOS7_OR_LATER?64:0))
-#define kTABLE_VIEW_OFFSET          (IOS7_OR_LATER?64:0)
-#define kORIGIN_Y(object)           (CGRectGetMinY([object frame])+CGRectGetHeight([object frame]))
-#define kORIGIN_X(object)           (CGRectGetMinX([object frame])+CGRectGetWidth([object frame]))
-#define kSelf_X1(object)            (CGRectGetMinX([object frame]))
-#define kSelf_Y1(object)            (CGRectGetMinY([object frame]))
-#define kSelf_X2(object)            (CGRectGetMaxX([object frame]))
-#define kSelf_Y2(object)            (CGRectGetMaxY([object frame]))
-#define kSelf_W(object)             (CGRectGetWidth([object frame]))
-#define kSelf_H(object)             (CGRectGetHeight([object frame]))
+#define kSCREEN_BOUNDS              [[UIScreen mainScreen] bounds]
+#define kSCREEN_HEIGHT              [[UIScreen mainScreen] bounds].size.height
+#define kSCREEN_WIDTH               [[UIScreen mainScreen] bounds].size.width
+#define kVIEW_HEIGHT                self.view.height
+#define kVIEW_Y                     (IOS7_OR_LATER ? kNAV_HEIGHT : 0)
+#define kNAV_HEIGHT                 (self.navigationController ? 44 : 0)
+#define kTABBAR_HEIGHT              (self.tabBarController ? 49 : 0)
 #define kCENTER(LEN, NUM)           ((LEN - NUM)/2)
 
 #define kUIColorHEX(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]

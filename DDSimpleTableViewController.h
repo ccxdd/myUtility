@@ -27,7 +27,7 @@
 
 - (id)selectedRowValueWithSectionKey:(NSString *)sectionKey rowKey:(NSString *)rowKey;
 
-- (NSArray *)selectedRowsValuesWithSectionKey:(NSString *)sectionKey rowKey:(NSString *)rowKey;
+- (NSMutableArray *)selectedRowsValuesWithSectionKey:(NSString *)sectionKey rowKey:(NSString *)rowKey;
 
 - (void)selectedRowsForArray:(NSArray *)array key:(NSString *)key targetKey:(NSString *)targetKey;
 

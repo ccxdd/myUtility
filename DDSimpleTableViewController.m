@@ -114,7 +114,7 @@
 
 #pragma mark - selectedRowsValuesWithSectionKey:rowKey:
 
-- (NSArray *)selectedRowsValuesWithSectionKey:(NSString *)sectionKey rowKey:(NSString *)rowKey
+- (NSMutableArray *)selectedRowsValuesWithSectionKey:(NSString *)sectionKey rowKey:(NSString *)rowKey
 {
     NSArray *indexPaths = _tableView.indexPathsForSelectedRows;
     NSMutableArray *values = [NSMutableArray array];

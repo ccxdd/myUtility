@@ -66,11 +66,14 @@
     if ([[imageData firstObject] isKindOfClass:[UIImage class]]) {
         [self setImageData:_imageData type:DDPage_Type_UIImage key:nil];
     }
+    else if ([[imageData firstObject] isKindOfClass:[NSData class]]) {
+        [self setImageData:_imageData type:DDPage_Type_UIImageData key:nil];
+    }
     else if ([[imageData firstObject] isKindOfClass:[NSDictionary class]]) {
         [self setImageData:_imageData type:DDPage_Type_Dictionary key:self.nameOrKey];
     }
     else {
-        [self setImageData:_imageData type:DDPage_Type_Image_Name key:self.nameOrKey];
+        [self setImageData:_imageData type:DDPage_Type_ImageName key:self.nameOrKey];
     }
 }
 
@@ -107,7 +110,12 @@
                 [imageView setImage:newArrM[i]];
             }
                 break;
-            case DDPage_Type_Image_Name: //
+            case DDPage_Type_UIImageData: //
+            {
+                [imageView setImage:[UIImage imageWithData:newArrM[i]]];
+            }
+                break;
+            case DDPage_Type_ImageName: //
             {
                 [imageView setImage:[UIImage imageNamed:key]];
             }
@@ -174,7 +182,7 @@
     if (_isCircle) {
         NSInteger offsetX = scrollView.contentOffset.x;
         if (offsetX > (_factImageCount-1) * self.width) {
-            [scrollView setContentOffset:CGPointMake(self.width, 0) animated:NO];
+            [scrollView setContentOffset:CGPointMake(self.width+0.5f, 0) animated:NO];
         } else if (offsetX < self.width) {
             [scrollView setContentOffset:CGPointMake((_factImageCount-1) * self.width, 0) animated:NO];
         }
@@ -197,7 +205,7 @@
 
 - (void)timerAction:(NSTimer *)sender
 {
-    [_scrollView setContentOffset:CGPointMake(self.scrollView.contentOffset.x+self.width+1, 0) animated:YES];
+    [_scrollView setContentOffset:CGPointMake(self.scrollView.contentOffset.x+self.width, 0) animated:YES];
 }
 
 - (void)updatePageIndex
@@ -220,6 +228,8 @@
 
 - (NSTimer *)pageControlTimer
 {
+    [_timer invalidate];
+    _timer = nil;
     return [NSTimer scheduledTimerWithTimeInterval:self.timeInterval
                                             target:self
                                           selector:@selector(timerAction:)

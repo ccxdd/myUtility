@@ -10,7 +10,8 @@
 
 typedef NS_ENUM(NSInteger, DDPageType) {
     DDPage_Type_UIImage,
-    DDPage_Type_Image_Name,
+    DDPage_Type_UIImageData,
+    DDPage_Type_ImageName,
     DDPage_Type_Dictionary
 };
 

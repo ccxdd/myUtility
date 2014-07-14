@@ -10,6 +10,11 @@
 
 @implementation NSString (DDString)
 
++ (NSString *)fromInt:(NSInteger)intValue
+{
+    return [NSString stringWithFormat:@"%ld", (long)intValue];
+}
+
 - (NSURL *)toURL
 {
     return [NSURL URLWithString:self];
@@ -38,9 +43,14 @@
     return [NSString stringWithFormat:@"%@%@", self, appendString];
 }
 
-+ (NSString *)fromInt:(NSInteger)intValue
+- (NSString *)filterToNumberString
 {
-    return [NSString stringWithFormat:@"%ld", (long)intValue];
+    return [[self componentsSeparatedByCharactersInSet:[[NSCharacterSet characterSetWithCharactersInString:@"0123456789"] invertedSet]] componentsJoinedByString:@""];
+}
+
+- (void)toPasteboard
+{
+    [[UIPasteboard generalPasteboard] setString:self];
 }
 
 @end

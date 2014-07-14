@@ -10,6 +10,8 @@
 
 @interface NSString (DDString)
 
++ (NSString *)fromInt:(NSInteger)intValue;
+
 - (NSURL *)toURL;
 
 - (NSURLRequest *)toRequest;
@@ -18,6 +20,8 @@
 
 - (NSString *)addString:(NSString *)appendString;
 
-+ (NSString *)fromInt:(NSInteger)intValue;
+- (NSString *)filterToNumberString;
+
+- (void)toPasteboard;
 
 @end

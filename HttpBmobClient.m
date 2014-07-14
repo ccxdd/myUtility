@@ -73,16 +73,17 @@
     BmobClassField *classField = [self classFields][className];
     NSDictionary *normalFields = [parameters filterWithKeys:classField.fields non:NO];
     NSDictionary *uploadFields = [parameters filterWithKeys:classField.uploadFields non:NO];
-    
+    DLogBlue(@"normalFields = %@", normalFields);
     BmobObject *object = [BmobObject objectWithoutDatatWithClassName:className objectId:normalFields[@"objectId"]];
     [object saveAllWithDictionary:normalFields];
     
     [self uploadFields:uploadFields className:tCategory resultBlock:^(NSDictionary *files){
+        DLogBlue(@"files = %@", files);
         [object saveAllWithDictionary:files];
         if (normalFields[@"objectId"]) {
             [object updateInBackgroundWithResultBlock:^(BOOL isSuccessful, NSError *error) {
                 if (isSuccessful) {
-                    success(@YES);
+                    success(object);
                 } else {
                     [self errorHandle:error];
                 }
@@ -90,7 +91,7 @@
         } else {
             [object saveInBackgroundWithResultBlock:^(BOOL isSuccessful, NSError *error) {
                 if (isSuccessful) {
-                    success(@YES);
+                    success(object);
                 } else {
                     [self errorHandle:error];
                 }
@@ -106,12 +107,13 @@
 {
     if ([fields count]) {
         __block NSMutableDictionary *files = [NSMutableDictionary dictionary];
-        
+        __block NSInteger count = 0;
         [fields enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-            [self uploadFilePath:obj className:className resultBlock:^(BmobFile *fileObj) {
+            [self uploadPathOrData:obj className:className resultBlock:^(BmobFile *fileObj) {
+                count++;
                 [files setValue:fileObj forKeyPath:key];
                 
-                if ([files count] == [fields count]) {
+                if (count == [fields count]) {
                     resultBlock(files);
                 }
             }];
@@ -121,26 +123,58 @@
     }
 }
 
-+ (void)uploadFilePath:(NSString *)path
-             className:(NSString *)className
-           resultBlock:(void(^)(BmobFile *fileObj))resultBlock
++ (void)uploadDataArray:(NSArray *)dataArr
+              className:(NSString *)className
+            resultBlock:(void(^)(NSMutableArray *urlArr))resultBlock
 {
-    if (path) {
-        BmobFile *fileObj = [[BmobFile alloc] initWithClassName:className
-                                                   withFilePath:path];
-        [fileObj saveInBackground:^(BOOL isSuccessful, NSError *error) {
-            if (isSuccessful) {
-                resultBlock(fileObj);
-            } else {
-                [self errorHandle:error];
-            }
-        } withProgressBlock:^(float progress) {
-            DLog(@"%@ : progress = %f", className, progress);
-            [BMWaitVC showProgress:progress message:nil];
+    if ([dataArr count]) {
+        __block NSMutableArray *urlArr = [NSMutableArray array];
+        __block NSInteger count = 0;
+        [dataArr enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+            [self uploadPathOrData:obj className:className resultBlock:^(BmobFile *fileObj) {
+                count++;
+                if (fileObj) {
+                    [urlArr addObject:fileObj.url];
+                }
+                if (count == [dataArr count]) {
+                    resultBlock(urlArr);
+                }
+            }];
         }];
     } else {
         resultBlock(nil);
     }
+}
+
++ (void)uploadPathOrData:(id)obj
+               className:(NSString *)className
+             resultBlock:(void(^)(BmobFile *fileObj))resultBlock
+{
+    BmobFile *fileObj;
+    
+    if ([obj isKindOfClass:[NSString class]]) {
+        fileObj = [[BmobFile alloc] initWithClassName:className
+                                         withFilePath:obj];
+    }
+    else if ([obj isKindOfClass:[NSData class]]) {
+        fileObj = [[BmobFile alloc] initWithClassName:className
+                                         withFileName:@"file"
+                                         withFileData:obj];
+    } else {
+        resultBlock(nil);
+        return;
+    }
+    
+    [fileObj saveInBackground:^(BOOL isSuccessful, NSError *error) {
+        if (isSuccessful) {
+            resultBlock(fileObj);
+        } else {
+            [self errorHandle:error];
+        }
+    } withProgressBlock:^(float progress) {
+        DLog(@"%@ : progress = %f", className, progress);
+        [BMWaitVC showProgress:progress message:nil];
+    }];
 }
 
 + (NSMutableDictionary *)convertObject:(BmobObject *)obj className:(NSString *)className
@@ -189,6 +223,22 @@
         
         classFields[tSubCategory] = [BmobClassField classWithFields:@[@"objectId", @"name"]
                                                        uploadFields:@[@"imageFile"]];
+        
+        classFields[tProduct] = [BmobClassField classWithFields:@[@"objectId",
+                                                                  @"name",
+                                                                  @"describe",
+                                                                  @"price",
+                                                                  @"discount",
+                                                                  @"stock",
+                                                                  @"weight",
+                                                                  @"saleDate",
+                                                                  @"tags",
+                                                                  @"images"]
+                                                   uploadFields:nil];
+        
+        //        classFields[tProductImage] = [BmobClassField classWithFields:@[@"objectId",
+        //                                                                       @"describe"]
+        //                                                        uploadFields:@[@"imageFile"]];
     });
     
     return classFields;
@@ -197,7 +247,7 @@
 + (void)errorHandle:(NSError *)error
 {
     NSString *message;
-    DLog(@"error = %@", error);
+    DLogRed(@"error = %@", error);
     
     switch (error.code) {
         case 20002: //

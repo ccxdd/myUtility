@@ -8,6 +8,14 @@
 
 #import <UIKit/UIKit.h>
 
+typedef NS_ENUM (NSInteger, UIViewAlignPosition) {
+    UIViewAlignPositionTop,
+    UIViewAlignPositionLeft,
+    UIViewAlignPositionBottom,
+    UIViewAlignPositionRight,
+};
+
+
 @interface UIView (DDView)
 
 /**
@@ -23,6 +31,18 @@
  *  @return view
  */
 + (id)viewForXibName:(NSString *)xibName atIndex:(NSInteger)index;
+
+/**
+ *  通用Frame
+ *
+ *  @param top    到top距离
+ *  @param left   到left距离
+ *  @param bottom 到bottom距离
+ *  @param right  到right距离
+ *
+ *  @return CGRect
+ */
++ (CGRect)commonFrameTop:(CGFloat)top left:(CGFloat)left bottom:(CGFloat)bottom right:(CGFloat)right;
 
 /**
  *  返回x1
@@ -142,5 +162,7 @@
  */
 - (void)setShadowX:(CGFloat)x y:(CGFloat)y color:(UIColor *)color opacity:(float)opacity radius:(CGFloat)radius
            usePath:(BOOL)usePath;
+
+- (void)alignPostiion:(UIViewAlignPosition)position offset:(CGFloat)offset;
 
 @end

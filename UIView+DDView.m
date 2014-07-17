@@ -34,6 +34,17 @@
     }
 }
 
++ (CGRect)commonFrameTop:(CGFloat)top left:(CGFloat)left bottom:(CGFloat)bottom right:(CGFloat)right
+{
+    CGRect frame = CGRectMake(0 + left,
+                              0 + top,
+                              kSCREEN_WIDTH - left - right,
+                              kSCREEN_HEIGHT - top - bottom + kIOS67_VIEW_OFFSET);
+    NSLog(@"%@", NSStringFromCGRect(frame));
+    
+    return frame;
+}
+
 - (CGFloat)x1
 {
     return CGRectGetMinX(self.frame);
@@ -246,6 +257,32 @@
         }];
     } else {
         [self setFrame:frame];
+    }
+}
+
+- (void)alignPostiion:(UIViewAlignPosition)position offset:(CGFloat)offset
+{
+    switch (position) {
+        case UIViewAlignPositionTop:
+        {
+            [self setY:0 + offset];
+        }
+            break;
+        case UIViewAlignPositionLeft:
+        {
+            [self setX:0 + offset];
+        }
+            break;
+        case UIViewAlignPositionBottom:
+        {
+            [self setY:kSCREEN_HEIGHT - self.height + offset + kIOS67_VIEW_OFFSET];
+        }
+            break;
+        case UIViewAlignPositionRight:
+        {
+            [self setX:kSCREEN_WIDTH - self.width + offset];
+        }
+            break;
     }
 }
 

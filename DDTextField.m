@@ -132,8 +132,8 @@ static NSNumber *superViewProperty;
     
     //调整坐标
     CGFloat y = 0;
-    float keyboardHeight = 215;
-    float space = kSCREEN_HEIGHT - keyboardHeight - textField.frame.size.height - 44;
+    float keyboardHeight = 216 + 44 + 30;
+    float space = kSCREEN_HEIGHT - keyboardHeight - textField.frame.size.height;
     
     if ([[textField superview] isKindOfClass:[UIScrollView class]]) {
         
@@ -141,15 +141,21 @@ static NSNumber *superViewProperty;
         float max_offset_y = scrollView.contentSize.height - scrollView.frame.size.height;
         CGPoint fieldPoint = [scrollView convertPoint:textField.frame.origin toView:nil];
         if (!superViewProperty) {
-            superViewProperty = [NSNumber numberWithFloat:scrollView.contentSize.height];
+            superViewProperty = @(scrollView.contentSize.height);
         }
         
-        if (fieldPoint.y > space)
-        {
+        if (fieldPoint.y > space) {
             y = fieldPoint.y - space + scrollView.contentOffset.y;
             if (y > max_offset_y) {
-                [scrollView setContentSize:CGSizeMake(scrollView.frame.size.width, scrollView.contentSize.height+(y-max_offset_y))];
+                [scrollView setContentSize:CGSizeMake(scrollView.frame.size.width,
+                                                      scrollView.contentSize.height+(y-max_offset_y))];
             }
+            [UIView animateWithDuration:0.5 animations:^{
+                [scrollView setContentOffset:CGPointMake(0, y)];
+            }];
+        }
+        else if (fieldPoint.y < 84) {
+            y = fieldPoint.y - 84 + scrollView.contentOffset.y;
             [UIView animateWithDuration:0.5 animations:^{
                 [scrollView setContentOffset:CGPointMake(0, y)];
             }];
@@ -158,23 +164,25 @@ static NSNumber *superViewProperty;
         
         UIView *superView = [textField superview];
         CGPoint fieldPoint = [superView convertPoint:textField.frame.origin toView:nil];
-//        if (!superViewProperty) {
-//            superViewProperty = [NSNumber numberWithFloat:superView.frame.origin.y];
-//        }
         
-        if (fieldPoint.y > space)
-        {
+        if (fieldPoint.y > space) {
             UIView *fullView = [self superFullScreenView:textField];
             if (!superViewProperty) {
-                superViewProperty = [NSNumber numberWithFloat:fullView.frame.origin.y];
+                superViewProperty = @(fullView.frame.origin.y);
             }
             y = fieldPoint.y - space;
-            [UIView animateWithDuration:0.5 animations:^{
-                fullView.frame = CGRectMake(fullView.frame.origin.x,
-                                            fullView.frame.origin.y - y - 10,
-                                            fullView.frame.size.width,
-                                            fullView.frame.size.height);
-            }];
+            if (fieldPoint.y + self.height + 30 > kSCREEN_HEIGHT) {
+                y -= 30;
+            }
+            [fullView setY:fullView.y1 - y animated:YES duration:0.5];
+        }
+        else if (fieldPoint.y < 84) {
+            UIView *fullView = [self superFullScreenView:textField];
+            if (!superViewProperty) {
+                superViewProperty = @(fullView.frame.origin.y);
+            }
+            y = fieldPoint.y - 84;
+            [fullView setY:fullView.y1 - y animated:YES duration:0.5];
         }
     }
     
@@ -191,21 +199,19 @@ static NSNumber *superViewProperty;
     }
     
     [self setBarButtonNeedsDisplayAtTag:textField.textFieldsIndex];
-    
 }
 
 - (void)textFieldDidEndEditing:(NSNotification *)notification
 {
     DDTextField *textField = (DDTextField*)[notification object];
-    BOOL isValid = [self isValid];
+    //BOOL isValid = [self isValid];
     
     self.activeImageView.hidden = YES;
     [textField resignFirstResponder];
     
     if (self.didEndEditingBlock) {
-        self.didEndEditingBlock(self, isValid);
+        self.didEndEditingBlock(self, NO);
     }
-    
 }
 
 - (void)setConfirmField:(id)field
@@ -273,20 +279,15 @@ static NSNumber *superViewProperty;
             }];
         } else if ([[self superview] isKindOfClass:[UIView class]]) {
             UIView *superView = [self superFullScreenView:self];
-            [UIView animateWithDuration:0.5 animations:^{
-                superView.frame = CGRectMake(superView.frame.origin.x,
-                                             [superViewProperty floatValue],
-                                             superView.frame.size.width,
-                                             superView.frame.size.height);
-                superViewProperty = nil;
-            }];
+            [superView setY:[superViewProperty floatValue] animated:YES duration:0.5];
+            superViewProperty = nil;
         }
     }
     
     if (self.fieldType == DDTextField_TYPE_PICKER) {
         [self pickerView:_pickerView didSelectRow:[_pickerView selectedRowInComponent:0] inComponent:0];
     } else if (self.fieldType == DDTextField_TYPE_DATE) {
-        self.text = [Utility dateToString:[_datePicker date]];
+        self.text = [Utility dateToString:[sender date]];
     }
     
     [self resignFirstResponder];
@@ -349,7 +350,7 @@ static NSNumber *superViewProperty;
                 [_datePicker handleControlEvent:UIControlEventValueChanged withBlock:^(id sender) {
                     self.text = [Utility dateToString:[sender date]];
                 }];
-                self.inputView = _datePicker;
+                self.inputView = _pickerView;
             }
         }
             break;
@@ -437,14 +438,15 @@ static NSNumber *superViewProperty;
     
     if (!result && self.required) {
         
-        self.layer.backgroundColor = kUIColorRGBA(180, 0, 0, 0.7).CGColor;
+        //self.layer.backgroundColor = kUIColorRGBA(180, 0, 0, 0.7).CGColor;
         
         if (self.hitMessage) {
-            [BMWaitVC showMessage:self.hitMessage];
+            //[BMWaitVC showMessage:self.hitMessage];
+            [BMWaitVC showAlertMessage:self.hitMessage buttonTitles:nil alertBlock:nil];
         }
         return NO;
     } else {
-        self.layer.backgroundColor = [UIColor clearColor].CGColor;
+        //self.layer.backgroundColor = [UIColor clearColor].CGColor;
     }
     
     return YES;

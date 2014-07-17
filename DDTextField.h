@@ -8,16 +8,16 @@
 
 #import <UIKit/UIKit.h>
 
-typedef NS_ENUM(NSInteger, DDTextField_TYPE) {
-    DDTextField_TYPE_DEFAULT = 0,
-    DDTextField_TYPE_MOBILE  = 1,
-    DDTextField_TYPE_NUM     = 2,
-    DDTextField_TYPE_DATE    = 3,
-    DDTextField_TYPE_CONFIRM = 4,
-    DDTextField_TYPE_EMAIL   = 5,
-    DDTextField_TYPE_PWD     = 6,
-    DDTextField_TYPE_PWD_NUM = 7,
-    DDTextField_TYPE_PICKER  = 8
+typedef NS_ENUM(NSInteger ,DDTextField_TYPE) {
+    DDTextField_TYPE_DEFAULT,
+    DDTextField_TYPE_MOBILE,
+    DDTextField_TYPE_NUM,
+    DDTextField_TYPE_DATE,
+    DDTextField_TYPE_CONFIRM,
+    DDTextField_TYPE_EMAIL,
+    DDTextField_TYPE_PWD,
+    DDTextField_TYPE_PWD_NUM,
+    DDTextField_TYPE_PICKER,
 };
 
 @interface DDTextField : UITextField
@@ -50,5 +50,6 @@ typedef NS_ENUM(NSInteger, DDTextField_TYPE) {
                          selectedBlock:(void(^)(NSInteger index, id rowObject))selectedBlock;
 
 - (void)setConfirmField:(id)field;
+- (void)doneButtonIsClicked:(id)sender;
 
 @end

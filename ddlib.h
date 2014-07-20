@@ -6,19 +6,24 @@
 //  Copyright (c) 2013年 ccxdd. All rights reserved.
 //
 
+/* category */
+#import "NSDictionary+DDictionary.h"
+#import "UITableView+DDTableView.h"
+#import "NSString+DDString.h"
+#import "UIViewController+DDVC.h"
+#import "UIControl+DDControl.h"
+#import "UILabel+DDLabel.h"
+#import "UIView+DDView.h"
+/* category */
+
+#import "BMWaitVC.h"
 #import "DDTextField.h"
 #import "DDDataSource.h"
 #import "Utility.h"
-#import "NSDictionary+JSONString.h"
-#import "BMWaitVC.h"
 #import "BMStepper.h"
 #import "DDCheckBox.h"
 #import "DDRadioBox.h"
-#import "NSString+DDString.h"
-#import "UIViewController+DDVC.h"
-#import "UIView+DDView.h"
-#import "UIControl+DDControl.h"
-#import "DDSimpleTableViewController.h"
+#import "DDTableVC.h"
 #import "DDTextView.h"
 #import "DDPageCV.h"
 #import "ButtonGroup.h"
@@ -34,10 +39,11 @@
 #define kSCREEN_BOUNDS              [[UIScreen mainScreen] bounds]
 #define kSCREEN_HEIGHT              [[UIScreen mainScreen] bounds].size.height
 #define kSCREEN_WIDTH               [[UIScreen mainScreen] bounds].size.width
-#define kVIEW_HEIGHT                self.view.height
+#define kVIEW_HEIGHT                (IOS7_OR_LATER ? kSCREEN_HEIGHT : kSCREEN_HEIGHT - 20)
 #define kVIEW_Y                     (IOS7_OR_LATER ? kNAV_HEIGHT : 0)
 #define kNAV_HEIGHT                 (self.navigationController ? 44 : 0)
 #define kTABBAR_HEIGHT              (self.tabBarController ? 49 : 0)
+#define kIOS67_VIEW_OFFSET          (IOS7_OR_LATER ? 0 : -64)
 #define kCENTER(LEN, NUM)           ((LEN - NUM)/2)
 
 #define kUIColorHEX(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]

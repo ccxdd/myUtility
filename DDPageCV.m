@@ -10,6 +10,7 @@
 
 @interface DDPageCV () <UIScrollViewDelegate>
 
+@property (nonatomic, strong) NSArray       *imageData;
 @property (nonatomic, strong) UIScrollView  *scrollView;
 @property (nonatomic, strong) UIPageControl *pageControl;
 @property (nonatomic, strong) NSTimer       *timer;
@@ -60,28 +61,14 @@
     _isCircle = YES;
 }
 
-- (void)setImageData:(NSArray *)imageData
-{
-    _imageData = imageData;
-    
-    if ([[imageData firstObject] isKindOfClass:[UIImage class]]) {
-        [self setImageData:_imageData type:DDPage_Type_UIImage key:nil];
-    }
-    else if ([[imageData firstObject] isKindOfClass:[NSData class]]) {
-        [self setImageData:_imageData type:DDPage_Type_UIImageData key:nil];
-    }
-    else if ([[imageData firstObject] isKindOfClass:[NSDictionary class]]) {
-        [self setImageData:_imageData type:DDPage_Type_Dictionary key:self.nameOrKey];
-    }
-    else {
-        [self setImageData:_imageData type:DDPage_Type_ImageName key:self.nameOrKey];
-    }
-}
-
 - (void)setImageData:(NSArray *)imageData type:(DDPageType)type key:(NSString *)key
 {
-    NSAssert([imageData count] > 0, @"DDPageCV imageData Error!");
+    if ([imageData count] < 1) {
+        DLog(@"DDPageCV imageData Error!");
+        return;
+    }
     
+    self.imageData = imageData;
     self.imageNameKey = key;
     self.type = type;
     
@@ -105,32 +92,33 @@
                                                                                0,
                                                                                self.width,
                                                                                self.height)];
+        id imageObj = key ? newArrM[i][key] : newArrM[i];
+        
         switch (type) {
             case DDPage_Type_UIImage: //
             {
-                [imageView setImage:newArrM[i]];
+                [imageView setImage:imageObj];
             }
                 break;
             case DDPage_Type_UIImageData: //
             {
-                [imageView setImage:[UIImage imageWithData:newArrM[i]]];
+                [imageView setImage:[UIImage imageWithData:imageObj]];
             }
                 break;
             case DDPage_Type_ImageName: //
             {
-                [imageView setImage:[UIImage imageNamed:key]];
+                [imageView setImage:[UIImage imageNamed:imageObj]];
             }
                 break;
-            case DDPage_Type_Dictionary: //
+            case DDPage_Type_URL: //
             {
-                NSString *urlString = key ? newArrM[i][key] : newArrM[i];
-                [imageView setImageWithURL:urlString.toURL
-                          placeholderImage:[UIImage imageNamed:self.nameOrKey]];
+                [imageView setImageWithURL:[imageObj toURL]
+                          placeholderImage:[UIImage imageNamed:self.placeholderName]];
             }
                 break;
         }
 
-        imageView.contentMode = UIViewContentModeScaleAspectFit;
+        imageView.contentMode = UIViewContentModeScaleAspectFill;
         [_scrollView addSubview:imageView];
     }
     
@@ -183,7 +171,7 @@
     if (_isCircle) {
         NSInteger offsetX = scrollView.contentOffset.x;
         if (offsetX > (_factImageCount-1) * self.width) {
-            [scrollView setContentOffset:CGPointMake(self.width+0.5f, 0) animated:NO];
+            [scrollView setContentOffset:CGPointMake(self.width, 0) animated:NO];
         } else if (offsetX < self.width) {
             [scrollView setContentOffset:CGPointMake((_factImageCount-1) * self.width, 0) animated:NO];
         }
@@ -206,7 +194,15 @@
 
 - (void)timerAction:(NSTimer *)sender
 {
-    [_scrollView setContentOffset:CGPointMake(self.scrollView.contentOffset.x+self.width, 0) animated:YES];
+    NSInteger offsetX = _scrollView.contentOffset.x + 5;
+    
+    if (offsetX > (_factImageCount-1) * self.width) {
+        [_scrollView setContentOffset:CGPointMake(self.width, 0) animated:NO];
+        [_scrollView setContentOffset:CGPointMake(_scrollView.contentOffset.x+self.width, 0) animated:YES];
+    } else {
+        [_scrollView setContentOffset:CGPointMake(_scrollView.contentOffset.x+self.width, 0) animated:YES];
+    }
+    
 }
 
 - (void)updatePageIndex

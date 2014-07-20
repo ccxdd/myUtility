@@ -45,6 +45,8 @@
     return frame;
 }
 
+#pragma mark - X, Y, Width, Height -
+
 - (CGFloat)x
 {
     return CGRectGetMinX(self.frame);
@@ -231,6 +233,17 @@
     [self setX:origin.x y:origin.y];
 }
 
+#pragma mark - setFrame:animated: -
+
+- (void)setFrame:(CGRect)frame animated:(BOOL)animated duration:(NSTimeInterval)duration
+{
+    [self animated:animated duration:duration animations:^{
+        self.frame = frame;
+    }];
+}
+
+#pragma mark - CornerRadius, Border, Shadow -
+
 - (void)setCornerRadius:(CGFloat)radius
 {
     self.layer.cornerRadius = radius;
@@ -249,8 +262,6 @@
     self.layer.borderWidth = width;
 }
 
-#pragma mark - setShadowX:y:color:opacity:radius:usePath
-
 - (void)setShadowX:(CGFloat)x y:(CGFloat)y color:(UIColor *)color opacity:(float)opacity radius:(CGFloat)radius
            usePath:(BOOL)usePath
 {
@@ -265,61 +276,81 @@
     }
 }
 
-#pragma mark - setFrame:animated:
+#pragma mark - alignPostiion:offset: -
 
-- (void)setFrame:(CGRect)frame animated:(BOOL)animated duration:(NSTimeInterval)duration
+- (void)alignPostiion:(UIViewAlignPosition)position offset:(CGFloat)offset
+{
+    [self alignPostiion:position offset:offset animated:NO duration:kDuation];
+}
+
+- (void)alignPostiion:(UIViewAlignPosition)position offset:(CGFloat)offset
+             animated:(BOOL)animated
+{
+    [self alignPostiion:position offset:offset animated:animated duration:kDuation];
+}
+
+- (void)alignPostiion:(UIViewAlignPosition)position offset:(CGFloat)offset
+             animated:(BOOL)animated duration:(NSTimeInterval)duration
+{
+    UIView *superView = [self superview];
+    
+    [self animated:animated duration:duration animations:^{
+        switch (position) {
+            case UIViewAlignPositionTop:
+            {
+                self.y = 0 + offset;
+            }
+                break;
+            case UIViewAlignPositionLeft:
+            {
+                self.x = 0 + offset;
+            }
+                break;
+            case UIViewAlignPositionBottom:
+            {
+                self.y = superView.height - self.height + offset;
+            }
+                break;
+            case UIViewAlignPositionRight:
+            {
+                self.x = superView.width - self.width + offset;
+            }
+                break;
+            case UIViewAlignPositionVerticalCenter:
+            {
+                self.center = CGPointMake(self.x, superView.midY);
+            }
+                break;
+            case UIViewAlignPositionHorizontalCenter:
+            {
+                self.center = CGPointMake(superView.midX, self.y);
+            }
+                break;
+            case UIViewAlignPositionCenter:
+            {
+                self.center = superView.center;
+            }
+                break;
+        }
+    }];
+}
+
+#pragma mark -
+
+- (void)animated:(BOOL)animated duration:(NSTimeInterval)duration animations:(void (^)(void))animations
 {
     if (animated) {
         [UIView animateWithDuration:duration animations:^{
-            [self setFrame:frame];
+            if (animations) {
+                animations();
+            }
         } completion:^(BOOL finished) {
             
         }];
     } else {
-        [self setFrame:frame];
-    }
-}
-
-- (void)alignPostiion:(UIViewAlignPosition)position offset:(CGFloat)offset
-{
-    UIView *superView = [self superview];
-    
-    switch (position) {
-        case UIViewAlignPositionTop:
-        {
-            self.y = 0 + offset;
+        if (animations) {
+            animations();
         }
-            break;
-        case UIViewAlignPositionLeft:
-        {
-            self.x = 0 + offset;
-        }
-            break;
-        case UIViewAlignPositionBottom:
-        {
-            self.y = superView.height - self.height + offset;
-        }
-            break;
-        case UIViewAlignPositionRight:
-        {
-            self.x = superView.width + self.width + offset;
-        }
-            break;
-        case UIViewAlignPositionVerticalCenter:
-        {
-            self.center = CGPointMake(self.x, superView.midY);
-        }
-            break;
-        case UIViewAlignPositionHorizontalCenter:
-        {
-            self.center = CGPointMake(self.y, superView.midX);
-        }
-            break;
-        case UIViewAlignPositionCenter:
-        {
-            self.center = superView.center;
-        }
-            break;
     }
 }
 

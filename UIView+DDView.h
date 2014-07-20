@@ -141,6 +141,18 @@ typedef NS_ENUM (NSInteger, UIViewAlignPosition) {
 - (void)setShadowX:(CGFloat)x y:(CGFloat)y color:(UIColor *)color opacity:(float)opacity radius:(CGFloat)radius
            usePath:(BOOL)usePath;
 
+/**
+ *  对齐
+ *
+ *  @param position 对齐方位
+ *  @param offset   偏移量
+ */
 - (void)alignPostiion:(UIViewAlignPosition)position offset:(CGFloat)offset;
+
+- (void)alignPostiion:(UIViewAlignPosition)position offset:(CGFloat)offset
+             animated:(BOOL)animated;
+
+- (void)alignPostiion:(UIViewAlignPosition)position offset:(CGFloat)offset
+             animated:(BOOL)animated duration:(NSTimeInterval)duration;
 
 @end

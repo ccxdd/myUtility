@@ -13,10 +13,20 @@ typedef NS_ENUM (NSInteger, UIViewAlignPosition) {
     UIViewAlignPositionLeft,
     UIViewAlignPositionBottom,
     UIViewAlignPositionRight,
+    UIViewAlignPositionCenter,
+    UIViewAlignPositionHorizontalCenter,
+    UIViewAlignPositionVerticalCenter,
 };
 
 
 @interface UIView (DDView)
+
+@property (nonatomic, assign) CGFloat   x;
+@property (nonatomic, assign) CGFloat   y;
+@property (nonatomic, assign) CGFloat   width;
+@property (nonatomic, assign) CGFloat   height;
+@property (nonatomic, assign) CGPoint   origin;
+@property (nonatomic, assign) CGSize    size;
 
 /**
  *  返回Xib中首个View
@@ -45,25 +55,11 @@ typedef NS_ENUM (NSInteger, UIViewAlignPosition) {
 + (CGRect)commonFrameTop:(CGFloat)top left:(CGFloat)left bottom:(CGFloat)bottom right:(CGFloat)right;
 
 /**
- *  返回x1
- *
- *  @return CGFloat
- */
-- (CGFloat)x1;
-
-/**
  *  返回x2
  *
  *  @return CGFloat
  */
 - (CGFloat)x2;
-
-/**
- *  返回y1
- *
- *  @return CGFloat
- */
-- (CGFloat)y1;
 
 /**
  *  返回y2
@@ -86,25 +82,9 @@ typedef NS_ENUM (NSInteger, UIViewAlignPosition) {
  */
 - (CGFloat)midY;
 
-/**
- *  返回宽度
- *
- *  @return CGFloat
- */
-- (CGFloat)width;
-
-/**
- *  返回高度
- *
- *  @return CGFloat
- */
-- (CGFloat)height;
-
-- (void)setX:(CGFloat)x;
 - (void)setX:(CGFloat)x animated:(BOOL)animated;
 - (void)setX:(CGFloat)x animated:(BOOL)animated duration:(NSTimeInterval)duration;
 
-- (void)setY:(CGFloat)y;
 - (void)setY:(CGFloat)y animated:(BOOL)animated;
 - (void)setY:(CGFloat)y animated:(BOOL)animated duration:(NSTimeInterval)duration;
 
@@ -112,11 +92,9 @@ typedef NS_ENUM (NSInteger, UIViewAlignPosition) {
 - (void)setX:(CGFloat)x y:(CGFloat)y animated:(BOOL)animated;
 - (void)setX:(CGFloat)x y:(CGFloat)y animated:(BOOL)animated duration:(NSTimeInterval)duration;
 
-- (void)setWidth:(CGFloat)width;
 - (void)setWidth:(CGFloat)width animated:(BOOL)animated;
 - (void)setWidth:(CGFloat)width animated:(BOOL)animated duration:(NSTimeInterval)duration;
 
-- (void)setHeight:(CGFloat)height;
 - (void)setHeight:(CGFloat)height animated:(BOOL)animated;
 - (void)setHeight:(CGFloat)height animated:(BOOL)animated duration:(NSTimeInterval)duration;
 

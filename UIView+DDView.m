@@ -45,7 +45,7 @@
     return frame;
 }
 
-- (CGFloat)x1
+- (CGFloat)x
 {
     return CGRectGetMinX(self.frame);
 }
@@ -55,7 +55,7 @@
     return CGRectGetMaxX(self.frame);
 }
 
-- (CGFloat)y1
+- (CGFloat)y
 {
     return CGRectGetMinY(self.frame);
 }
@@ -87,128 +87,148 @@
 
 - (void)setX:(CGFloat)x
 {
-    [self setFrame:CGRectMake(x, CGRectGetMinY(self.frame), CGRectGetWidth(self.frame), CGRectGetHeight(self.frame))
+    [self setFrame:CGRectMake(x, self.y, self.width, self.height)
           animated:NO
           duration:kDuation];
 }
 
 - (void)setX:(CGFloat)x animated:(BOOL)animated
 {
-    [self setFrame:CGRectMake(x, CGRectGetMinY(self.frame), CGRectGetWidth(self.frame), CGRectGetHeight(self.frame))
+    [self setFrame:CGRectMake(x, self.y, self.width, self.height)
           animated:animated
           duration:kDuation];
 }
 
 - (void)setX:(CGFloat)x animated:(BOOL)animated duration:(NSTimeInterval)duration
 {
-    [self setFrame:CGRectMake(x, CGRectGetMinY(self.frame), CGRectGetWidth(self.frame), CGRectGetHeight(self.frame))
+    [self setFrame:CGRectMake(x, self.y, self.width, self.height)
           animated:animated
           duration:duration];
 }
 
 - (void)setY:(CGFloat)y
 {
-    [self setFrame:CGRectMake(CGRectGetMinX(self.frame), y, CGRectGetWidth(self.frame), CGRectGetHeight(self.frame))
+    [self setFrame:CGRectMake(self.x, y, self.width, self.height)
           animated:NO
           duration:kDuation];
 }
 
 - (void)setY:(CGFloat)y animated:(BOOL)animated
 {
-    [self setFrame:CGRectMake(CGRectGetMinX(self.frame), y, CGRectGetWidth(self.frame), CGRectGetHeight(self.frame))
+    [self setFrame:CGRectMake(self.x, y, self.width, self.height)
           animated:animated
           duration:kDuation];
 }
 
 - (void)setY:(CGFloat)y animated:(BOOL)animated duration:(NSTimeInterval)duration
 {
-    [self setFrame:CGRectMake(CGRectGetMinX(self.frame), y, CGRectGetWidth(self.frame), CGRectGetHeight(self.frame))
+    [self setFrame:CGRectMake(self.x, y, self.width, self.height)
           animated:animated
           duration:duration];
 }
 
 - (void)setX:(CGFloat)x y:(CGFloat)y;
 {
-    [self setFrame:CGRectMake(x, y, CGRectGetWidth(self.frame), CGRectGetHeight(self.frame))
+    [self setFrame:CGRectMake(x, y, self.width, self.height)
           animated:NO
           duration:kDuation];
 }
 
 - (void)setX:(CGFloat)x y:(CGFloat)y animated:(BOOL)animated
 {
-    [self setFrame:CGRectMake(x, y, CGRectGetWidth(self.frame), CGRectGetHeight(self.frame))
+    [self setFrame:CGRectMake(x, y, self.width, self.height)
           animated:animated
           duration:kDuation];
 }
 
 - (void)setX:(CGFloat)x y:(CGFloat)y animated:(BOOL)animated duration:(NSTimeInterval)duration
 {
-    [self setFrame:CGRectMake(x, y, CGRectGetWidth(self.frame), CGRectGetHeight(self.frame))
+    [self setFrame:CGRectMake(x, y, self.width, self.height)
           animated:animated
           duration:duration];
 }
 
 - (void)setWidth:(CGFloat)width
 {
-    [self setFrame:CGRectMake(CGRectGetMinX(self.frame), CGRectGetMinY(self.frame), width, CGRectGetHeight(self.frame))
+    [self setFrame:CGRectMake(self.x, self.y, width, self.height)
           animated:NO
           duration:kDuation];
 }
 
 - (void)setWidth:(CGFloat)width animated:(BOOL)animated
 {
-    [self setFrame:CGRectMake(CGRectGetMinX(self.frame), CGRectGetMinY(self.frame), width, CGRectGetHeight(self.frame))
+    [self setFrame:CGRectMake(self.x, self.y, width, self.height)
           animated:animated
           duration:kDuation];
 }
 
 - (void)setWidth:(CGFloat)width animated:(BOOL)animated duration:(NSTimeInterval)duration
 {
-    [self setFrame:CGRectMake(CGRectGetMinX(self.frame), CGRectGetMinY(self.frame), width, CGRectGetHeight(self.frame))
+    [self setFrame:CGRectMake(self.x, self.y, width, self.height)
           animated:animated
           duration:duration];
 }
 
 - (void)setHeight:(CGFloat)height
 {
-    [self setFrame:CGRectMake(CGRectGetMinX(self.frame), CGRectGetMinY(self.frame), CGRectGetWidth(self.frame), height)
+    [self setFrame:CGRectMake(self.x, self.y, self.width, height)
           animated:NO
           duration:kDuation];
 }
 
 - (void)setHeight:(CGFloat)height animated:(BOOL)animated
 {
-    [self setFrame:CGRectMake(CGRectGetMinX(self.frame), CGRectGetMinY(self.frame), CGRectGetWidth(self.frame), height)
+    [self setFrame:CGRectMake(self.x, self.y, self.width, height)
           animated:animated
           duration:kDuation];
 }
 
 - (void)setHeight:(CGFloat)height animated:(BOOL)animated duration:(NSTimeInterval)duration
 {
-    [self setFrame:CGRectMake(CGRectGetMinX(self.frame), CGRectGetMinY(self.frame), CGRectGetWidth(self.frame), height)
+    [self setFrame:CGRectMake(self.x, self.y, self.width, height)
           animated:animated
           duration:duration];
 }
 
 - (void)setWidth:(CGFloat)width height:(CGFloat)height
 {
-    [self setFrame:CGRectMake(CGRectGetMinX(self.frame), CGRectGetMinY(self.frame), width, height)
+    [self setFrame:CGRectMake(self.x, self.y, width, height)
           animated:NO
           duration:kDuation];
 }
 
 - (void)setWidth:(CGFloat)width height:(CGFloat)height animated:(BOOL)animated
 {
-    [self setFrame:CGRectMake(CGRectGetMinX(self.frame), CGRectGetMinY(self.frame), width, height)
+    [self setFrame:CGRectMake(self.x, self.y, width, height)
           animated:animated
           duration:kDuation];
 }
 
 - (void)setWidth:(CGFloat)width height:(CGFloat)height animated:(BOOL)animated duration:(NSTimeInterval)duration
 {
-    [self setFrame:CGRectMake(CGRectGetMinX(self.frame), CGRectGetMinY(self.frame), width, height)
+    [self setFrame:CGRectMake(self.x, self.y, width, height)
           animated:animated
           duration:duration];
+}
+
+- (CGSize)size
+{
+    return self.frame.size;
+}
+
+- (void)setSize:(CGSize)size
+{
+    [self setWidth:size.width height:size.height];
+}
+
+- (CGPoint)origin
+{
+    return self.origin;
+}
+
+- (void)setOrigin:(CGPoint)origin
+{
+    [self setX:origin.x y:origin.y];
 }
 
 - (void)setCornerRadius:(CGFloat)radius
@@ -262,25 +282,42 @@
 
 - (void)alignPostiion:(UIViewAlignPosition)position offset:(CGFloat)offset
 {
+    UIView *superView = [self superview];
+    
     switch (position) {
         case UIViewAlignPositionTop:
         {
-            [self setY:0 + offset];
+            self.y = 0 + offset;
         }
             break;
         case UIViewAlignPositionLeft:
         {
-            [self setX:0 + offset];
+            self.x = 0 + offset;
         }
             break;
         case UIViewAlignPositionBottom:
         {
-            [self setY:kSCREEN_HEIGHT - self.height + offset + kIOS67_VIEW_OFFSET];
+            self.y = superView.height - self.height + offset;
         }
             break;
         case UIViewAlignPositionRight:
         {
-            [self setX:kSCREEN_WIDTH - self.width + offset];
+            self.x = superView.width + self.width + offset;
+        }
+            break;
+        case UIViewAlignPositionVerticalCenter:
+        {
+            self.center = CGPointMake(self.x, superView.midY);
+        }
+            break;
+        case UIViewAlignPositionHorizontalCenter:
+        {
+            self.center = CGPointMake(self.y, superView.midX);
+        }
+            break;
+        case UIViewAlignPositionCenter:
+        {
+            self.center = superView.center;
         }
             break;
     }

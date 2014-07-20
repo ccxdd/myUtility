@@ -18,7 +18,9 @@
 
 - (id)toJSON;
 
-- (NSString *)addString:(NSString *)appendString;
+- (NSString *)addPrefix:(NSString *)string;
+
+- (NSString *)addSuffix:(NSString *)string;
 
 - (NSString *)filterToNumberString;
 

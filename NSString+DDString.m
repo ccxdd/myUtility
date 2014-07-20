@@ -38,9 +38,14 @@
     return nil;
 }
 
-- (NSString *)addString:(NSString *)appendString
+- (NSString *)addPrefix:(NSString *)string;
 {
-    return [NSString stringWithFormat:@"%@%@", self, appendString];
+    return [NSString stringWithFormat:@"%@%@", string, self];
+}
+
+- (NSString *)addSuffix:(NSString *)string
+{
+    return [NSString stringWithFormat:@"%@%@", self, string];
 }
 
 - (NSString *)filterToNumberString

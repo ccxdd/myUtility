@@ -88,10 +88,7 @@
     cellItem = [self itemAtIndexPath:indexPath sectionKey:self.sectionKey rowKey:nil];
     
     if (self.cellForRowAtIndexPath) {
-        self.cellForRowAtIndexPath(cell,
-                                   indexPath,
-                                   cellItem
-                                   );
+        self.cellForRowAtIndexPath(cell, indexPath, cellItem);
     }
     
     return cell;

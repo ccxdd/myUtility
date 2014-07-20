@@ -48,6 +48,6 @@
  */
 - (void)selectedRowsForArray:(NSArray *)array key:(NSString *)key targetKey:(NSString *)targetKey;
 
-- (void)setAllowsMultipleSelection:(BOOL)allowsMultipleSelection;
+- (void)multipleSelection:(BOOL)multipleSelection;
 
 @end

@@ -23,17 +23,17 @@
     }
 }
 
-#pragma mark - allowsMultipleSelection
+#pragma mark - multipleSelection
 
-- (void)setAllowsMultipleSelection:(BOOL)allowsMultipleSelection
+- (void)multipleSelection:(BOOL)multipleSelection
 {
-    self.allowsMultipleSelection = allowsMultipleSelection;
+    self.allowsMultipleSelection = multipleSelection;
     
     DDDataSource *ds = [self tableViewDS];
     
     if (ds) {
-        ds.isAllowEdit = allowsMultipleSelection;
-        self.editing = allowsMultipleSelection;
+        ds.isAllowEdit = multipleSelection;
+        self.editing = multipleSelection;
     }
 }
 

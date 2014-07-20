@@ -174,7 +174,7 @@ static NSNumber *superViewProperty;
             if (fieldPoint.y + self.height + 30 > kSCREEN_HEIGHT) {
                 y -= 30;
             }
-            [fullView setY:fullView.y1 - y animated:YES duration:0.5];
+            [fullView setY:fullView.y - y animated:YES duration:0.5];
         }
         else if (fieldPoint.y < 84) {
             UIView *fullView = [self superFullScreenView:textField];
@@ -182,7 +182,7 @@ static NSNumber *superViewProperty;
                 superViewProperty = @(fullView.frame.origin.y);
             }
             y = fieldPoint.y - 84;
-            [fullView setY:fullView.y1 - y animated:YES duration:0.5];
+            [fullView setY:fullView.y - y animated:YES duration:0.5];
         }
     }
     

@@ -1,16 +1,14 @@
 //
-//  NSDictionary+JSONString.m
+//  NSDictionary+DDictionary.m
 //  Trafish
 //
 //  Created by ccxdd on 13-11-23.
 //  Copyright (c) 2013年 ccxdd. All rights reserved.
 //
 
-#import "NSDictionary+JSONString.h"
+#import "NSDictionary+DDictionary.h"
 
-@implementation NSDictionary (JSONString)
-
-#pragma mark ------------JSONString---------------
+@implementation NSDictionary (DDictionary)
 
 - (NSString *)JSONString
 {
@@ -32,7 +30,7 @@
     return [[self JSONString] dataUsingEncoding:NSUTF8StringEncoding];
 }
 
-- (instancetype)filterWithKeys:(NSArray *)keys non:(BOOL)non
+- (instancetype)filterKeys:(NSArray *)keys non:(BOOL)non
 {
     NSMutableDictionary *dict;
     

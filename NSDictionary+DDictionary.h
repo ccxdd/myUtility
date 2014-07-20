@@ -1,5 +1,5 @@
 //
-//  NSDictionary+JSONString.h
+//  NSDictionary+DDictionary.h
 //  Trafish
 //
 //  Created by ccxdd on 13-11-23.
@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface NSDictionary (JSONString)
+@interface NSDictionary (DDictionary)
 
 - (NSString *)JSONString;
 
@@ -18,10 +18,10 @@
  *  过滤字典数据
  *
  *  @param keys 键
- *  @param non  非
+ *  @param non  是否取反
  *
  *  @return 字典
  */
-- (instancetype)filterWithKeys:(NSArray *)keys non:(BOOL)non;
+- (instancetype)filterKeys:(NSArray *)keys non:(BOOL)non;
 
 @end

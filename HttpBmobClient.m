@@ -43,7 +43,7 @@
             
             if ([array count] > 0) {
                 for (BmobObject *obj in array) {
-                    [responseArrayM addObject:[self convertObject:obj className:obj.className]];
+                    [responseArrayM addObject:[self convertBmobObj:obj className:obj.className]];
                 }
                 
                 success(responseArrayM);
@@ -71,8 +71,8 @@
               success:(void(^)(id responseObject))success
 {
     BmobClassField *classField = [self classFields][className];
-    NSDictionary *normalFields = [parameters filterWithKeys:classField.fields non:NO];
-    NSDictionary *uploadFields = [parameters filterWithKeys:classField.uploadFields non:NO];
+    NSDictionary *normalFields = [parameters filterKeys:classField.fields non:NO];
+    NSDictionary *uploadFields = [parameters filterKeys:classField.uploadFields non:NO];
     DLogBlue(@"normalFields = %@", normalFields);
     BmobObject *object = [BmobObject objectWithoutDatatWithClassName:className objectId:normalFields[@"objectId"]];
     [object saveAllWithDictionary:normalFields];
@@ -152,7 +152,11 @@
 {
     BmobFile *fileObj;
     
-    if ([obj isKindOfClass:[NSString class]]) {
+    if (obj) {
+        resultBlock(nil);
+        return;
+    }
+    else if ([obj isKindOfClass:[NSString class]]) {
         fileObj = [[BmobFile alloc] initWithClassName:className
                                          withFilePath:obj];
     }
@@ -160,9 +164,6 @@
         fileObj = [[BmobFile alloc] initWithClassName:className
                                          withFileName:@"file"
                                          withFileData:obj];
-    } else {
-        resultBlock(nil);
-        return;
     }
     
     [fileObj saveInBackground:^(BOOL isSuccessful, NSError *error) {
@@ -177,29 +178,24 @@
     }];
 }
 
-+ (NSMutableDictionary *)convertObject:(BmobObject *)obj className:(NSString *)className
+#pragma mark - 转换BmobObject到NSDictionary -
+
++ (NSMutableDictionary *)convertBmobObj:(BmobObject *)BmobObj className:(NSString *)className
 {
-    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    NSMutableDictionary *mdict = [NSMutableDictionary dictionary];
+    BmobClassField *classField = [self classFields][className];
+
+    [classField.fields enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        [mdict setValue:[self getObjFromBmob:[BmobObj objectForKey:obj]]
+                 forKey:obj];
+    }];
     
-    dict[@"objectId"] = obj.objectId;
-    dict[@"createdAt"] = obj.createdAt;
-    dict[@"updatedAt"] = obj.updatedAt;
+    [classField.uploadFields enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        [mdict setValue:[self getObjFromBmob:[BmobObj objectForKey:obj]]
+                 forKey:obj];
+    }];
     
-    if ([className isEqualToString:tCategory]) {           //分类
-        
-        [dict setValue:[obj objectForKey:@"name"] forKey:@"name"];
-        [dict setValue:[obj objectForKey:@"sub"] forKey:@"sub"];
-        [dict setValue:[self getObjFromBmob:[obj objectForKey:@"imageFile"]]
-                forKey:@"imageFile"];;
-        
-    } else if ([className isEqualToString:tSubCategory]) { //子类
-        
-        [dict setValue:[obj objectForKey:@"name"] forKey:@"name"];
-        [dict setValue:[self getObjFromBmob:[obj objectForKey:@"imageFile"]]
-                forKey:@"imageFile"];
-    }
-    
-    return dict;
+    return mdict;
 }
 
 + (id)getObjFromBmob:(id)obj
@@ -208,7 +204,7 @@
         return [obj url];
     }
     
-    return nil;
+    return obj;
 }
 
 + (NSDictionary *)classFields

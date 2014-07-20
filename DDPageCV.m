@@ -52,6 +52,7 @@
     [_scrollView addGestureRecognizer:tapGes];
     
     _pageControl = [[UIPageControl alloc] initWithFrame:CGRectMake(0, frame.size.height-30, frame.size.width, 30)];
+    _pageControl.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     [self addSubview:_pageControl];
     //timer
     _timeInterval = 5;

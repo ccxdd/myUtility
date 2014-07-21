@@ -36,4 +36,8 @@
  */
 - (void)attribUnderLineText:(NSString *)text;
 
+- (void)textPrefix:(NSString *)string;
+
+- (void)textSuffix:(NSString *)string;
+
 @end

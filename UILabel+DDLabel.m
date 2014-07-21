@@ -71,4 +71,14 @@
     self.attributedText = attribString;
 }
 
+- (void)textPrefix:(NSString *)string
+{
+    self.text = [self.text addPrefix:string];
+}
+
+- (void)textSuffix:(NSString *)string
+{
+    self.text = [self.text addSuffix:string];
+}
+
 @end

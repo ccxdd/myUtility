@@ -38,4 +38,24 @@
  */
 - (void)setPropertyValues:(NSDictionary *)values;
 
+/**
+ *  验证VC中的输入项
+ *
+ *  @param completion 回调
+ */
+- (void)verifyInputField:(void(^)(BOOL result))completion;
+
+/**
+ *  验证View中的输入项
+ *
+ *  @param view       待验证的View
+ *  @param completion 回调
+ */
+- (void)verifyInputFieldFromView:(UIView *)view completion:(void(^)(BOOL result))completion;
+
+/**
+ *  清除内容
+ */
+- (void)clearPropertyText;
+
 @end

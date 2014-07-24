@@ -108,4 +108,64 @@
     }];
 }
 
+#pragma mark - 验证输入项
+
+/**
+ *  验证VC中的输入项
+ *
+ *  @param completion 回调
+ */
+- (void)verifyInputField:(void(^)(BOOL result))completion
+{
+    __block BOOL result = YES;
+    
+    [[self getPropertyObjects] enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        if ([obj isKindOfClass:[DDTextField class]]) {
+            if (![obj isValid]) {
+                result = NO;
+                *stop = YES;
+            }
+        }
+    }];
+    
+    completion(result);
+}
+
+/**
+ *  验证View中的输入项
+ *
+ *  @param view       待验证的View
+ *  @param completion 回调
+ */
+- (void)verifyInputFieldFromView:(UIView *)view completion:(void(^)(BOOL result))completion
+{
+    __block BOOL result = YES;
+    
+    [view.subviews enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        if ([obj isKindOfClass:[DDTextField class]]) {
+            if (![obj isValid]) {
+                result = NO;
+                *stop = YES;
+            }
+        }
+    }];
+    
+    completion(result);
+}
+
+/**
+ *  清除内容
+ */
+- (void)clearPropertyText
+{
+    [[self getPropertyObjects] enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        if ([obj isKindOfClass:[UILabel class]] ||
+            [obj isKindOfClass:[UITextField class]] ||
+            [obj isKindOfClass:[UITextView class]])
+        {
+            [obj setText:@""];
+        }
+    }];
+}
+
 @end

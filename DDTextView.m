@@ -16,19 +16,30 @@
 
 @implementation DDTextView
 
+- (void)awakeFromNib
+{
+    [self setupTextView];
+}
+
+- (void)setupTextView
+{
+    self.placeholderLabel = [[UILabel alloc] initWithFrame:CGRectMake(5, 5, self.frame.size.width, 20)];
+    self.placeholderLabel.font = self.font;
+    self.placeholderLabel.backgroundColor = [UIColor clearColor];
+    self.placeholderLabel.textColor = [UIColor colorWithWhite:.7 alpha:1];
+    self.placeholderLabel.text = self.placeholder;
+    self.delegate = self;
+    [self addSubview:self.placeholderLabel];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textViewDidDidChange:) name:UITextViewTextDidChangeNotification object:self];
+}
+
 - (id)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
     if (self) {
         // Initialization code
-        self.placeholderLabel = [[UILabel alloc] initWithFrame:CGRectMake(5, 5, self.frame.size.width, 20)];
-        self.placeholderLabel.font = self.font;
-        self.placeholderLabel.backgroundColor = [UIColor clearColor];
-        self.placeholderLabel.textColor = [UIColor colorWithWhite:.7 alpha:1];
-        self.delegate = self;
-        [self addSubview:self.placeholderLabel];
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textViewDidDidChange:) name:UITextViewTextDidChangeNotification object:self];
+        [self setupTextView];
     }
     return self;
 }

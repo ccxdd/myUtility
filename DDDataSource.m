@@ -90,8 +90,12 @@
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
+        id item = [self itemAtIndexPath:indexPath sectionKey:self.sectionKey rowKey:nil];
         [self.tableData removeObjectAtIndex:indexPath.row];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+        if (self.deleteRowAtIndexPath) {
+            self.deleteRowAtIndexPath(indexPath, item);
+        }
     }
 }
 
@@ -174,8 +178,11 @@
     if (self.editingStyleForRowAtIndexPath) {
         return self.editingStyleForRowAtIndexPath(indexPath);
     }
+    else if (self.isAllowEdit && tableView.allowsMultipleSelection) {
+        return UITableViewCellEditingStyleDelete|UITableViewCellEditingStyleInsert;
+    }
     
-    return UITableViewCellEditingStyleDelete|UITableViewCellEditingStyleInsert;
+    return UITableViewCellEditingStyleDelete;
 }
 
 - (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView

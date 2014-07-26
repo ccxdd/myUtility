@@ -27,8 +27,9 @@
 @property (nonatomic, copy) CGFloat   (^heightForFooterInSection)(NSInteger section);
 @property (nonatomic, copy) UIView*   (^viewForHeaderInSection)(NSInteger section);
 @property (nonatomic, copy) UIView*   (^viewForFooterInSection)(NSInteger section);
-//edit
+//edit, delete
 @property (nonatomic, copy) UITableViewCellEditingStyle (^editingStyleForRowAtIndexPath)(NSIndexPath *indexPath);
+@property (nonatomic, copy) void      (^deleteRowAtIndexPath)(NSIndexPath *indexPath, id item);
 //cellForRow, didSelect
 @property (nonatomic, copy) void      (^cellForRowAtIndexPath)(id cell, NSIndexPath *indexPath, id item);
 @property (nonatomic, copy) void      (^didSelectRowAtIndexPath)(NSIndexPath *indexPath, id item);

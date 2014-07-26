@@ -112,7 +112,7 @@
     }];
 }
 
-#pragma mark - 验证输入项
+#pragma mark - 验证输入项 -
 
 /**
  *  验证VC中的输入项
@@ -168,6 +168,15 @@
             [obj isKindOfClass:[UITextView class]])
         {
             [obj setText:@""];
+        }
+    }];
+}
+
+- (void)batchFindObject:(Class)objClass inArray:(NSArray *)arr completion:(void(^)(id arrObj))completion
+{
+    [arr enumerateObjectsUsingBlock:^(id arrObj, NSUInteger idx, BOOL *stop) {
+        if ([arrObj isKindOfClass:objClass]) {
+            completion(arrObj);
         }
     }];
 }

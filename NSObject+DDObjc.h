@@ -58,4 +58,6 @@
  */
 - (void)clearPropertyText;
 
+- (void)batchFindObject:(Class)objClass inArray:(NSArray *)arr completion:(void(^)(id arrObj))completion;
+
 @end

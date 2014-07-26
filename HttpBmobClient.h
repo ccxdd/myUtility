@@ -20,6 +20,10 @@
            parameters:(NSDictionary *)parameters
               success:(void(^)(id responseObject))success;
 
++ (void)deleteObjectId:(NSString *)objectId
+             className:(NSString *)className
+               success:(void(^)(id responseObject))success;
+
 + (void)uploadDataArray:(NSArray *)dataArr
               className:(NSString *)className
             resultBlock:(void(^)(NSMutableArray *urlArr))resultBlock;

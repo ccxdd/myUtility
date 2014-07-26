@@ -62,6 +62,7 @@
                    success:(void(^)(id responseObject))success
 {
     BmobQuery *query = [BmobQuery queryWithClassName:className];
+    [query whereKey:@"delete" notEqualTo:@"1"];
     [query orderByAscending:@"createdAt"];
     [self query:query findWithSuccess:success];
 }
@@ -99,6 +100,21 @@
         }
     }];
     
+}
+
++ (void)deleteObjectId:(NSString *)objectId
+             className:(NSString *)className
+               success:(void(^)(id responseObject))success
+{
+    BmobObject *obj = [BmobObject objectWithoutDatatWithClassName:className objectId:objectId];
+    [obj setObject:@"1" forKey:@"delete"];
+    [obj updateInBackgroundWithResultBlock:^(BOOL isSuccessful, NSError *error) {
+        if (isSuccessful) {
+            success(@YES);
+        } else {
+            [self errorHandle:error];
+        }
+    }];
 }
 
 + (void)uploadFields:(NSDictionary *)fields
@@ -235,10 +251,6 @@
                                                                   @"tags",
                                                                   @"images"]
                                                    uploadFields:nil];
-        
-        //        classFields[tProductImage] = [BmobClassField classWithFields:@[@"objectId",
-        //                                                                       @"describe"]
-        //                                                        uploadFields:@[@"imageFile"]];
     });
     
     return classFields;

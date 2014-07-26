@@ -26,4 +26,10 @@
 
 - (void)toPasteboard;
 
+- (BOOL)inArray:(NSArray *)arr;
+
+- (void)inArray:(NSArray *)arr
+            key:(NSString *)key
+     completion:(void(^)(NSInteger index))completion;
+
 @end

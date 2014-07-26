@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 
 typedef NS_ENUM(NSInteger, DDPageType) {
+    DDPage_Type_None,
     DDPage_Type_UIImage,
     DDPage_Type_UIImageData,
     DDPage_Type_ImageName,
@@ -17,6 +18,7 @@ typedef NS_ENUM(NSInteger, DDPageType) {
 
 @interface DDPageCV : UIView
 
+@property (nonatomic, strong) NSArray        *imageData;
 @property (nonatomic, assign) BOOL           showPageControl;
 @property (nonatomic, assign) BOOL           isCircle;
 @property (nonatomic, assign) NSTimeInterval timeInterval;
@@ -26,5 +28,7 @@ typedef NS_ENUM(NSInteger, DDPageType) {
 @property (nonatomic, copy) void(^pageControlViewBlock)(NSInteger page, id item);
 
 - (void)setImageData:(NSArray *)imageData type:(DDPageType)type key:(NSString *)key;
+
+- (DDPageType)getPageTypeFrom:(NSArray *)imageData;
 
 @end

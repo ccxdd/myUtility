@@ -10,7 +10,6 @@
 
 @interface DDPageCV () <UIScrollViewDelegate>
 
-@property (nonatomic, strong) NSArray       *imageData;
 @property (nonatomic, strong) UIScrollView  *scrollView;
 @property (nonatomic, strong) UIPageControl *pageControl;
 @property (nonatomic, strong) NSTimer       *timer;
@@ -61,14 +60,46 @@
     _isCircle = YES;
 }
 
+- (DDPageType)getPageTypeFrom:(NSArray *)imageData
+{
+    if (![imageData count]) {
+        return DDPage_Type_None;
+    }
+    
+    id obj = [imageData firstObject];
+    
+    if ([obj isKindOfClass:[UIImage class]]) {
+        return DDPage_Type_UIImage;
+    }
+    else if ([obj isKindOfClass:[NSData class]]) {
+        return DDPage_Type_UIImageData;
+    }
+    else if ([obj isKindOfClass:[NSString class]]) {
+        if ([obj hasPrefix:@"http://"]) {
+            return DDPage_Type_URL;
+        } else {
+            return DDPage_Type_ImageName;
+        }
+    }
+    
+    return DDPage_Type_None;
+}
+
+- (void)setImageData:(NSArray *)imageData
+{
+    [self setImageData:imageData
+                  type:[self getPageTypeFrom:imageData]
+                   key:self.imageNameKey];
+}
+
 - (void)setImageData:(NSArray *)imageData type:(DDPageType)type key:(NSString *)key
 {
-    if ([imageData count] < 1) {
-        DLog(@"DDPageCV imageData Error!");
+    if ([imageData count] < 1 || type == DDPage_Type_None) {
+        DLog(@"DDPageCV imageData none!");
         return;
     }
     
-    self.imageData = imageData;
+    _imageData = imageData;
     self.imageNameKey = key;
     self.type = type;
     
@@ -116,9 +147,11 @@
                           placeholderImage:[UIImage imageNamed:self.placeholderName]];
             }
                 break;
+            default:
+                break;
         }
-
-        imageView.contentMode = UIViewContentModeScaleAspectFill;
+        
+        imageView.contentMode = UIViewContentModeScaleAspectFit;
         [_scrollView addSubview:imageView];
     }
     

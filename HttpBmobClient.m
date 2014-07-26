@@ -74,13 +74,13 @@
     NSDictionary *normalFields = [parameters filterKeys:classField.fields non:NO];
     NSDictionary *uploadFields = [parameters filterKeys:classField.uploadFields non:NO];
     DLogBlue(@"normalFields = %@", normalFields);
-    BmobObject *object = [BmobObject objectWithoutDatatWithClassName:className objectId:normalFields[@"objectId"]];
+    BmobObject *object = [BmobObject objectWithoutDatatWithClassName:className objectId:parameters[@"objectId"]];
     [object saveAllWithDictionary:normalFields];
     
     [self uploadFields:uploadFields className:tCategory resultBlock:^(NSDictionary *files){
         DLogBlue(@"files = %@", files);
         [object saveAllWithDictionary:files];
-        if (normalFields[@"objectId"]) {
+        if (parameters[@"objectId"]) {
             [object updateInBackgroundWithResultBlock:^(BOOL isSuccessful, NSError *error) {
                 if (isSuccessful) {
                     success(object);
@@ -130,17 +130,23 @@
     if ([dataArr count]) {
         __block NSMutableArray *urlArr = [NSMutableArray array];
         __block NSInteger count = 0;
-        [dataArr enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-            [self uploadPathOrData:obj className:className resultBlock:^(BmobFile *fileObj) {
-                count++;
-                if (fileObj) {
-                    [urlArr addObject:fileObj.url];
-                }
-                if (count == [dataArr count]) {
-                    resultBlock(urlArr);
-                }
+        
+        if ([[dataArr firstObject] isKindOfClass:[NSString class]] && [[dataArr firstObject] hasPrefix:@"http://"]) {
+            resultBlock([NSMutableArray arrayWithArray:dataArr]);
+        } else {
+            [dataArr enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+                [self uploadPathOrData:obj className:className resultBlock:^(BmobFile *fileObj) {
+                    count++;
+                    if (fileObj) {
+                        [urlArr addObject:fileObj.url];
+                    }
+                    if (count == [dataArr count]) {
+                        resultBlock(urlArr);
+                    }
+                }];
             }];
-        }];
+        }
+        
     } else {
         resultBlock(nil);
     }
@@ -152,11 +158,7 @@
 {
     BmobFile *fileObj;
     
-    if (obj) {
-        resultBlock(nil);
-        return;
-    }
-    else if ([obj isKindOfClass:[NSString class]]) {
+    if ([obj isKindOfClass:[NSString class]]) {
         fileObj = [[BmobFile alloc] initWithClassName:className
                                          withFilePath:obj];
     }
@@ -182,9 +184,10 @@
 
 + (NSMutableDictionary *)convertBmobObj:(BmobObject *)BmobObj className:(NSString *)className
 {
-    NSMutableDictionary *mdict = [NSMutableDictionary dictionary];
+    __block NSMutableDictionary *mdict = [NSMutableDictionary dictionary];
     BmobClassField *classField = [self classFields][className];
-
+    [mdict setValue:BmobObj.objectId forKey:@"objectId"];
+    
     [classField.fields enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         [mdict setValue:[self getObjFromBmob:[BmobObj objectForKey:obj]]
                  forKey:obj];
@@ -214,20 +217,21 @@
     dispatch_once(&pred, ^{
         classFields = [NSMutableDictionary dictionary];
         
-        classFields[tCategory] = [BmobClassField classWithFields:@[@"objectId", @"name", @"sub"]
+        classFields[tCategory] = [BmobClassField classWithFields:@[@"name", @"sub"]
                                                     uploadFields:@[@"imageFile"]];
         
-        classFields[tSubCategory] = [BmobClassField classWithFields:@[@"objectId", @"name"]
+        classFields[tSubCategory] = [BmobClassField classWithFields:@[@"name"]
                                                        uploadFields:@[@"imageFile"]];
         
-        classFields[tProduct] = [BmobClassField classWithFields:@[@"objectId",
-                                                                  @"name",
+        classFields[tProduct] = [BmobClassField classWithFields:@[@"name",
                                                                   @"describe",
                                                                   @"price",
                                                                   @"discount",
                                                                   @"stock",
                                                                   @"weight",
                                                                   @"saleDate",
+                                                                  @"mode",
+                                                                  @"madeIn",
                                                                   @"tags",
                                                                   @"images"]
                                                    uploadFields:nil];

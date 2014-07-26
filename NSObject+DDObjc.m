@@ -85,6 +85,10 @@
  */
 - (void)setPropertyValues:(NSDictionary *)propertyObjects
 {
+    if (![propertyObjects isKindOfClass:[NSDictionary class]] || ![propertyObjects count]) {
+        return;
+    }
+    
     NSMutableDictionary *uiClassDict = self.getPropertyObjects;
     NSMutableDictionary *objcClassDict = [NSMutableDictionary dictionaryWithDictionary:propertyObjects];
     

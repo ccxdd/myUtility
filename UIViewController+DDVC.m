@@ -198,7 +198,7 @@ const char leftHandlerKey, rightHandleKey;
     }
 }
 
-- (void)pushToVC:(UIViewController *)vc
+- (void)pushVC:(UIViewController *)vc
 {
     [self.navigationController pushViewController:vc animated:YES];
 }

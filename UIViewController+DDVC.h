@@ -38,7 +38,7 @@
 
 - (void)popToRootVC;
 
-- (void)pushToVC:(UIViewController *)vc;
+- (void)pushVC:(UIViewController *)vc;
 
 /**
  *  是否存在pop栈中

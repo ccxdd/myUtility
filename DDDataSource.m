@@ -10,7 +10,6 @@
 
 @interface DDDataSource ()
 
-@property (strong, nonatomic) NSMutableDictionary        *registerCellDict;
 @property (nonatomic, copy  ) NSString                   *cellIdentifier;
 
 @end
@@ -24,7 +23,6 @@
     self = [super init];
     
     if (self) {
-        self.registerCellDict   = [NSMutableDictionary dictionary];
         self.tableData          = [NSMutableArray arrayWithArray:tableData];
         self.cellIdentifier     = cellIdentifier;
         self.cellForRowAtIndexPath = cellForRowAtIndexPath;
@@ -37,17 +35,6 @@
 - (void)setTableData:(NSMutableArray *)tableData
 {
     _tableData = [NSMutableArray arrayWithArray:tableData];
-}
-
-#pragma mark - registerTableViewCell:key
-
-- (void)registerCellWithClassName:(NSString *)className
-{
-    if (className) {
-        self.registerCellDict[className] = NSClassFromString(className);
-    } else {
-        DLog(@"registerTableViewCell Error!");
-    }
 }
 
 #pragma mark - TableView DataSource && Delegate
@@ -75,14 +62,20 @@
     UITableViewCell *cell;
     id cellItem;
     
-    if (self.registerCellDict.count == 0) {
-        cell = [tableView dequeueReusableCellWithIdentifier:self.cellIdentifier forIndexPath:indexPath];
-    } else if (self.classNameForIndexPath) {
-        NSString *className = self.classNameForIndexPath(indexPath);
-        Class cellClass = NSClassFromString(className);
-        cell = [[cellClass alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:self.cellIdentifier];
-    } else {
-        DLog(@"Error Cell !");
+    @try {
+        if (!self.cellForIndexPath) {
+            cell = [tableView dequeueReusableCellWithIdentifier:self.cellIdentifier forIndexPath:indexPath];
+        } else {
+            cell = [tableView dequeueReusableCellWithIdentifier:self.cellIdentifier];
+            if (!cell) {
+                cell = self.cellForIndexPath(indexPath);
+            }
+        }
+    }
+    @catch (NSException *exception) {
+        DLog(@"\n exception:%@", NSStringFromSelector(_cmd));
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault
+                                      reuseIdentifier:self.cellIdentifier];
     }
     
     cellItem = [self itemAtIndexPath:indexPath sectionKey:self.sectionKey rowKey:nil];
@@ -183,6 +176,15 @@
     }
     
     return UITableViewCellEditingStyleDelete|UITableViewCellEditingStyleInsert;
+}
+
+- (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView
+{
+    if (self.sectionIndexTitlesForTableView) {
+        return self.sectionIndexTitlesForTableView();
+    }
+    
+    return nil;
 }
 
 - (id)itemAtIndexPath:(NSIndexPath *)indexPath sectionKey:(NSString *)sectionKey rowKey:(NSString *)rowKey

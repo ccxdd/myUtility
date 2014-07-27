@@ -233,10 +233,10 @@
     dispatch_once(&pred, ^{
         classFields = [NSMutableDictionary dictionary];
         
-        classFields[tCategory] = [BmobClassField classWithFields:@[@"name", @"sub"]
+        classFields[tCategory] = [BmobClassField classWithFields:@[@"name", @"subList"]
                                                     uploadFields:@[@"imageFile"]];
         
-        classFields[tSubCategory] = [BmobClassField classWithFields:@[@"name"]
+        classFields[tSubCategory] = [BmobClassField classWithFields:@[@"name", @"productList"]
                                                        uploadFields:@[@"imageFile"]];
         
         classFields[tProduct] = [BmobClassField classWithFields:@[@"name",

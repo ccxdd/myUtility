@@ -26,6 +26,11 @@
     [self configPageCV:self.frame];
 }
 
+- (void)dealloc
+{
+    self.startup = NO;
+}
+
 - (id)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];

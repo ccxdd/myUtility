@@ -17,16 +17,16 @@
 
 @property (nonatomic, copy) UITableViewCell* (^cellForIndexPath)(NSIndexPath *indexPath);
 //number
-@property (nonatomic, copy) NSInteger (^numberOfSectionsInTableView)(void);
-@property (nonatomic, copy) NSInteger (^numberOfRowsInSection)(NSInteger section);
+@property (nonatomic, copy) NSInteger (^numberOfSectionsInTableView)(NSMutableArray *tableData);
+@property (nonatomic, copy) NSInteger (^numberOfRowsInSection)(NSInteger section, id item);
 @property (nonatomic, copy) NSArray*  (^sectionIndexTitlesForTableView)(void);
 //header, footer
-@property (nonatomic, copy) NSString* (^titleForHeaderInSection)(NSInteger section);
-@property (nonatomic, copy) NSString* (^titleForFooterInSection)(NSInteger section);
-@property (nonatomic, copy) CGFloat   (^heightForHeaderInSection)(NSInteger section);
-@property (nonatomic, copy) CGFloat   (^heightForFooterInSection)(NSInteger section);
-@property (nonatomic, copy) UIView*   (^viewForHeaderInSection)(NSInteger section);
-@property (nonatomic, copy) UIView*   (^viewForFooterInSection)(NSInteger section);
+@property (nonatomic, copy) NSString* (^titleForHeaderInSection)(NSInteger section, id item);
+@property (nonatomic, copy) NSString* (^titleForFooterInSection)(NSInteger section, id item);
+@property (nonatomic, copy) CGFloat   (^heightForHeaderInSection)(NSInteger section, id item);
+@property (nonatomic, copy) CGFloat   (^heightForFooterInSection)(NSInteger section, id item);
+@property (nonatomic, copy) UIView*   (^viewForHeaderInSection)(NSInteger section, id item);
+@property (nonatomic, copy) UIView*   (^viewForFooterInSection)(NSInteger section, id item);
 //edit, delete
 @property (nonatomic, copy) UITableViewCellEditingStyle (^editingStyleForRowAtIndexPath)(NSIndexPath *indexPath);
 @property (nonatomic, copy) void      (^deleteRowAtIndexPath)(NSIndexPath *indexPath, id item);

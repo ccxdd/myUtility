@@ -57,7 +57,7 @@
             [values addObject:[ds itemAtIndexPath:indexPath sectionKey:sectionKey rowKey:rowKey]];
         }
         
-        return values;
+        return [values count] ? values : nil;
     }
     
     return nil;

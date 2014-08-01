@@ -42,7 +42,7 @@
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     if (self.numberOfSectionsInTableView) {
-        return self.numberOfSectionsInTableView();
+        return self.numberOfSectionsInTableView(self.tableData);
     } else {
         return 1;
     }
@@ -51,7 +51,7 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     if (self.numberOfRowsInSection) {
-        return self.numberOfRowsInSection(section);
+        return self.numberOfRowsInSection(section, [self itemAtSection:section sectionKey:self.sectionKey]);
     } else {
         return [self.tableData count];
     }
@@ -107,7 +107,7 @@
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
     if (self.titleForHeaderInSection) {
-        return self.titleForHeaderInSection(section);
+        return self.titleForHeaderInSection(section, self.tableData[section]);
     } else {
         return nil;
     }
@@ -116,7 +116,7 @@
 - (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section
 {
     if (self.titleForFooterInSection) {
-        return self.titleForFooterInSection(section);
+        return self.titleForFooterInSection(section, self.tableData[section]);
     } else {
         return nil;
     }
@@ -125,7 +125,7 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section;
 {
     if (self.heightForHeaderInSection) {
-        return self.heightForHeaderInSection(section);
+        return self.heightForHeaderInSection(section, self.tableData[section]);
     } else {
         return 0;
     }
@@ -134,7 +134,7 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
 {
     if (self.heightForFooterInSection) {
-        return self.heightForFooterInSection(section);
+        return self.heightForFooterInSection(section, self.tableData[section]);
     } else {
         return 0;
     }
@@ -143,7 +143,7 @@
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
     if (self.viewForHeaderInSection) {
-        return self.viewForHeaderInSection(section);
+        return self.viewForHeaderInSection(section, self.tableData[section]);
     } else {
         return nil;
     }
@@ -152,7 +152,7 @@
 - (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
 {
     if (self.viewForFooterInSection) {
-        return self.viewForFooterInSection(section);
+        return self.viewForFooterInSection(section, self.tableData[section]);
     } else {
         return nil;
     }
@@ -177,8 +177,7 @@
 {
     if (self.editingStyleForRowAtIndexPath) {
         return self.editingStyleForRowAtIndexPath(indexPath);
-    }
-    else if (self.isAllowEdit && tableView.allowsMultipleSelection) {
+    } else if (self.isAllowEdit && tableView.allowsMultipleSelection) {
         return UITableViewCellEditingStyleDelete|UITableViewCellEditingStyleInsert;
     }
     
@@ -192,6 +191,27 @@
     }
     
     return nil;
+}
+
+- (id)itemAtSection:(NSInteger)section sectionKey:(NSString *)sectionKey
+{
+    id value;
+    
+    @try {
+        if (self.numberOfSectionsInTableView) {
+            if (sectionKey) {
+                value = self.tableData[section][sectionKey];
+            } else {
+                value = self.tableData[section];
+            }
+        }
+    }
+    @catch (NSException *exception) {
+        value = nil;
+        DLog(@"\n exception:%@", NSStringFromSelector(_cmd));
+    }
+    
+    return value;
 }
 
 - (id)itemAtIndexPath:(NSIndexPath *)indexPath sectionKey:(NSString *)sectionKey rowKey:(NSString *)rowKey

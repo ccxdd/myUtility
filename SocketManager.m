@@ -8,7 +8,7 @@
 
 #import "SocketManager.h"
 #import "GCDAsyncSocket.h"
-#import "NSDictionary+JSONString.h"
+#import "NSDictionary+DDictionary.h"
 
 @interface SocketManager () <GCDAsyncSocketDelegate>
 {

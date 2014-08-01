@@ -135,11 +135,11 @@ const NSInteger unionSize = 20;
 #pragma mark - Init
 - (void)commonInit {
   _columnCount = 2;
-  _minimumColumnSpacing = 10;
-  _minimumInteritemSpacing = 10;
+  _minimumColumnSpacing = 5;
+  _minimumInteritemSpacing = 5;
   _headerHeight = 0;
   _footerHeight = 0;
-  _sectionInset = UIEdgeInsetsZero;
+  _sectionInset = UIEdgeInsetsMake(5, 5, 5, 5);
 }
 
 - (id)init {

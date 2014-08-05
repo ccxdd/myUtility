@@ -213,6 +213,15 @@
           duration:duration];
 }
 
+- (void)setAlpha:(CGFloat)alpha duration:(NSTimeInterval)duration
+{
+    [UIView animateWithDuration:duration animations:^{
+        self.alpha = alpha;
+    } completion:^(BOOL finished) {
+        
+    }];
+}
+
 - (CGSize)size
 {
     return self.frame.size;

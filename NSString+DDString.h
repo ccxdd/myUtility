@@ -32,4 +32,16 @@
             key:(NSString *)key
      completion:(void(^)(NSInteger index))completion;
 
++ (NSString *)documentPath;
+
++ (NSString *)tempPath;
+
+- (BOOL)isExistFile;
+
+- (BOOL)deleteFile;
+
+- (NSString *)stringToIndex:(NSUInteger)to;
+
+- (NSString *)stringFromIndex:(NSUInteger)from;;
+
 @end

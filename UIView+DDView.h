@@ -102,6 +102,8 @@ typedef NS_ENUM (NSInteger, UIViewAlignPosition) {
 - (void)setWidth:(CGFloat)width height:(CGFloat)height animated:(BOOL)animated;
 - (void)setWidth:(CGFloat)width height:(CGFloat)height animated:(BOOL)animated duration:(NSTimeInterval)duration;
 
+- (void)setAlpha:(CGFloat)alpha duration:(NSTimeInterval)duration;
+
 - (void)setFrame:(CGRect)frame animated:(BOOL)animated duration:(NSTimeInterval)duration;
 
 /**

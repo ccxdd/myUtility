@@ -90,4 +90,48 @@
     }
 }
 
++ (NSString *)documentPath
+{
+    return NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
+}
+
++ (NSString *)tempPath
+{
+    return NSTemporaryDirectory();
+}
+
+- (BOOL)isExistFile
+{
+    BOOL isDir = NO;
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    BOOL existed = [fileManager fileExistsAtPath:self isDirectory:&isDir];
+    
+    return existed;
+}
+
+- (BOOL)deleteFile:(NSString *)fileName
+{
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    
+    return [fileManager removeItemAtPath:self error:nil];
+}
+
+- (NSString *)stringToIndex:(NSUInteger)to
+{
+    if (self.length > to) {
+        return [self substringToIndex:to];
+    } else {
+        return @"";
+    }
+}
+
+- (NSString *)stringFromIndex:(NSUInteger)from;
+{
+    if (self.length > from) {
+        return [self substringFromIndex:from];
+    } else {
+        return @"";
+    }
+}
+
 @end

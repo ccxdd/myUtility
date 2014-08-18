@@ -40,4 +40,9 @@
 
 - (void)textSuffix:(NSString *)string;
 
+/**
+ *  千位分隔:是否保留2位小数
+ */
+- (void)thousandSeparator:(BOOL)decimal;
+
 @end

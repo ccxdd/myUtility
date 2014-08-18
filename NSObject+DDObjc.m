@@ -93,9 +93,10 @@
     NSMutableDictionary *objcClassDict = [NSMutableDictionary dictionaryWithDictionary:propertyObjects];
     
     [uiClassDict enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-        if ([obj isKindOfClass:[UILabel class]] ||
-            [obj isKindOfClass:[UITextField class]] ||
-            [obj isKindOfClass:[UITextView class]])
+        if ([propertyObjects objectForKey:key] &&
+            ([obj isKindOfClass:[UILabel class]] ||
+             [obj isKindOfClass:[UITextField class]] ||
+             [obj isKindOfClass:[UITextView class]]))
         {
             [obj setText:[propertyObjects objectForKey:key]];
             [objcClassDict removeObjectForKey:key];

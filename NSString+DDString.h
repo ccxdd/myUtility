@@ -10,6 +10,10 @@
 
 @interface NSString (DDString)
 
++ (NSString *)versionString;
+
++ (NSString *)buildString;
+
 + (NSString *)fromInt:(NSInteger)intValue;
 
 - (NSURL *)toURL;
@@ -18,9 +22,17 @@
 
 - (id)toJSON;
 
+- (NSData *)toData;
+
 - (NSString *)addPrefix:(NSString *)string;
 
 - (NSString *)addSuffix:(NSString *)string;
+
+- (NSString *)delString:(NSString *)string;
+
+- (NSString *)insert:(NSString *)string index:(NSUInteger)index;
+
+- (NSString *)replaceFrom:(NSUInteger)from to:(NSUInteger)to with:(NSString *)string;
 
 - (NSString *)filterToNumberString;
 
@@ -42,6 +54,10 @@
 
 - (NSString *)stringToIndex:(NSUInteger)to;
 
-- (NSString *)stringFromIndex:(NSUInteger)from;;
+- (NSString *)stringFromIndex:(NSUInteger)from;
+
+- (NSString *)thousandSeparator:(BOOL)decimal;
+
+- (NSNumber *)toNSNumber;
 
 @end

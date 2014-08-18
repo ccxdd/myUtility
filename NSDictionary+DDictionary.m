@@ -22,7 +22,6 @@
         DLogError(@"dictionary to JSONString Error! error = %@", error);
         return nil;
     }
-
 }
 
 - (NSData *)JsonUTF8Data
@@ -45,6 +44,16 @@
     }
     
     return dict;
+}
+
+- (instancetype)valueToNSNumber
+{
+    NSMutableDictionary *mdict = [NSMutableDictionary dictionaryWithDictionary:self];
+    [self enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        [mdict setValue:@([[self objectForKey:key] doubleValue]) forKey:key];
+    }];
+    
+    return mdict;
 }
 
 @end

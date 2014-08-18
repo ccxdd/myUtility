@@ -27,6 +27,7 @@
         self.cellIdentifier     = cellIdentifier;
         self.cellForRowAtIndexPath = cellForRowAtIndexPath;
         self.isAllowEdit = NO;
+        _totalHeight = 0;
     }
     
     return self;
@@ -41,6 +42,8 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
+    _totalHeight = 0;
+    
     if (self.numberOfSectionsInTableView) {
         return self.numberOfSectionsInTableView(self.tableData);
     } else {
@@ -50,10 +53,19 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if (self.numberOfRowsInSection) {
-        return self.numberOfRowsInSection(section, [self itemAtSection:section sectionKey:self.sectionKey]);
-    } else {
-        return [self.tableData count];
+    @try {
+        if (self.numberOfRowsInSection) {
+            return self.numberOfRowsInSection(section, [self itemAtSection:section sectionKey:self.sectionKey]);
+        } else if (self.numberOfSectionsInTableView) {
+            NSArray *sectionArr = [self itemAtSection:section sectionKey:self.sectionKey];
+            return [sectionArr count];
+        } else {
+            return [self.tableData count];
+        }
+    }
+    @catch (NSException *exception) {
+        DLog(@"\n exception:%@", NSStringFromSelector(_cmd));
+        return 0;
     }
 }
 
@@ -78,9 +90,10 @@
                                       reuseIdentifier:self.cellIdentifier];
     }
     
-    cellItem = [self itemAtIndexPath:indexPath sectionKey:self.sectionKey rowKey:nil];
-    
-    if (self.cellForRowAtIndexPath) {
+    if (self.cellForRowAtCustom) {
+        self.cellForRowAtCustom(cell, indexPath);
+    } else if (self.cellForRowAtIndexPath) {
+        cellItem = [self itemAtIndexPath:indexPath sectionKey:self.sectionKey rowKey:nil];
         self.cellForRowAtIndexPath(cell, indexPath, cellItem);
     }
     
@@ -120,6 +133,21 @@
     } else {
         return nil;
     }
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    CGFloat rowHeight = 0;
+    
+    if (self.heightForRowAtIndexPath) {
+        rowHeight =  self.heightForRowAtIndexPath(indexPath);
+    } else {
+        rowHeight =  tableView.rowHeight;
+    }
+    
+    _totalHeight += rowHeight;
+    
+    return rowHeight;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section;
@@ -166,9 +194,10 @@
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
     }
     
-    cellItem = [self itemAtIndexPath:indexPath sectionKey:self.sectionKey rowKey:self.rowKey];
-    
-    if (self.didSelectRowAtIndexPath) {
+    if (self.didSelectRowAtCustom) {
+        self.didSelectRowAtCustom(indexPath);
+    } else if (self.didSelectRowAtIndexPath) {
+        cellItem = [self itemAtIndexPath:indexPath sectionKey:self.sectionKey rowKey:self.rowKey];
         self.didSelectRowAtIndexPath(indexPath, cellItem);
     }
 }

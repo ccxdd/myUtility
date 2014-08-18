@@ -12,19 +12,25 @@
 @interface BmobClassField : NSObject
 
 @property (nonatomic, strong) NSArray *fields;
+@property (nonatomic, strong) NSArray *numberFields;
 @property (nonatomic, strong) NSArray *uploadFields;
 
-+ (instancetype)classWithFields:(NSArray *)fields uploadFields:(NSArray *)uploadFields;
++ (instancetype)classWithFields:(NSArray *)fields
+                   numberFields:(NSArray *)numberFields
+                   uploadFields:(NSArray *)uploadFields;
 
 @end
 
 @implementation BmobClassField
 
-+ (instancetype)classWithFields:(NSArray *)fields uploadFields:(NSArray *)uploadFields
++ (instancetype)classWithFields:(NSArray *)fields
+                   numberFields:(NSArray *)numberFields
+                   uploadFields:(NSArray *)uploadFields
 {
     BmobClassField *classField = [super alloc];
     if (classField) {
         classField.fields = fields;
+        classField.numberFields = numberFields;
         classField.uploadFields = uploadFields;
     }
     return classField;
@@ -62,7 +68,7 @@
                    success:(void(^)(id responseObject))success
 {
     BmobQuery *query = [BmobQuery queryWithClassName:className];
-    [query whereKey:@"delete" notEqualTo:@"1"];
+    [query whereKey:@"hidden" notEqualTo:@"1"];
     [query orderByAscending:@"createdAt"];
     [self query:query findWithSuccess:success];
 }
@@ -73,10 +79,12 @@
 {
     BmobClassField *classField = [self classFields][className];
     NSDictionary *normalFields = [parameters filterKeys:classField.fields non:NO];
+    NSDictionary *numberFields = [parameters filterKeys:classField.numberFields non:NO];
     NSDictionary *uploadFields = [parameters filterKeys:classField.uploadFields non:NO];
     DLogBlue(@"normalFields = %@", normalFields);
     BmobObject *object = [BmobObject objectWithoutDatatWithClassName:className objectId:parameters[@"objectId"]];
     [object saveAllWithDictionary:normalFields];
+    [object saveAllWithDictionary:[numberFields valueToNSNumber]];
     
     [self uploadFields:uploadFields className:tCategory resultBlock:^(NSDictionary *files){
         DLogBlue(@"files = %@", files);
@@ -107,7 +115,7 @@
                success:(void(^)(id responseObject))success
 {
     BmobObject *obj = [BmobObject objectWithoutDatatWithClassName:className objectId:objectId];
-    [obj setObject:@"1" forKey:@"delete"];
+    [obj setObject:@"1" forKey:@"hidden"];
     [obj updateInBackgroundWithResultBlock:^(BOOL isSuccessful, NSError *error) {
         if (isSuccessful) {
             success(@YES);
@@ -209,6 +217,13 @@
                  forKey:obj];
     }];
     
+    [classField.numberFields enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        NSNumber *num = [BmobObj objectForKey:obj];
+        if ([num isKindOfClass:[NSNumber class]]) {
+            [mdict setValue:[num stringValue] forKey:obj];
+        }
+    }];
+    
     [classField.uploadFields enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         [mdict setValue:[self getObjFromBmob:[BmobObj objectForKey:obj]]
                  forKey:obj];
@@ -234,22 +249,24 @@
         classFields = [NSMutableDictionary dictionary];
         
         classFields[tCategory] = [BmobClassField classWithFields:@[@"name", @"subList"]
+                                                    numberFields:nil
                                                     uploadFields:@[@"imageFile"]];
         
         classFields[tSubCategory] = [BmobClassField classWithFields:@[@"name", @"productList"]
+                                                       numberFields:nil
                                                        uploadFields:@[@"imageFile"]];
         
         classFields[tProduct] = [BmobClassField classWithFields:@[@"name",
                                                                   @"describe",
-                                                                  @"price",
-                                                                  @"discount",
-                                                                  @"stock",
-                                                                  @"weight",
                                                                   @"saleDate",
                                                                   @"mode",
                                                                   @"madeIn",
                                                                   @"tags",
-                                                                  @"images"]
+                                                                  @"images",
+                                                                  @"weight"]
+                                                   numberFields:@[@"price",
+                                                                  @"discount",
+                                                                  @"stock"]
                                                    uploadFields:nil];
     });
     

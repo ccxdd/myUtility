@@ -10,6 +10,16 @@
 
 @implementation NSString (DDString)
 
++ (NSString *)versionString
+{
+    return [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+}
+
++ (NSString *)buildString
+{
+    return [[[NSBundle mainBundle] infoDictionary] objectForKey:(NSString *)kCFBundleVersionKey];
+}
+
 + (NSString *)fromInt:(NSInteger)intValue
 {
     return [NSString stringWithFormat:@"%ld", (long)intValue];
@@ -23,6 +33,11 @@
 - (NSURLRequest *)toRequest
 {
     return [NSURLRequest requestWithURL:[self toURL]];
+}
+
+- (NSData *)toData
+{
+    return  [self dataUsingEncoding:NSUTF8StringEncoding];
 }
 
 - (id)toJSON
@@ -40,12 +55,24 @@
 
 - (NSString *)addPrefix:(NSString *)string;
 {
-    return [NSString stringWithFormat:@"%@%@", string, self];
+    if (self.length > 0) {
+        return [NSString stringWithFormat:@"%@%@", string, self];
+    }
+    
+    return @"";
 }
 
 - (NSString *)addSuffix:(NSString *)string
 {
-    return [NSString stringWithFormat:@"%@%@", self, string];
+    if (self.length > 0) {
+        return [NSString stringWithFormat:@"%@%@", self, string];
+    }
+    return @"";
+}
+
+- (NSString *)delString:(NSString *)string
+{
+    return [self stringByReplacingOccurrencesOfString:string withString:@""];
 }
 
 - (NSString *)filterToNumberString
@@ -109,7 +136,7 @@
     return existed;
 }
 
-- (BOOL)deleteFile:(NSString *)fileName
+- (BOOL)deleteFile
 {
     NSFileManager *fileManager = [NSFileManager defaultManager];
     
@@ -132,6 +159,42 @@
     } else {
         return @"";
     }
+}
+
+- (NSString *)insert:(NSString *)string index:(NSUInteger)index
+{
+    if (self.length > index) {
+        return [[[self stringToIndex:index] addSuffix:string] addSuffix:[self stringFromIndex:index]];
+    } else {
+        return @"";
+    }
+}
+
+- (NSString *)replaceFrom:(NSUInteger)from to:(NSUInteger)to with:(NSString *)string
+{
+    if (to > from && self.length > to ) {
+        NSString *sub = [self substringWithRange:NSMakeRange(from, to-from)];
+        return [self stringByReplacingOccurrencesOfString:sub withString:string];
+    } else {
+        return @"";
+    }
+}
+
+- (NSString *)thousandSeparator:(BOOL)decimal
+{
+    if (self.length > 3) {
+        NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
+        [numberFormatter setPositiveFormat:decimal?@"###,##0.00":@"###,###"];
+        NSString *formattedNumberString = [numberFormatter stringFromNumber:@([self doubleValue])];
+        return formattedNumberString;
+    } else {
+        return self;
+    }
+}
+
+- (NSNumber *)toNSNumber
+{
+    return @([self doubleValue]);
 }
 
 @end

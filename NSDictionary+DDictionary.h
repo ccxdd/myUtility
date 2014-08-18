@@ -24,4 +24,6 @@
  */
 - (instancetype)filterKeys:(NSArray *)keys non:(BOOL)non;
 
+- (instancetype)valueToNSNumber;
+
 @end

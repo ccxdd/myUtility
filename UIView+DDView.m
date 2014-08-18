@@ -363,4 +363,22 @@
     }
 }
 
+#pragma mark - line -
+
++ (void)lineWithRect:(CGRect)frame color:(UIColor *)color toView:(UIView *)view
+{
+    UIView *line = [[UIView alloc] initWithFrame:frame];
+    line.backgroundColor = color;
+    
+    [view addSubview:line];
+}
+
++ (UIView *)lineWithRect:(CGRect)frame color:(UIColor *)color
+{
+    UIView *line = [[UIView alloc] initWithFrame:frame];
+    line.backgroundColor = color;
+    
+    return line;
+}
+
 @end

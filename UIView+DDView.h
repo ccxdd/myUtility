@@ -157,4 +157,14 @@ typedef NS_ENUM (NSInteger, UIViewAlignPosition) {
 - (void)alignPostiion:(UIViewAlignPosition)position offset:(CGFloat)offset
              animated:(BOOL)animated duration:(NSTimeInterval)duration;
 
+/**
+ *  画线
+ */
++ (void)lineWithRect:(CGRect)frame color:(UIColor *)color toView:(UIView *)view;
+
+/**
+ *  画线
+ */
++ (UIView *)lineWithRect:(CGRect)frame color:(UIColor *)color;
+
 @end

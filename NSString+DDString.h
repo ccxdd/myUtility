@@ -56,8 +56,49 @@
 
 - (NSString *)stringFromIndex:(NSUInteger)from;
 
+/**
+ *  千位分隔
+ *
+ *  @param decimal 是否保留2位小数
+ *
+ *  @return NSString
+ */
 - (NSString *)thousandSeparator:(BOOL)decimal;
 
 - (NSNumber *)toNSNumber;
+
+- (NSString *)yyyymmdd;
+
+- (NSString *)yyyymmdd:(NSString *)separator;
+
+- (NSString *)dateFormat:(NSString *)formatter;
+
+- (BOOL)isNumberic;
+
+- (BOOL)isInteger;
+
+- (BOOL)isDouble;
+
+- (BOOL)isFloat;
+
+- (NSString *)encryptUseSHA1;
+
++ (NSString *)currentDateTime:(NSInteger)timeType;
+
++ (NSString *)currentTime:(NSInteger)timeType;
+
++ (NSString *)currentDate;
+
++ (NSString *)dateFromTimestamp;
+
++ (NSString *)dateFromTimestampInterval:(NSTimeInterval)interval;
+
++ (NSString *)dateFrom13lenTimestamp;
+
+- (BOOL)isValidMobile;
+
+- (BOOL)isValidEmail;
+
++ (NSString *)generateRandomOfNum:(NSInteger)num;
 
 @end

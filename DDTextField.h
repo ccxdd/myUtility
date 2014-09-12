@@ -28,6 +28,7 @@ typedef NS_ENUM(NSInteger ,DDTextField_TYPE) {
 @property (nonatomic, assign          ) DDTextField_TYPE fieldType;     //输入框类型
 @property (nonatomic, copy            ) NSString         *textValue;
 @property (nonatomic, strong          ) UIImage          *activeBackgroundImage;
+@property (nonatomic, assign)           CGFloat          keyboardOffset;
 @property (nonatomic, copy) void(^didEndEditingBlock)(DDTextField *, BOOL);
 //
 @property (nonatomic, copy  ) NSString *keyName;

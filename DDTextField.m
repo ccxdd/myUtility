@@ -53,7 +53,6 @@ static NSNumber *superViewProperty;
                                                  name:UITextFieldTextDidBeginEditingNotification object:self];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textFieldDidEndEditing:)
                                                  name:UITextFieldTextDidEndEditingNotification object:self];
-    
     self.hitMessage = self.placeholder;
     self.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
     
@@ -126,6 +125,7 @@ static NSNumber *superViewProperty;
 - (void)textFieldDidBeginEditing:(NSNotification *)notification
 {
     DDTextField *textField = (DDTextField*)[notification object];
+    UIView *fieldSuperView = [textField superview];
     
     [self setInputAccessoryView:self.toolbar];
     self.activeImageView.hidden = NO;
@@ -135,7 +135,7 @@ static NSNumber *superViewProperty;
     float keyboardHeight = 216 + 44 + 30;
     float space = kSCREEN_HEIGHT - keyboardHeight - textField.frame.size.height;
     
-    if ([[textField superview] isKindOfClass:[UIScrollView class]]) {
+    if ([fieldSuperView isKindOfClass:[UIScrollView class]]) {
         
         UIScrollView *scrollView = (UIScrollView *)[textField superview];
         float max_offset_y = scrollView.contentSize.height - scrollView.frame.size.height;
@@ -160,10 +160,9 @@ static NSNumber *superViewProperty;
                 [scrollView setContentOffset:CGPointMake(0, y)];
             }];
         }
-    } else if ([[textField superview] isKindOfClass:[UIView class]]) {
+    } else if ([fieldSuperView isKindOfClass:[UIView class]]) {
         
-        UIView *superView = [textField superview];
-        CGPoint fieldPoint = [superView convertPoint:textField.frame.origin toView:nil];
+        CGPoint fieldPoint = [textField convertPoint:textField.origin toView:nil];
         
         if (fieldPoint.y > space) {
             UIView *fullView = [self superFullScreenView:textField];
@@ -171,9 +170,9 @@ static NSNumber *superViewProperty;
                 superViewProperty = @(fullView.frame.origin.y);
             }
             y = fieldPoint.y - space;
-            if (fieldPoint.y + self.height + 30 > kSCREEN_HEIGHT) {
-                y -= 30;
-            }
+            //if (fieldPoint.y + self.height + self.keyboardOffset > kSCREEN_HEIGHT) {
+            y += self.keyboardOffset;
+            //}
             [fullView setY:fullView.y - y animated:YES duration:0.5];
         }
         else if (fieldPoint.y < 84) {

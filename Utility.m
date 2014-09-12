@@ -697,8 +697,6 @@ static NSMutableDictionary *executeBlockDict;
         [df setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
     } else if (timeType == 12) {
         [df setDateFormat:@"yyyy-MM-dd hh:mm:ss"];
-    } else {
-        [df setDateFormat:@"yyyy-MM-dd-hh-mm-SSS"];
     }
     NSString *str = [df stringFromDate:[NSDate date]];
     return str;
@@ -1006,7 +1004,7 @@ static NSMutableDictionary *executeBlockDict;
      10         * 中国移动：China Mobile
      11         * 134[0-8],135,136,137,138,139,150,151,157,158,159,182,187,188
      12         */
-    NSString * CM = @"^1(34[0-8]|(3[5-9]|5[017-9]|8[278])\\d)\\d{7}$";
+    NSString * CM = @"^1(34[0-8]|(3[5-9]|5[017-9]|8[2378])\\d)\\d{7}$";
     /**
      15         * 中国联通：China Unicom
      16         * 130,131,132,152,155,156,185,186
@@ -1504,19 +1502,9 @@ static CGRect oldframe;
 
 + (void)safeNavVC:(UINavigationController *)navVC pushToVC:(UIViewController *)vc animated:(BOOL)animated
 {
-    __block BOOL isPush = YES;
+    NSString *lastVCName = NSStringFromClass([[navVC.viewControllers lastObject] class]);
     
-    dispatch_sync(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        [navVC.viewControllers enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-            if ([obj isKindOfClass:[vc class]]) {
-                DLog(@"%@ already in push stack!!!", obj);
-                isPush = NO;
-                *stop = YES;
-            }
-        }];
-    });
-    
-    if (isPush) {
+    if (![lastVCName isEqualToString:NSStringFromClass([vc class])]) {
         [navVC pushViewController:vc animated:animated];
     }
 }
@@ -1543,20 +1531,18 @@ static CGRect oldframe;
 {
     __block NSInteger index = -1;
     
-    dispatch_sync(dispatch_get_global_queue(0, 0), ^{
-        [arrayObject enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-            if (key) {
-                NSString *objValue = [NSString stringWithFormat:@"%@", obj[key]];
-                if ([objValue isEqualToString:[NSString stringWithFormat:@"%@", value]]) {
-                    index = idx;
-                    *stop = YES;
-                }
-            } else if ([obj isEqualToString:value]) {
+    [arrayObject enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        if (key) {
+            NSString *objValue = [NSString stringWithFormat:@"%@", obj[key]];
+            if ([objValue isEqualToString:[NSString stringWithFormat:@"%@", value]]) {
                 index = idx;
                 *stop = YES;
             }
-        }];
-    });
+        } else if ([obj isEqualToString:value]) {
+            index = idx;
+            *stop = YES;
+        }
+    }];
     
     if (completeBlock) {
         completeBlock(index);
@@ -1640,7 +1626,7 @@ static CGRect oldframe;
     }
     
     if (pushVC && target) {
-        [[target navigationController] pushViewController:pushVC animated:YES];
+        [self safeNavVC:[target navigationController] pushToVC:pushVC animated:YES];
     }
 }
 

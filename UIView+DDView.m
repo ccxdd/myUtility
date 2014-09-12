@@ -31,6 +31,7 @@
     }
     @catch (NSException *exception) {
         NSLog(@"\n exception: %@ \n %@",NSStringFromSelector(_cmd), exception);
+        return nil;
     }
 }
 
@@ -45,9 +46,26 @@
     return frame;
 }
 
++ (UIImage *)screenCapture
+{
+    UIView *screenView = [UIApplication sharedApplication].keyWindow;
+    return [screenView captureView];
+}
+
++ (void)saveScreenToAlbum
+{
+    UIView *screenView = [UIApplication sharedApplication].keyWindow;
+    [screenView saveCaptureToAlbum];
+}
+
 #pragma mark - X, Y, Width, Height -
 
 - (CGFloat)x
+{
+    return CGRectGetMinX(self.frame);
+}
+
+- (CGFloat)x1
 {
     return CGRectGetMinX(self.frame);
 }
@@ -58,6 +76,11 @@
 }
 
 - (CGFloat)y
+{
+    return CGRectGetMinY(self.frame);
+}
+
+- (CGFloat)y1
 {
     return CGRectGetMinY(self.frame);
 }
@@ -234,7 +257,7 @@
 
 - (CGPoint)origin
 {
-    return self.origin;
+    return self.frame.origin;
 }
 
 - (void)setOrigin:(CGPoint)origin
@@ -302,12 +325,19 @@
              animated:(BOOL)animated duration:(NSTimeInterval)duration
 {
     UIView *superView = [self superview];
+    CGFloat nav_height = 0;
+    
+    if (!IOS7_OR_LATER) {
+        if (superView.height == kVIEW_HEIGHT) {
+            nav_height = -44;
+        }
+    }
     
     [self animated:animated duration:duration animations:^{
         switch (position) {
             case UIViewAlignPositionTop:
             {
-                self.y = 0 + offset;
+                self.y = 0 + offset + nav_height;
             }
                 break;
             case UIViewAlignPositionLeft:
@@ -317,7 +347,7 @@
                 break;
             case UIViewAlignPositionBottom:
             {
-                self.y = superView.height - self.height + offset;
+                self.y = superView.height - self.height + offset + nav_height;
             }
                 break;
             case UIViewAlignPositionRight:
@@ -379,6 +409,48 @@
     line.backgroundColor = color;
     
     return line;
+}
+
+- (UIImage *)captureView
+{
+    CGRect rect = self.frame;
+    UIGraphicsBeginImageContext(rect.size);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    if (IOS7_OR_LATER) {
+        [self drawViewHierarchyInRect:self.bounds afterScreenUpdates:YES];
+    } else {
+        [self.layer renderInContext:context];
+    }
+    
+    UIImage *img = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return img;
+}
+
+- (void)saveCaptureToAlbum
+{
+    UIImageWriteToSavedPhotosAlbum([self captureView],
+                                   self,
+                                   @selector(image:didFinishSavingWithError:contextInfo:),
+                                   nil);
+}
+
+- (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo
+{
+    if (error != NULL){
+        //失败
+        [BMWaitVC showMessage:@"保存失败！"];
+    }
+    else{
+        //成功
+        [BMWaitVC showMessage:@"保存成功！"];
+    }
+}
+
+- (CGPoint)toWindowPoint
+{
+    UIView *superView = [self superview];
+    return [superView convertPoint:self.origin fromView:nil];
 }
 
 @end

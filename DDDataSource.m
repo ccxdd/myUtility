@@ -114,6 +114,11 @@
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    if (self.canEditRowAtIndexPath) {
+        id item = [self itemAtIndexPath:indexPath sectionKey:self.sectionKey rowKey:nil];
+        return self.canEditRowAtIndexPath(indexPath, item);
+    }
+    
     return self.isAllowEdit;
 }
 
@@ -202,6 +207,15 @@
     }
 }
 
+- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (self.didDeselectRowAtIndexPath) {
+        id cellItem;
+        cellItem = [self itemAtIndexPath:indexPath sectionKey:self.sectionKey rowKey:self.rowKey];
+        self.didDeselectRowAtIndexPath(indexPath, cellItem);
+    }
+}
+
 - (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (self.editingStyleForRowAtIndexPath) {
@@ -220,6 +234,11 @@
     }
     
     return nil;
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return NSLocalizedString(@"删除", nil);
 }
 
 - (id)itemAtSection:(NSInteger)section sectionKey:(NSString *)sectionKey

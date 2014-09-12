@@ -83,12 +83,7 @@
 
 - (void)thousandSeparator:(BOOL)decimal
 {
-    if (self.text.length > 3) {
-        NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
-        [numberFormatter setPositiveFormat:decimal?@"###,##0.00":@"###,###"];
-        NSString *formattedNumberString = [numberFormatter stringFromNumber:@([self.text doubleValue])];
-        self.text = formattedNumberString;
-    }
+    self.text = [self.text thousandSeparator:decimal];
 }
 
 @end

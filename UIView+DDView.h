@@ -21,12 +21,14 @@ typedef NS_ENUM (NSInteger, UIViewAlignPosition) {
 
 @interface UIView (DDView)
 
-@property (nonatomic, assign) CGFloat   x;
-@property (nonatomic, assign) CGFloat   y;
-@property (nonatomic, assign) CGFloat   width;
-@property (nonatomic, assign) CGFloat   height;
-@property (nonatomic, assign) CGPoint   origin;
-@property (nonatomic, assign) CGSize    size;
+@property (nonatomic, assign          ) CGFloat x;
+@property (nonatomic, assign          ) CGFloat y;
+@property (nonatomic, assign          ) CGFloat width;
+@property (nonatomic, assign          ) CGFloat height;
+@property (nonatomic, assign          ) CGPoint origin;
+@property (nonatomic, assign          ) CGSize  size;
+@property (nonatomic, assign, readonly) CGFloat x1;
+@property (nonatomic, assign, readonly) CGFloat y1;
 
 /**
  *  返回Xib中首个View
@@ -53,6 +55,18 @@ typedef NS_ENUM (NSInteger, UIViewAlignPosition) {
  *  @return CGRect
  */
 + (CGRect)commonFrameTop:(CGFloat)top left:(CGFloat)left bottom:(CGFloat)bottom right:(CGFloat)right;
+
+/**
+ *  截取屏幕
+ *
+ *  @return UIImage
+ */
++ (UIImage *)screenCapture;
+
+/**
+ *  保存屏幕截图到相册
+ */
++ (void)saveScreenToAlbum;
 
 /**
  *  返回x2
@@ -166,5 +180,19 @@ typedef NS_ENUM (NSInteger, UIViewAlignPosition) {
  *  画线
  */
 + (UIView *)lineWithRect:(CGRect)frame color:(UIColor *)color;
+
+/**
+ *  截取当前View图像
+ *
+ *  @return UIImage
+ */
+- (UIImage *)captureView;
+
+/**
+ *  保存View截图到相册
+ */
+- (void)saveCaptureToAlbum;
+
+- (CGPoint)toWindowPoint;
 
 @end

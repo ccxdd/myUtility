@@ -21,21 +21,21 @@ UIImage * getImageAtRect(UIImage *source,CGRect clipRect);
 	
 }
 
-///**
-// DES加密
-// */
-//+ (NSString *)encryptUse3DES:(NSString *)plainText key:(NSString *)key;
-//
-///**
-// DES解密
-// */
-//+ (NSString *)decryptUse3DES:(NSString *)encryptText key:(NSString *)key;
-//
-///**
-// *  SHA1加密
-// */
-//+ (NSString *)encryptUseSHA1:(NSString *)srcString;
-//+ (NSString *)hmacSHA1:(NSString *)plant secret:(NSString *)key;
+/**
+ DES加密
+ */
++ (NSString *)encryptUse3DES:(NSString *)plainText key:(NSString *)key;
+
+/**
+ DES解密
+ */
++ (NSString *)decryptUse3DES:(NSString *)encryptText key:(NSString *)key;
+
+/**
+ *  SHA1加密
+ */
++ (NSString *)encryptUseSHA1:(NSString *)srcString;
++ (NSString *)hmacSHA1:(NSString *)plant secret:(NSString *)key;
 
 /**
  *  字符串到byte

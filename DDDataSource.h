@@ -31,11 +31,13 @@
 //edit, delete
 @property (nonatomic, copy) UITableViewCellEditingStyle (^editingStyleForRowAtIndexPath)(NSIndexPath *indexPath);
 @property (nonatomic, copy) void      (^deleteRowAtIndexPath)(NSIndexPath *indexPath, id item);
+@property (nonatomic, copy) BOOL      (^canEditRowAtIndexPath)(NSIndexPath *indexPath, id item);
 //cellForRow, didSelect, height
 @property (nonatomic, copy) void      (^cellForRowAtCustom)(id cell, NSIndexPath *indexPath);
 @property (nonatomic, copy) void      (^cellForRowAtIndexPath)(id cell, NSIndexPath *indexPath, id item);
 @property (nonatomic, copy) void      (^didSelectRowAtCustom)(NSIndexPath *indexPath);
 @property (nonatomic, copy) void      (^didSelectRowAtIndexPath)(NSIndexPath *indexPath, id item);
+@property (nonatomic, copy) void      (^didDeselectRowAtIndexPath)(NSIndexPath *indexPath, id item);
 @property (nonatomic, copy) CGFloat   (^heightForRowAtIndexPath)(NSIndexPath *indexPath);
 
 - (id)initWithTableData:(NSArray *)tableData

@@ -194,5 +194,6 @@ typedef NS_ENUM (NSInteger, UIViewAlignPosition) {
 - (void)saveCaptureToAlbum;
 
 - (CGPoint)toWindowPoint;
+- (CGRect)toWindowFrame;
 
 @end

@@ -449,8 +449,12 @@
 
 - (CGPoint)toWindowPoint
 {
-    UIView *superView = [self superview];
-    return [superView convertPoint:self.origin fromView:nil];
+    return [self convertPoint:self.origin toView:nil];
+}
+
+- (CGRect)toWindowFrame
+{
+    return [self convertRect:self.frame toView:nil];
 }
 
 @end

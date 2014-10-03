@@ -13,6 +13,25 @@
 
 const char leftHandlerKey, rightHandleKey;
 
++ (id)storyboardName:(NSString *)name identifier:(NSString *)identifier
+{
+    UIViewController *classVC = nil;
+    
+    @try {
+        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:name bundle:nil];
+        if (identifier) {
+            classVC = [storyboard instantiateViewControllerWithIdentifier:identifier];
+        } else {
+            classVC = [storyboard instantiateInitialViewController];
+        }
+    }
+    @catch (NSException *exception) {
+        DLogError(@"%@", exception);
+    }
+    
+    return classVC;
+}
+
 - (void)backButtonWithImageName:(NSString *)imageName
 {
     UIBarButtonItem *backBtn = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:imageName]
@@ -201,6 +220,16 @@ const char leftHandlerKey, rightHandleKey;
 - (void)pushVC:(UIViewController *)vc
 {
     [self.navigationController pushViewController:vc animated:YES];
+}
+
+- (BOOL)isNavRootVC
+{
+    return ([self.navigationController.viewControllers count] == 1);
+}
+
+- (id)storyboardID:(NSString *)identifier
+{
+    return [self.storyboard instantiateViewControllerWithIdentifier:identifier];
 }
 
 @end

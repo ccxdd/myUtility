@@ -81,13 +81,13 @@
     NSDictionary *normalFields = [parameters filterKeys:classField.fields non:NO];
     NSDictionary *numberFields = [parameters filterKeys:classField.numberFields non:NO];
     NSDictionary *uploadFields = [parameters filterKeys:classField.uploadFields non:NO];
-    DLogBlue(@"normalFields = %@", normalFields);
+    DLogSuccss(@"normalFields = %@", normalFields);
     BmobObject *object = [BmobObject objectWithoutDatatWithClassName:className objectId:parameters[@"objectId"]];
     [object saveAllWithDictionary:normalFields];
     [object saveAllWithDictionary:[numberFields valueToNSNumber]];
     
     [self uploadFields:uploadFields className:tCategory resultBlock:^(NSDictionary *files){
-        DLogBlue(@"files = %@", files);
+        DLogSuccss(@"files = %@", files);
         [object saveAllWithDictionary:files];
         if (parameters[@"objectId"]) {
             [object updateInBackgroundWithResultBlock:^(BOOL isSuccessful, NSError *error) {
@@ -276,7 +276,7 @@
 + (void)errorHandle:(NSError *)error
 {
     NSString *message;
-    DLogRed(@"error = %@", error);
+    DLogError(@"error = %@", error);
     
     switch (error.code) {
         case 20002: //

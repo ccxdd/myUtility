@@ -108,7 +108,7 @@
             [self setValue:[propertyObjects objectForKey:key] forKey:key];
         }
         @catch (NSException *exception) {
-            DLogBlue(@"key: %@ not found", key);
+            DLogError(@"key: %@ not found", key);
         }
     }];
 }

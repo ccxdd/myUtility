@@ -69,6 +69,15 @@ typedef NS_ENUM (NSInteger, UIViewAlignPosition) {
 + (void)saveScreenToAlbum;
 
 /**
+ *  返回Nib
+ *
+ *  @param name xib名字
+ *
+ *  @return UINib
+ */
++ (UINib *)nibWithName:(NSString *)name;
+
+/**
  *  返回x2
  *
  *  @return CGFloat
@@ -165,9 +174,21 @@ typedef NS_ENUM (NSInteger, UIViewAlignPosition) {
  */
 - (void)alignPostiion:(UIViewAlignPosition)position offset:(CGFloat)offset;
 
+/**
+ *  对齐
+ *
+ *  @param position 对齐方位
+ *  @param offset   偏移量
+ */
 - (void)alignPostiion:(UIViewAlignPosition)position offset:(CGFloat)offset
              animated:(BOOL)animated;
 
+/**
+ *  对齐
+ *
+ *  @param position 对齐方位
+ *  @param offset   偏移量
+ */
 - (void)alignPostiion:(UIViewAlignPosition)position offset:(CGFloat)offset
              animated:(BOOL)animated duration:(NSTimeInterval)duration;
 
@@ -193,7 +214,18 @@ typedef NS_ENUM (NSInteger, UIViewAlignPosition) {
  */
 - (void)saveCaptureToAlbum;
 
+/**
+ *  获取相对于屏幕的坐标
+ *
+ *  @return CGPoint
+ */
 - (CGPoint)toWindowPoint;
+
+/**
+ *  获取相对于屏幕的Frame
+ *
+ *  @return CGRect
+ */
 - (CGRect)toWindowFrame;
 
 @end

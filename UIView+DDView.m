@@ -58,6 +58,11 @@
     [screenView saveCaptureToAlbum];
 }
 
++ (UINib *)nibWithName:(NSString *)name
+{
+    return [UINib nibWithNibName:name bundle:nil];
+}
+
 #pragma mark - X, Y, Width, Height -
 
 - (CGFloat)x
@@ -414,11 +419,15 @@
 - (UIImage *)captureView
 {
     CGRect rect = self.frame;
-    UIGraphicsBeginImageContext(rect.size);
-    CGContextRef context = UIGraphicsGetCurrentContext();
+    if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)]){
+        UIGraphicsBeginImageContextWithOptions(rect.size, NO, [UIScreen mainScreen].scale);
+    } else {
+        UIGraphicsBeginImageContext(rect.size);
+    }
     if (IOS7_OR_LATER) {
         [self drawViewHierarchyInRect:self.bounds afterScreenUpdates:YES];
     } else {
+        CGContextRef context = UIGraphicsGetCurrentContext();
         [self.layer renderInContext:context];
     }
     

@@ -10,6 +10,17 @@
 
 @interface UIScrollView (DD)
 
+@property (assign, nonatomic) CGFloat contentInsetTop;
+@property (assign, nonatomic) CGFloat contentInsetBottom;
+@property (assign, nonatomic) CGFloat contentInsetLeft;
+@property (assign, nonatomic) CGFloat contentInsetRight;
+
+@property (assign, nonatomic) CGFloat contentOffsetX;
+@property (assign, nonatomic) CGFloat contentOffsetY;
+
+@property (assign, nonatomic) CGFloat contentSizeWidth;
+@property (assign, nonatomic) CGFloat contentSizeHeight;
+
 - (CGFloat)contentBottom;
 
 - (void)contentHeightToFit:(UIViewController *)vc;

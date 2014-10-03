@@ -43,7 +43,7 @@ static NSString * const BaseURLString = @"http://localhost:8000";
     [self GET:URLString parameters:parameters success:^(NSURLSessionDataTask *task, id responseObject) {
         
         if ([responseObject[@"success"] integerValue]) {
-            DLogGreen(@"%@", responseObject);
+            DLogSuccss(@"%@", responseObject);
             success(responseObject);
         } else {
             DLogError(@"%@", responseObject);
@@ -67,7 +67,7 @@ static NSString * const BaseURLString = @"http://localhost:8000";
     [self POST:URLString parameters:parameters success:^(NSURLSessionDataTask *task, id responseObject) {
         
         if ([responseObject[@"success"] integerValue]) {
-            DLogGreen(@"%@", responseObject);
+            DLogSuccss(@"%@", responseObject);
             success(responseObject);
         } else {
             [BMWaitVC showMessage:responseObject[@"errors"]

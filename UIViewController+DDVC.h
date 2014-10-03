@@ -10,6 +10,8 @@
 
 @interface UIViewController (DDVC)
 
++ (id)storyboardName:(NSString *)name identifier:(NSString *)identifier;
+
 - (void)backButtonWithImageName:(NSString *)imageName;
 
 - (void)backButtonWithTitle:(NSString *)title;
@@ -55,5 +57,21 @@
  *  @param className 类名
  */
 - (void)popToClass:(NSString *)className;
+
+/**
+ *  是否为Nav的rootVC
+ *
+ *  @return BOOL
+ */
+- (BOOL)isNavRootVC;
+
+/**
+ *  根据Storyboard ID返回VC
+ *
+ *  @param identifier VC的ID
+ *
+ *  @return VC
+ */
+- (id)storyboardID:(NSString *)identifier;
 
 @end

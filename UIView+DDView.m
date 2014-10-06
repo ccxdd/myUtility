@@ -419,6 +419,7 @@
 - (UIImage *)captureView
 {
     CGRect rect = self.frame;
+    
     if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)]){
         UIGraphicsBeginImageContextWithOptions(rect.size, NO, [UIScreen mainScreen].scale);
     } else {
@@ -430,9 +431,38 @@
         CGContextRef context = UIGraphicsGetCurrentContext();
         [self.layer renderInContext:context];
     }
-    
     UIImage *img = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
+    
+    return img;
+}
+
+- (UIImage *)captureView1x
+{
+    CGRect rect = self.frame;
+
+    UIGraphicsBeginImageContext(rect.size);
+    if (IOS7_OR_LATER) {
+        [self drawViewHierarchyInRect:self.bounds afterScreenUpdates:YES];
+    } else {
+        CGContextRef context = UIGraphicsGetCurrentContext();
+        [self.layer renderInContext:context];
+    }
+    UIImage *img = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return img;
+}
+
+- (UIImage *)captureViewInRect:(CGRect)rect
+{
+    UIImage *img = [UIImage imageWithCGImage:CGImageCreateWithImageInRect([[self captureView] CGImage], rect)];
+    return img;
+}
+
+- (UIImage *)captureView1xInRect:(CGRect)rect
+{
+    UIImage *img = [UIImage imageWithCGImage:CGImageCreateWithImageInRect([[self captureView1x] CGImage], rect)];
     return img;
 }
 
@@ -464,6 +494,11 @@
 - (CGRect)toWindowFrame
 {
     return [self convertRect:self.frame toView:nil];
+}
+
+- (void)setBlurBackground
+{
+    self.backgroundColor = [UIColor colorWithPatternImage:[[[self superview] captureView1xInRect:self.frame] applyDarkEffect]];
 }
 
 @end

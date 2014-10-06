@@ -105,21 +105,27 @@
 - (UIImage *)applyLightEffect
 {
     UIColor *tintColor = [UIColor colorWithWhite:1.0 alpha:0.3];
-    return [self applyBlurWithRadius:30 tintColor:tintColor saturationDeltaFactor:1.8 maskImage:nil];
+    return [self applyBlurWithRadius:20 tintColor:tintColor saturationDeltaFactor:1.5 maskImage:nil];
 }
 
 
 - (UIImage *)applyExtraLightEffect
 {
     UIColor *tintColor = [UIColor colorWithWhite:0.97 alpha:0.82];
-    return [self applyBlurWithRadius:20 tintColor:tintColor saturationDeltaFactor:1.8 maskImage:nil];
+    return [self applyBlurWithRadius:20 tintColor:tintColor saturationDeltaFactor:1.5 maskImage:nil];
 }
 
 
 - (UIImage *)applyDarkEffect
 {
-    UIColor *tintColor = [UIColor colorWithWhite:0.11 alpha:0.73];
-    return [self applyBlurWithRadius:20 tintColor:tintColor saturationDeltaFactor:1.8 maskImage:nil];
+    UIColor *tintColor = [UIColor colorWithWhite:0 alpha:0.3];
+    return [self applyBlurWithRadius:20 tintColor:tintColor saturationDeltaFactor:1.5 maskImage:nil];
+}
+
+- (UIImage *)applyGrayEffect
+{
+    UIColor *tintColor = [UIColor colorWithWhite:0.5 alpha:0.3];
+    return [self applyBlurWithRadius:20 tintColor:tintColor saturationDeltaFactor:1.5 maskImage:nil];
 }
 
 
@@ -127,7 +133,7 @@
 {
     const CGFloat EffectColorAlpha = 0.6;
     UIColor *effectColor = tintColor;
-    int componentCount = CGColorGetNumberOfComponents(tintColor.CGColor);
+    NSInteger componentCount = CGColorGetNumberOfComponents(tintColor.CGColor);
     if (componentCount == 2) {
         CGFloat b;
         if ([tintColor getWhite:&b alpha:NULL]) {

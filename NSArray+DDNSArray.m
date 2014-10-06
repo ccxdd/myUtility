@@ -15,9 +15,15 @@
     if (self.count > index) {
         return self[index];
     } else {
-        NSLog(@"\n Execption: index = %d", index);
+        NSLog(@"\n Execption: index = %ld", index);
         return nil;
     }
+}
+
+- (instancetype)filterKey:(NSString *)key equalArray:(NSArray *)arr
+{
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K IN %@", key, arr];
+    return [self filteredArrayUsingPredicate:predicate];
 }
 
 @end

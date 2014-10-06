@@ -67,10 +67,30 @@
 + (void)queryWithClassName:(NSString *)className
                    success:(void(^)(id responseObject))success
 {
-    BmobQuery *query = [BmobQuery queryWithClassName:className];
-    [query whereKey:@"hidden" notEqualTo:@"1"];
-    [query orderByAscending:@"createdAt"];
-    [self query:query findWithSuccess:success];
+    if ([className isEqualToString:tCategory] || [className isEqualToString:tSubCategory]) {
+        id cacheObject = [Utility objectForKey:className];
+        if (cacheObject) {
+            if (success) {
+                success(cacheObject);
+            }
+        } else {
+            BmobQuery *query = [BmobQuery queryWithClassName:className];
+            query.limit = 1000;
+            [query whereKey:@"hidden" notEqualTo:@"1"];
+            [query orderByAscending:@"createdAt"];
+            [self query:query findWithSuccess:^(id responseObject) {
+                if (success) {
+                    success(responseObject);
+                }
+                [Utility setObject:responseObject forKey:className];
+            }];
+        }
+    } else {
+        BmobQuery *query = [BmobQuery queryWithClassName:className];
+        [query whereKey:@"hidden" notEqualTo:@"1"];
+        [query orderByAscending:@"createdAt"];
+        [self query:query findWithSuccess:success];
+    }
 }
 
 + (void)saveClassName:(NSString *)className

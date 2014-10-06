@@ -108,12 +108,12 @@
 
 - (void)contentHeightToFit:(UIViewController *)vc
 {
-    [self contentHeightToFit:vc tabbar:vc.isNavRootVC offset:0];
+    [self contentHeightToFit:vc tabbar:vc.tabBarController offset:0];
 }
 
 - (void)contentHeightToFit:(UIViewController *)vc offset:(CGFloat)offset
 {
-    [self contentHeightToFit:vc tabbar:vc.isNavRootVC offset:offset];
+    [self contentHeightToFit:vc tabbar:vc.tabBarController offset:offset];
 }
 
 - (void)contentHeightToFit:(UIViewController *)vc tabbar:(BOOL)tabBar offset:(CGFloat)offset

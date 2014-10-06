@@ -12,4 +12,14 @@
 
 - (id)atIndex:(NSUInteger)index;
 
+/**
+ *  返回Key所存在的Arr
+ *
+ *  @param key 数组中的Key值
+ *  @param arr 用来比较数组
+ *
+ *  @return NSArray
+ */
+- (instancetype)filterKey:(NSString *)key equalArray:(NSArray *)arr;
+
 @end

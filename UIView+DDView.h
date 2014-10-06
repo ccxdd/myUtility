@@ -208,6 +208,10 @@ typedef NS_ENUM (NSInteger, UIViewAlignPosition) {
  *  @return UIImage
  */
 - (UIImage *)captureView;
+- (UIImage *)captureViewInRect:(CGRect)rect;
+
+- (UIImage *)captureView1x;
+- (UIImage *)captureView1xInRect:(CGRect)rect;
 
 /**
  *  保存View截图到相册
@@ -227,5 +231,7 @@ typedef NS_ENUM (NSInteger, UIViewAlignPosition) {
  *  @return CGRect
  */
 - (CGRect)toWindowFrame;
+
+- (void)setBlurBackground;
 
 @end

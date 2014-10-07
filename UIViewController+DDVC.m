@@ -72,7 +72,7 @@ const char leftHandlerKey, rightHandleKey;
 
 - (void)rightButtonWithImageName:(NSString *)imageName clickBlock:(void(^)(id))clickBlock
 {
-    [self rightButtonWithImageName:imageName renderingMode:UIImageRenderingModeAlwaysOriginal clickBlock:clickBlock];
+    [self rightButtonWithImageName:imageName renderingMode:UIImageRenderingModeAutomatic clickBlock:clickBlock];
 }
 
 - (void)rightButtonWithTitle:(NSString *)title clickBlock:(void(^)(id))clickBlock
@@ -113,7 +113,7 @@ const char leftHandlerKey, rightHandleKey;
 
 - (void)leftButtonWithImageName:(NSString *)imageName clickBlock:(void(^)(id))clickBlock
 {
-    [self leftButtonWithImageName:imageName renderingMode:UIImageRenderingModeAlwaysOriginal clickBlock:clickBlock];
+    [self leftButtonWithImageName:imageName renderingMode:UIImageRenderingModeAutomatic clickBlock:clickBlock];
 }
 
 - (void)leftButtonWithTitle:(NSString *)title clickBlock:(void(^)(id))clickBlock

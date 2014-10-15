@@ -69,6 +69,16 @@ static NSUInteger kWaitViewCount = 0;
         
         UITapGestureRecognizer *hudGes = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissAction)];
         [HUD addGestureRecognizer:hudGes];
+        
+        //            UILabel *lab = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 120, 20)];
+        //            [lab setText:@"点击取消"];
+        //            [lab setFont:[UIFont systemFontOfSize:14]];
+        //            [lab setBackgroundColor:[UIColor clearColor]];
+        //            [lab setTextColor:[UIColor lightGrayColor]];
+        //            [lab setTextAlignment:NSTextAlignmentCenter];
+        //            [lab setTag:dHUD_TAG+1];
+        //            lab.center = CGPointMake(HUD.center.x, HUD.center.y+50);
+        //            [HUD addSubview:lab];
     });
 }
 
@@ -147,14 +157,7 @@ static NSUInteger kWaitViewCount = 0;
 + (void)showAlertMessage:(NSString *)message alertBlock:(void(^)(NSInteger buttonIndex))alertBlock
 {
     alertViewBlock = alertBlock;
-    
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
-                                                    message:message
-                                                   delegate:self
-                                          cancelButtonTitle:@"取消"
-                                          otherButtonTitles:@"确定", nil];
-    [alert show];
-    
+    [self showAlertMessage:message buttonTitles:@[@"取消", @"确定"] alertBlock:alertBlock];
 }
 
 + (void)showAlertMessage:(NSString *)message
@@ -167,8 +170,8 @@ static NSUInteger kWaitViewCount = 0;
     switch ([buttonTitles count]) {
         case 0: //
         {
-            alert = [[UIAlertView alloc] initWithTitle:nil
-                                               message:message
+            alert = [[UIAlertView alloc] initWithTitle:message
+                                               message:nil
                                               delegate:self
                                      cancelButtonTitle:@"确认"
                                      otherButtonTitles:nil, nil];
@@ -176,8 +179,8 @@ static NSUInteger kWaitViewCount = 0;
             break;
         case 1: //
         {
-            alert = [[UIAlertView alloc] initWithTitle:nil
-                                               message:message
+            alert = [[UIAlertView alloc] initWithTitle:message
+                                               message:nil
                                               delegate:self
                                      cancelButtonTitle:buttonTitles[0]
                                      otherButtonTitles:nil, nil];
@@ -185,8 +188,8 @@ static NSUInteger kWaitViewCount = 0;
             break;
         case 2:
         {
-            alert = [[UIAlertView alloc] initWithTitle:nil
-                                               message:message
+            alert = [[UIAlertView alloc] initWithTitle:message
+                                               message:nil
                                               delegate:self
                                      cancelButtonTitle:buttonTitles[0]
                                      otherButtonTitles:buttonTitles[1], nil];
@@ -296,10 +299,7 @@ static NSUInteger kWaitViewCount = 0;
         }
     } else {
         if (alertViewBlock) {
-            //dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                alertViewBlock(buttonIndex);
-                //alertViewBlock = nil;
-            //});
+            alertViewBlock(buttonIndex);
         }
     }
 }
@@ -308,11 +308,12 @@ static NSUInteger kWaitViewCount = 0;
 
 + (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
+    if (actionSheet.cancelButtonIndex == buttonIndex) {
+        buttonIndex = -1;
+    }
+    
     if (alertViewBlock) {
-        //dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            alertViewBlock(buttonIndex);
-            //alertViewBlock = nil;
-        //});
+        alertViewBlock(buttonIndex);
     }
 }
 

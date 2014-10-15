@@ -101,4 +101,14 @@
 
 + (NSString *)generateRandomOfNum:(NSInteger)num;
 
+/**
+ *  计算文字高度
+ *
+ *  @param font  字体
+ *  @param width 宽度
+ *
+ *  @return CGSize
+ */
+- (CGSize)calcSizeFromFont:(UIFont *)font width:(NSInteger)width;
+
 @end

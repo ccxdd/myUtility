@@ -97,22 +97,22 @@
 
 - (CGFloat)width
 {
-    return CGRectGetWidth(self.frame);
+    return CGRectGetWidth(self.bounds);
 }
 
 - (CGFloat)height
 {
-    return CGRectGetHeight(self.frame);
+    return CGRectGetHeight(self.bounds);
 }
 
 - (CGFloat)midX
 {
-    return CGRectGetMidX(self.frame);
+    return CGRectGetMidX(self.bounds);
 }
 
 - (CGFloat)midY
 {
-    return CGRectGetMidY(self.frame);
+    return CGRectGetMidY(self.bounds);
 }
 
 - (void)setX:(CGFloat)x

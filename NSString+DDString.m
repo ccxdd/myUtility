@@ -202,9 +202,9 @@
 
 - (NSDateFormatter *)dateFormatter
 {
-	NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-	[dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-	return dateFormatter;
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+    return dateFormatter;
 }
 
 - (NSString *)yyyymmdd
@@ -245,21 +245,21 @@
 {
     NSScanner *scan = [NSScanner scannerWithString:self];
     NSInteger var;
-	return ([scan scanInteger:&var]) && [scan isAtEnd];
+    return ([scan scanInteger:&var]) && [scan isAtEnd];
 }
 
 - (BOOL)isDouble
 {
     NSScanner *scan = [NSScanner scannerWithString:self];
     double var;
-	return ([scan scanDouble:&var]) && [scan isAtEnd];
+    return ([scan scanDouble:&var]) && [scan isAtEnd];
 }
 
 - (BOOL)isFloat
 {
     NSScanner *scan = [NSScanner scannerWithString:self];
     float var;
-	return ([scan scanFloat:&var]) && [scan isAtEnd];
+    return ([scan scanFloat:&var]) && [scan isAtEnd];
 }
 
 - (NSString *)encryptUseSHA1
@@ -403,7 +403,7 @@
         //DLog(@"%@ isNumbericString: YES", str);
         return YES;
     }
-	
+    
     //DLog(@"%@ isNumbericString: NO", str);
     return NO;
 }
@@ -413,17 +413,34 @@
  */
 + (NSString *)generateRandomOfNum:(NSInteger)num
 {
-	const NSInteger N = num;
-	
-	NSString *sourceString = @"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	NSMutableString *result = [NSMutableString string];
-	for (int i = 0; i < N; i++)
-	{
-		unsigned index = arc4random() % [sourceString length];
-		NSString *s = [sourceString substringWithRange:NSMakeRange(index, 1)];
-		[result appendString:s];
-	}
-	return result;
+    const NSInteger N = num;
+    
+    NSString *sourceString = @"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    NSMutableString *result = [NSMutableString string];
+    for (int i = 0; i < N; i++)
+    {
+        unsigned index = arc4random() % [sourceString length];
+        NSString *s = [sourceString substringWithRange:NSMakeRange(index, 1)];
+        [result appendString:s];
+    }
+    return result;
+}
+
+- (CGSize)calcSizeFromFont:(UIFont *)font width:(NSInteger)width
+{
+    CGSize calcSize = CGSizeMake(width,MAXFLOAT);
+    CGSize labelsize = CGSizeZero;
+    
+    if (IOS7_OR_LATER) {
+        labelsize = [self boundingRectWithSize:calcSize
+                                       options:NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesLineFragmentOrigin
+                                    attributes:@{NSFontAttributeName: font}
+                                       context:nil].size;
+    } else {
+        labelsize = [self sizeWithFont:font constrainedToSize:calcSize lineBreakMode:NSLineBreakByWordWrapping];
+    }
+    
+    return labelsize;
 }
 
 @end

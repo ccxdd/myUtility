@@ -125,7 +125,7 @@
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
     if (self.titleForHeaderInSection) {
-        return self.titleForHeaderInSection(section, self.tableData[section]);
+        return self.titleForHeaderInSection(section, [self.tableData atIndex:section]);
     } else {
         return nil;
     }
@@ -134,7 +134,7 @@
 - (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section
 {
     if (self.titleForFooterInSection) {
-        return self.titleForFooterInSection(section, self.tableData[section]);
+        return self.titleForFooterInSection(section, [self.tableData atIndex:section]);
     } else {
         return nil;
     }
@@ -158,7 +158,7 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section;
 {
     if (self.heightForHeaderInSection) {
-        return self.heightForHeaderInSection(section, self.tableData[section]);
+        return self.heightForHeaderInSection(section, [self.tableData atIndex:section]);
     } else {
         return 0;
     }
@@ -167,7 +167,7 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
 {
     if (self.heightForFooterInSection) {
-        return self.heightForFooterInSection(section, self.tableData[section]);
+        return self.heightForFooterInSection(section, [self.tableData atIndex:section]);
     } else {
         return 0;
     }
@@ -176,7 +176,7 @@
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
     if (self.viewForHeaderInSection) {
-        return self.viewForHeaderInSection(section, self.tableData[section]);
+        return self.viewForHeaderInSection(section, [self.tableData atIndex:section]);
     } else {
         return nil;
     }
@@ -185,7 +185,7 @@
 - (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
 {
     if (self.viewForFooterInSection) {
-        return self.viewForFooterInSection(section, self.tableData[section]);
+        return self.viewForFooterInSection(section, [self.tableData atIndex:section]);
     } else {
         return nil;
     }
@@ -248,9 +248,9 @@
     @try {
         if (self.numberOfSectionsInTableView) {
             if (sectionKey) {
-                value = self.tableData[section][sectionKey];
+                value = [self.tableData atIndex:section][sectionKey];
             } else {
-                value = self.tableData[section];
+                value = [self.tableData atIndex:section];
             }
         }
     }

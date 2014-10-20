@@ -105,7 +105,7 @@
 - (UIImage *)applyLightEffect
 {
     UIColor *tintColor = [UIColor colorWithWhite:1.0 alpha:0.3];
-    return [self applyBlurWithRadius:20 tintColor:tintColor saturationDeltaFactor:1.5 maskImage:nil];
+    return [self applyBlurWithRadius:20 tintColor:tintColor saturationDeltaFactor:1.0 maskImage:nil];
 }
 
 
@@ -119,13 +119,13 @@
 - (UIImage *)applyDarkEffect
 {
     UIColor *tintColor = [UIColor colorWithWhite:0 alpha:0.3];
-    return [self applyBlurWithRadius:20 tintColor:tintColor saturationDeltaFactor:1.5 maskImage:nil];
+    return [self applyBlurWithRadius:20 tintColor:tintColor saturationDeltaFactor:1 maskImage:nil];
 }
 
 - (UIImage *)applyGrayEffect
 {
     UIColor *tintColor = [UIColor colorWithWhite:0.5 alpha:0.3];
-    return [self applyBlurWithRadius:20 tintColor:tintColor saturationDeltaFactor:1.5 maskImage:nil];
+    return [self applyBlurWithRadius:20 tintColor:tintColor saturationDeltaFactor:1.2 maskImage:nil];
 }
 
 

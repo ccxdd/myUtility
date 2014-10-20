@@ -48,19 +48,22 @@
 
 + (UIImage *)screenCapture
 {
-    UIView *screenView = [UIApplication sharedApplication].keyWindow;
-    return [screenView captureView];
+    return [[UIView screenWindow] captureView];
 }
 
 + (void)saveScreenToAlbum
 {
-    UIView *screenView = [UIApplication sharedApplication].keyWindow;
-    [screenView saveCaptureToAlbum];
+    [[UIView screenWindow] saveCaptureToAlbum];
 }
 
 + (UINib *)nibWithName:(NSString *)name
 {
     return [UINib nibWithNibName:name bundle:nil];
+}
+
++ (UIView *)screenWindow
+{
+    return [UIApplication sharedApplication].keyWindow;
 }
 
 #pragma mark - X, Y, Width, Height -
@@ -496,9 +499,33 @@
     return [self convertRect:self.frame toView:nil];
 }
 
-- (void)setBlurBackground
+- (void)setDarkBlurBackground
 {
-    self.backgroundColor = [UIColor colorWithPatternImage:[[[self superview] captureView1xInRect:self.frame] applyDarkEffect]];
+    [self setBackgroundImage:[[[UIView screenWindow] captureView1xInRect:self.frame] applyLightEffect]];
+}
+
+- (void)setLightBlurBackground
+{
+    [self setBackgroundImage:[[[UIView screenWindow] captureView1xInRect:self.frame] applyLightEffect]];
+}
+
+- (void)setBackgroundImage:(UIImage *)image
+{
+    self.backgroundColor = [UIColor colorWithPatternImage:image];
+}
+
+- (void)setBackgroundImage:(UIImage *)image blur:(CGFloat)blur
+{
+    [self setBackgroundImage:image blur:blur tintColor:nil];
+}
+
+- (void)setBackgroundImage:(UIImage *)image blur:(CGFloat)blur tintColor:(UIColor *)tintColor
+{
+    UIImage *newImage = [image applyBlurWithRadius:blur
+                                         tintColor:tintColor
+                             saturationDeltaFactor:1
+                                         maskImage:nil];
+    [self setBackgroundImage:newImage];
 }
 
 @end

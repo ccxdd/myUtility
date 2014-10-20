@@ -156,7 +156,7 @@
                 break;
         }
         
-        imageView.contentMode = UIViewContentModeScaleAspectFit;
+        imageView.contentMode = UIViewContentModeScaleAspectFill;
         [_scrollView addSubview:imageView];
     }
     

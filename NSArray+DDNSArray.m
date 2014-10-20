@@ -15,7 +15,7 @@
     if (self.count > index) {
         return self[index];
     } else {
-        NSLog(@"\n Execption: index = %ld", index);
+        NSLog(@"\n Execption: index = %ld", (long)index);
         return nil;
     }
 }
@@ -24,6 +24,15 @@
 {
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K IN %@", key, arr];
     return [self filteredArrayUsingPredicate:predicate];
+}
+
+- (void)searchKey:(NSString *)key value:(NSString *)value completion:(void(^)(NSArray *resultArr))completion
+{
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K contains[cd] %@", key, value];
+    NSArray *resultArr = [self filteredArrayUsingPredicate:predicate];
+    if (completion) {
+        completion(resultArr);
+    }
 }
 
 @end

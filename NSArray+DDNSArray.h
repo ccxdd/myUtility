@@ -22,4 +22,13 @@
  */
 - (instancetype)filterKey:(NSString *)key equalArray:(NSArray *)arr;
 
+/**
+ *  查询数组中是否包含指定的值
+ *
+ *  @param key        字典中的键
+ *  @param value      键所对应的值
+ *  @param completion NSArray
+ */
+- (void)searchKey:(NSString *)key value:(NSString *)value completion:(void(^)(NSArray *resultArr))completion;
+
 @end

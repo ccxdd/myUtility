@@ -4,17 +4,19 @@
 //  WanYueHui
 //
 //  Created by ccxdd on 13-5-27.
-//  Copyright (c) 2013年 Zhangcc. All rights reserved.
+//  Copyright (c) 2013年 ccxdd. All rights reserved.
 //
 
 #import "BMWaitVC.h"
 #import "MBProgressHUD.h"
 
 #define dHUD_TAG                12344321
+#define dPOP_TAG                112233
 #define HUD_FONT                [UIFont systemFontOfSize:16]
 
 static const void(^alertViewBlock)(NSInteger buttonIndex);
 static const void(^alertViewFieldBlock)(UITextField *field, NSInteger buttonIndex);
+static const void(^popViewBlock)(void);
 static NSUInteger kWaitViewCount = 0;
 
 @implementation BMWaitVC
@@ -194,7 +196,7 @@ static NSUInteger kWaitViewCount = 0;
                                      cancelButtonTitle:buttonTitles[0]
                                      otherButtonTitles:buttonTitles[1], nil];
         }
-            
+            break;
         default: //
         {
             DLog(@"超出界限: %@", buttonTitles);
@@ -315,6 +317,48 @@ static NSUInteger kWaitViewCount = 0;
     if (alertViewBlock) {
         alertViewBlock(buttonIndex);
     }
+}
+
+#pragma mark - PopView
+
++ (void)popView:(UIView *)popView
+{
+    [self popView:popView completion:nil];
+}
+
++ (void)popView:(UIView *)popView completion:(void(^)())completion
+{
+    if (!popView) {
+        return;
+    }
+    
+    popViewBlock = completion;
+    
+    if (![[BMWaitVC AppDelegateWindow] viewWithTag:dPOP_TAG]) {
+        UIView *popBackView = [[UIView alloc] initWithFrame:[BMWaitVC AppDelegateWindow].bounds];
+        popBackView.tag = dPOP_TAG;
+        [popBackView addSubview:popView];
+        [popView alignPostiion:UIViewAlignPositionCenter offset:0];
+        [popView setLightBlurBackground];
+        [[BMWaitVC AppDelegateWindow] addSubview:popBackView];
+        
+        UITapGestureRecognizer *tapGes = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(closePopView:)];
+        [popBackView addGestureRecognizer:tapGes];
+        
+        [popBackView popScale_from:CGSizeMake(.5, .5) to:CGSizeMake(1, 1) velocity:CGSizeMake(0, 0) speed:15 bounciness:20 completion:^{
+        }];
+    }
+}
+
++ (void)closePopView:(UITapGestureRecognizer *)tapGes
+{
+    UIView *popBackView = tapGes.view;
+    [popBackView popScale_from:CGSizeMake(1, 1) to:CGSizeMake(0, 0) velocity:CGSizeMake(0, 0) speed:10 bounciness:0 completion:^{
+        [popBackView removeFromSuperview];
+        if (popViewBlock) {
+            popViewBlock();
+        }
+    }];
 }
 
 @end

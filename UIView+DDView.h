@@ -78,6 +78,13 @@ typedef NS_ENUM (NSInteger, UIViewAlignPosition) {
 + (UINib *)nibWithName:(NSString *)name;
 
 /**
+ *  返回当前keyWindow
+ *
+ *  @return UIView
+ */
++ (UIView *)screenWindow;
+
+/**
  *  返回x2
  *
  *  @return CGFloat
@@ -232,6 +239,14 @@ typedef NS_ENUM (NSInteger, UIViewAlignPosition) {
  */
 - (CGRect)toWindowFrame;
 
-- (void)setBlurBackground;
+- (void)setDarkBlurBackground;
+
+- (void)setLightBlurBackground;
+
+- (void)setBackgroundImage:(UIImage *)image;
+
+- (void)setBackgroundImage:(UIImage *)image blur:(CGFloat)blur;
+
+- (void)setBackgroundImage:(UIImage *)image blur:(CGFloat)blur tintColor:(UIColor *)tintColor;
 
 @end

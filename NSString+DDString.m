@@ -28,6 +28,11 @@
     return [NSString stringWithFormat:@"%ld", (long)intValue];
 }
 
++ (NSString *)appName
+{
+    return [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleDisplayName"];
+}
+
 - (NSURL *)toURL
 {
     return [NSURL URLWithString:self];

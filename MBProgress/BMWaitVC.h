@@ -103,6 +103,21 @@
  */
 + (void)showProgress:(double)progress message:(NSString *)message;
 
+/**
+ *  弹出框
+ *
+ *  @param popView 想要弹出的View
+ */
++ (void)popView:(UIView *)popView;
+
+/**
+ *  弹出框
+ *
+ *  @param popView    想要弹出的View
+ *  @param completion 回调
+ */
++ (void)popView:(UIView *)popView completion:(void(^)())completion;
+
 @end
 
 

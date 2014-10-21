@@ -249,4 +249,6 @@ typedef NS_ENUM (NSInteger, UIViewAlignPosition) {
 
 - (void)setBackgroundImage:(UIImage *)image blur:(CGFloat)blur tintColor:(UIColor *)tintColor;
 
+- (void)setBackgroundBlur:(CGFloat)blur tintColor:(UIColor *)tintColor;
+
 @end

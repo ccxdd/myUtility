@@ -10,7 +10,8 @@
 
 @interface GlassButton : UIButton
 
-@property (nonatomic, copy) NSString *colorStyle;
+@property (nonatomic, copy  ) NSString *colorStyle;
+@property (nonatomic, assign) CGFloat  radius;
 
 + (instancetype)buttonWithStyle:(NSString *)style frame:(CGRect)frame;
 

@@ -22,6 +22,8 @@
 }
 
 @property (nonatomic, assign) id<WaitViewDelegate> waitViewDelegate;
+@property (nonatomic, weak) UIView *popView;
+@property (nonatomic, weak) UIView *popBackView;
 
 + (instancetype)sharedInstance;
 
@@ -117,6 +119,11 @@
  *  @param completion 回调
  */
 + (void)popView:(UIView *)popView completion:(void(^)())completion;
+
+/**
+ *  关闭PopView
+ */
++ (void)closePopView;
 
 @end
 

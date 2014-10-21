@@ -27,7 +27,11 @@
 
 - (void)configButton
 {
-    [self setCornerRadius:self.height/3];
+    if (self.radius == 0) {
+        [self setCornerRadius:self.height/3];
+    } else if (self.radius > 0) {
+        [self setCornerRadius:self.radius];
+    }
     
     if ([self.colorStyle isEqualToString:@"r"]) {
         self.backgroundColor = kGlassRed;

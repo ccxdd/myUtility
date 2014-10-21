@@ -286,13 +286,12 @@
 
 - (void)setCornerRadius:(CGFloat)radius
 {
-    self.layer.cornerRadius = radius;
+    [self setCornerRadius:radius borderColor:nil width:0];
 }
 
 - (void)setBorderColor:(UIColor *)borderColor width:(CGFloat)width
 {
-    self.layer.borderColor = borderColor.CGColor;
-    self.layer.borderWidth = width;
+    [self setCornerRadius:0 borderColor:nil width:0];
 }
 
 - (void)setCornerRadius:(CGFloat)radius borderColor:(UIColor *)borderColor width:(CGFloat)width
@@ -300,6 +299,7 @@
     self.layer.cornerRadius = radius;
     self.layer.borderColor = borderColor.CGColor;
     self.layer.borderWidth = width;
+    self.clipsToBounds = YES;
 }
 
 - (void)setShadowX:(CGFloat)x y:(CGFloat)y color:(UIColor *)color opacity:(float)opacity radius:(CGFloat)radius
@@ -501,7 +501,7 @@
 
 - (void)setDarkBlurBackground
 {
-    [self setBackgroundImage:[[[UIView screenWindow] captureView1xInRect:self.frame] applyLightEffect]];
+    [self setBackgroundImage:[[[UIView screenWindow] captureView1xInRect:self.frame] applyDarkEffect]];
 }
 
 - (void)setLightBlurBackground
@@ -526,6 +526,13 @@
                              saturationDeltaFactor:1
                                          maskImage:nil];
     [self setBackgroundImage:newImage];
+}
+
+- (void)setBackgroundBlur:(CGFloat)blur tintColor:(UIColor *)tintColor
+{
+    UIImage *newImage = [[UIView screenWindow] captureView1xInRect:self.frame];
+    [self setBackgroundImage:newImage blur:blur tintColor:tintColor];
+    
 }
 
 @end

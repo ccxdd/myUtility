@@ -18,6 +18,7 @@ static const void(^alertViewBlock)(NSInteger buttonIndex);
 static const void(^alertViewFieldBlock)(UITextField *field, NSInteger buttonIndex);
 static const void(^popViewBlock)(void);
 static NSUInteger kWaitViewCount = 0;
+static CGRect     popViewFrame;
 
 @implementation BMWaitVC
 
@@ -336,29 +337,52 @@ static NSUInteger kWaitViewCount = 0;
     
     if (![[BMWaitVC AppDelegateWindow] viewWithTag:dPOP_TAG]) {
         UIView *popBackView = [[UIView alloc] initWithFrame:[BMWaitVC AppDelegateWindow].bounds];
+        popBackView.backgroundColor = kUIColorRGBA(127, 127, 127, .4);
         popBackView.tag = dPOP_TAG;
         [popBackView addSubview:popView];
         [popView alignPostiion:UIViewAlignPositionCenter offset:0];
         [popView setLightBlurBackground];
         [[BMWaitVC AppDelegateWindow] addSubview:popBackView];
+        popViewFrame = popView.frame;
+        [BMWaitVC sharedInstance].popBackView = popBackView;
+        [BMWaitVC sharedInstance].popView = popView;
         
         UITapGestureRecognizer *tapGes = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(closePopView:)];
+        tapGes.delegate = [self sharedInstance];
         [popBackView addGestureRecognizer:tapGes];
         
-        [popBackView popScale_from:CGSizeMake(.5, .5) to:CGSizeMake(1, 1) velocity:CGSizeMake(0, 0) speed:15 bounciness:20 completion:^{
+        [popView popScale_from:CGSizeMake(.5, .5) to:CGSizeMake(1, 1) velocity:CGSizeMake(5, 5) speed:15 bounciness:20 completion:^{
         }];
     }
 }
 
 + (void)closePopView:(UITapGestureRecognizer *)tapGes
 {
-    UIView *popBackView = tapGes.view;
-    [popBackView popScale_from:CGSizeMake(1, 1) to:CGSizeMake(0, 0) velocity:CGSizeMake(0, 0) speed:10 bounciness:0 completion:^{
-        [popBackView removeFromSuperview];
-        if (popViewBlock) {
-            popViewBlock();
-        }
-    }];
+    [self closePopView];
+}
+
++ (void)closePopView
+{
+    UIView *popBackView = [BMWaitVC sharedInstance].popBackView;
+    UIView *popView = [BMWaitVC sharedInstance].popView;
+    
+    if (popBackView) {
+        [popView popScale_from:CGSizeMake(1, 1) to:CGSizeMake(.9, .9) velocity:CGSizeMake(5, 5) speed:20 bounciness:10 completion:^{
+            [popView popScale_from:CGSizeMake(1, 1) to:CGSizeMake(0, 0) velocity:CGSizeMake(0, 0) speed:15 bounciness:0 completion:^{
+                [popBackView removeFromSuperview];
+                if (popViewBlock) {
+                    popViewBlock();
+                }
+            }];
+        }];
+    }
+}
+
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
+{
+    CGPoint touchPoint = [gestureRecognizer locationInView:gestureRecognizer.view];
+    BOOL result = CGRectContainsPoint(popViewFrame, touchPoint);
+    return !result;
 }
 
 @end

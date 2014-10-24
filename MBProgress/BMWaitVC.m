@@ -337,7 +337,7 @@ static CGRect     popViewFrame;
     
     if (![[BMWaitVC AppDelegateWindow] viewWithTag:dPOP_TAG]) {
         UIView *popBackView = [[UIView alloc] initWithFrame:[BMWaitVC AppDelegateWindow].bounds];
-        popBackView.backgroundColor = kUIColorRGBA(127, 127, 127, .4);
+        popBackView.backgroundColor = kUIColorRGBA(127, 127, 127, .3);
         popBackView.tag = dPOP_TAG;
         [popBackView addSubview:popView];
         [popView alignPostiion:UIViewAlignPositionCenter offset:0];

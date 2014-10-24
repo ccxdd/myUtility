@@ -148,8 +148,8 @@
                 break;
             case DDPage_Type_URL: //
             {
-                [imageView setImageWithURL:[imageObj toURL]
-                          placeholderImage:[UIImage imageNamed:self.placeholderName]];
+                [imageView sd_setImageWithURL:[imageObj toURL]
+                             placeholderImage:[UIImage imageNamed:self.placeholderName]];
             }
                 break;
             default:

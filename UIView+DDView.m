@@ -491,12 +491,12 @@
 
 - (CGPoint)toWindowPoint
 {
-    return [self convertPoint:self.origin toView:nil];
+    return [self convertPoint:self.bounds.origin toView:nil];
 }
 
 - (CGRect)toWindowFrame
 {
-    return [self convertRect:self.frame toView:nil];
+    return [self convertRect:self.bounds toView:nil];
 }
 
 - (void)setDarkBlurBackground

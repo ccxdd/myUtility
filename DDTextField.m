@@ -162,7 +162,7 @@ static NSNumber *superViewProperty;
         }
     } else if ([fieldSuperView isKindOfClass:[UIView class]]) {
         
-        CGPoint fieldPoint = [textField convertPoint:textField.origin toView:nil];
+        CGPoint fieldPoint = [textField toWindowPoint];
         
         if (fieldPoint.y > space) {
             UIView *fullView = [self superFullScreenView:textField];

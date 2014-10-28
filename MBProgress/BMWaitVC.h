@@ -119,6 +119,11 @@
  *  @param completion 回调
  */
 + (void)popView:(UIView *)popView completion:(void(^)())completion;
++ (void)popView:(UIView *)popView
+        popBlur:(CGFloat)popBlur popTint:(UIColor *)popTint
+       backBlur:(CGFloat)backBlur backTint:(UIColor *)backTint
+       animated:(BOOL)animated
+     completion:(void(^)())completion;
 
 /**
  *  关闭PopView

@@ -327,21 +327,37 @@ static CGRect     popViewFrame;
     [self popView:popView completion:nil];
 }
 
-+ (void)popView:(UIView *)popView completion:(void(^)())completion
++ (void)popView:(UIView *)popView
+        popBlur:(CGFloat)popBlur popTint:(UIColor *)popTint
+       backBlur:(CGFloat)backBlur backTint:(UIColor *)backTint
+       animated:(BOOL)animated
+     completion:(void(^)())completion
 {
     if (!popView) {
         return;
     }
-    
     popViewBlock = completion;
     
     if (![[BMWaitVC AppDelegateWindow] viewWithTag:dPOP_TAG]) {
         UIView *popBackView = [[UIView alloc] initWithFrame:[BMWaitVC AppDelegateWindow].bounds];
-        popBackView.backgroundColor = kUIColorRGBA(127, 127, 127, .3);
+        if (backBlur > 0) {
+            [popBackView setBackgroundBlur:backBlur tintColor:backTint];
+        } else if (backTint) {
+            popBackView.backgroundColor = backTint;
+        }
         popBackView.tag = dPOP_TAG;
         [popBackView addSubview:popView];
+        
         [popView alignPostiion:UIViewAlignPositionCenter offset:0];
-        [popView setLightBlurBackground];
+        
+        if (popBlur > 0) {
+            [popView setBackgroundBlur:backBlur tintColor:backTint];
+        } else if (popTint) {
+            popView.backgroundColor = backTint;
+        } else {
+            [popView setLightBlurBackground];
+        }
+        
         [[BMWaitVC AppDelegateWindow] addSubview:popBackView];
         popViewFrame = popView.frame;
         [BMWaitVC sharedInstance].popBackView = popBackView;
@@ -351,9 +367,17 @@ static CGRect     popViewFrame;
         tapGes.delegate = [self sharedInstance];
         [popBackView addGestureRecognizer:tapGes];
         
-        [popView popScale_from:CGSizeMake(.5, .5) to:CGSizeMake(1, 1) velocity:CGSizeMake(5, 5) speed:15 bounciness:20 completion:^{
-        }];
+        if (animated) {
+            [popView popScale_from:CGSizeMake(.5, .5) to:CGSizeMake(1, 1) velocity:CGSizeMake(5, 5) speed:15 bounciness:20 completion:^{
+            }];
+        }
     }
+}
+
++ (void)popView:(UIView *)popView completion:(void(^)())completion
+{
+    [self popView:popView popBlur:0 popTint:nil backBlur:0 backTint:kUIColorRGBA(127, 127, 127, .3)
+         animated:YES completion:completion];
 }
 
 + (void)closePopView:(UITapGestureRecognizer *)tapGes
@@ -371,7 +395,9 @@ static CGRect     popViewFrame;
             [popView popScale_from:CGSizeMake(1, 1) to:CGSizeMake(0, 0) velocity:CGSizeMake(0, 0) speed:15 bounciness:0 completion:^{
                 [popBackView removeFromSuperview];
                 if (popViewBlock) {
-                    popViewBlock();
+                    [Utility dispatch_afterDelayTime:0 block:^{
+                        popViewBlock();
+                    }];
                 }
             }];
         }];

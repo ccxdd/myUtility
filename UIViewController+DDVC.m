@@ -219,6 +219,12 @@ const char leftHandlerKey, rightHandleKey;
 
 - (void)pushVC:(UIViewController *)vc
 {
+    [self pushToVC:vc hideTabbar:vc.hidesBottomBarWhenPushed];
+}
+
+- (void)pushToVC:(UIViewController *)vc hideTabbar:(BOOL)isHide
+{
+    vc.hidesBottomBarWhenPushed = isHide;
     [self.navigationController pushViewController:vc animated:YES];
 }
 
@@ -230,6 +236,11 @@ const char leftHandlerKey, rightHandleKey;
 - (id)storyboardID:(NSString *)identifier
 {
     return [self.storyboard instantiateViewControllerWithIdentifier:identifier];
+}
+
+- (id)storyboardInitialVC
+{
+    return [self.storyboard instantiateInitialViewController];
 }
 
 @end

@@ -42,6 +42,8 @@
 
 - (void)pushVC:(UIViewController *)vc;
 
+- (void)pushToVC:(UIViewController *)vc hideTabbar:(BOOL)isHide;
+
 /**
  *  是否存在pop栈中
  *
@@ -73,5 +75,12 @@
  *  @return VC
  */
 - (id)storyboardID:(NSString *)identifier;
+
+/**
+ *  返回Storyboard初始化VC
+ *
+ *  @return VC
+ */
+- (id)storyboardInitialVC;
 
 @end

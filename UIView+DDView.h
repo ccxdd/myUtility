@@ -67,6 +67,7 @@ typedef NS_ENUM (NSInteger, UIViewAlignPosition) {
  *  保存屏幕截图到相册
  */
 + (void)saveScreenToAlbum;
++ (void)saveScreenToAlbumWithCompletion:(void(^)(BOOL result))completion;
 
 /**
  *  返回Nib
@@ -223,7 +224,7 @@ typedef NS_ENUM (NSInteger, UIViewAlignPosition) {
 /**
  *  保存View截图到相册
  */
-- (void)saveCaptureToAlbum;
+- (void)saveCaptureToAlbumWithCompletion:(void(^)(BOOL result))completion;
 
 /**
  *  获取相对于屏幕的坐标

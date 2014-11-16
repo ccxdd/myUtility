@@ -15,7 +15,7 @@
     if (self.count > index) {
         return self[index];
     } else {
-        NSLog(@"\n Execption: index = %ld", (long)index);
+        NSLog(@"\n NSArray Execption: index = %ld", (long)index);
         return nil;
     }
 }

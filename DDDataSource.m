@@ -264,6 +264,10 @@
 
 - (id)itemAtIndexPath:(NSIndexPath *)indexPath sectionKey:(NSString *)sectionKey rowKey:(NSString *)rowKey
 {
+    if (!self.tableData.count) {
+        return nil;
+    }
+    
     id value;
     
     @try {

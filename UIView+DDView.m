@@ -11,6 +11,8 @@
 
 #define kDuation    0.3f
 
+static const void(^savePhotoBlock)(BOOL result);
+
 @implementation UIView (DDView)
 
 + (id)viewForXibName:(NSString *)xibName
@@ -53,7 +55,15 @@
 
 + (void)saveScreenToAlbum
 {
-    [[UIView screenWindow] saveCaptureToAlbum];
+    [self saveScreenToAlbumWithCompletion:nil];
+}
+
++ (void)saveScreenToAlbumWithCompletion:(void(^)(BOOL result))completion
+{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        UIView *screenView = [UIApplication sharedApplication].keyWindow;
+        [screenView saveCaptureToAlbumWithCompletion:completion];
+    });
 }
 
 + (UINib *)nibWithName:(NSString *)name
@@ -469,8 +479,9 @@
     return img;
 }
 
-- (void)saveCaptureToAlbum
+- (void)saveCaptureToAlbumWithCompletion:(void(^)(BOOL result))completion
 {
+    savePhotoBlock = completion;
     UIImageWriteToSavedPhotosAlbum([self captureView],
                                    self,
                                    @selector(image:didFinishSavingWithError:contextInfo:),
@@ -479,13 +490,16 @@
 
 - (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo
 {
-    if (error != NULL){
-        //失败
-        [BMWaitVC showMessage:@"保存失败！"];
-    }
-    else{
-        //成功
-        [BMWaitVC showMessage:@"保存成功！"];
+    if (savePhotoBlock) {
+        savePhotoBlock((error == NULL));
+    } else {
+        if (error != NULL){
+            //失败
+            [BMWaitVC showMessage:@"保存失败！"];
+        } else {
+            //成功
+            [BMWaitVC showMessage:@"保存成功！"];
+        }
     }
 }
 

@@ -42,7 +42,30 @@
 
 - (void)pushVC:(UIViewController *)vc;
 
+/**
+ *  Push到VC时是否隐藏Tabbar
+ *
+ *  @param vc     要Push的VC
+ *  @param isHide 是否隐藏Tabbar
+ */
 - (void)pushToVC:(UIViewController *)vc hideTabbar:(BOOL)isHide;
+
+/**
+ *  Push从Storyboard中取出的VC
+ *
+ *  @param identifier Storyboard中的ID
+ *  @param isHide     是否隐藏Tabbar
+ */
+- (void)pushToStoryboardID:(NSString *)identifier hideTabbar:(BOOL)isHide;
+
+/**
+ *  Push从Storyboard中取出的VC
+ *
+ *  @param SbName     Storyboard的名字
+ *  @param identifier Storyboard中的ID
+ *  @param isHide     是否隐藏Tabbar
+ */
+- (void)pushToStoryboardName:(NSString *)SbName identifier:(NSString *)identifier hideTabbar:(BOOL)isHide;
 
 /**
  *  是否存在pop栈中

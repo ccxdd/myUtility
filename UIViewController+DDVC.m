@@ -228,6 +228,18 @@ const char leftHandlerKey, rightHandleKey;
     [self.navigationController pushViewController:vc animated:YES];
 }
 
+- (void)pushToStoryboardID:(NSString *)identifier hideTabbar:(BOOL)isHide
+{
+    [self pushToVC:[self storyboardID:identifier] hideTabbar:isHide];
+}
+
+- (void)pushToStoryboardName:(NSString *)SbName identifier:(NSString *)identifier hideTabbar:(BOOL)isHide
+{
+    UIViewController *classVC = [UIViewController storyboardName:SbName
+                                                      identifier:identifier];
+    [self pushToVC:classVC hideTabbar:isHide];
+}
+
 - (BOOL)isNavRootVC
 {
     return ([self.navigationController.viewControllers count] == 1);

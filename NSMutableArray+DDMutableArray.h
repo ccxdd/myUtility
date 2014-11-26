@@ -12,4 +12,6 @@
 
 - (void)addUniqueObject:(id)object;
 
+- (void)addSafeObject:(id)object;
+
 @end

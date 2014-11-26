@@ -25,7 +25,7 @@ typedef NS_ENUM(NSInteger, DDPageType) {
 @property (nonatomic, assign) BOOL           startup;
 @property (nonatomic, copy  ) NSString       *key;
 @property (nonatomic, copy  ) NSString       *placeholderName;
-@property (nonatomic, copy) void(^pageControlViewBlock)(NSInteger page, id item);
+@property (nonatomic, copy) void(^selectedBlock)(NSInteger page, id item);
 
 - (void)setImageData:(NSArray *)imageData type:(DDPageType)type key:(NSString *)key;
 

@@ -15,4 +15,13 @@
     
 }
 
+- (void)addSafeObject:(id)object
+{
+    if (object) {
+        [self addObject:object];
+    } else {
+        NSLog(@"========== addSafeObject ERROR!!! ==========");
+    }
+}
+
 @end

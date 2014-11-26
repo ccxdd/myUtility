@@ -8,14 +8,59 @@
 
 #import "DDPageCV.h"
 
-@interface DDPageCV () <UIScrollViewDelegate>
+#pragma mark - PageCvCell -
 
-@property (nonatomic, strong) UIScrollView  *scrollView;
-@property (nonatomic, strong) UIPageControl *pageControl;
-@property (nonatomic, strong) NSTimer       *timer;
-@property (nonatomic, copy  ) NSString      *imageNameKey;
-@property (nonatomic, assign) NSInteger     factImageCount;
-@property (nonatomic, assign) DDPageType    type;
+@interface PageCvCell : UICollectionViewCell
+
+@property (strong, nonatomic) UIImageView *imageView;
+@property (strong, nonatomic) UILabel *name;
+
+@end
+
+@implementation PageCvCell
+
+- (instancetype)initWithFrame:(CGRect)frame
+{
+    self = [super initWithFrame:frame];
+    if (self) {
+        self.imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
+        self.imageView.contentMode = UIViewContentModeScaleAspectFill;
+        [self.contentView addSubview:self.imageView];
+        
+        self.name = [[UILabel alloc] initWithFrame:CGRectMake(0, frame.size.height-35, frame.size.width, 35)];
+        self.name.font = [UIFont systemFontOfSize:12];
+        self.name.textColor = [UIColor whiteColor];
+        self.name.backgroundColor = [UIColor colorWithWhite:0 alpha:.7];
+        [self.contentView addSubview:self.name];
+    }
+    return self;
+}
+
+- (void)setHighlighted:(BOOL)highlighted
+{
+    [super setHighlighted:highlighted];
+}
+
+- (void)prepareForReuse
+{
+    [super prepareForReuse];
+    [self.imageView sd_cancelCurrentImageLoad];
+}
+
+@end
+
+#pragma mark - DDPageCV -
+
+@interface DDPageCV () <UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout>
+
+@property (nonatomic, strong) UIPageControl    *pageControl;
+@property (nonatomic, strong) NSTimer          *timer;
+@property (nonatomic, copy  ) NSString         *imageNameKey;
+@property (nonatomic, assign) NSInteger        factImageCount;
+@property (nonatomic, assign) DDPageType       type;
+@property (nonatomic, strong) UICollectionView *collectionView;
+@property (nonatomic, assign) BOOL             lockStatus;
+@property (nonatomic, strong) NSMutableArray   *reformImageData;
 
 @end
 
@@ -23,7 +68,7 @@
 
 - (void)awakeFromNib
 {
-    [self configPageCV:self.frame];
+    [self configPageCV:self.superview.bounds];
 }
 
 - (void)dealloc
@@ -45,16 +90,22 @@
 
 - (void)configPageCV:(CGRect)frame
 {
-    _scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
-    _scrollView.pagingEnabled = YES;
-    _scrollView.delegate = self;
-    _scrollView.showsHorizontalScrollIndicator = NO;
-    _scrollView.showsVerticalScrollIndicator = NO;
-    [self addSubview:_scrollView];
+    UICollectionViewFlowLayout *flowLayout = [[UICollectionViewFlowLayout alloc] init];
+    //[flowLayout setItemSize:CGSizeMake(frame.size.width, frame.size.height)];
+    [flowLayout setScrollDirection:UICollectionViewScrollDirectionHorizontal];
+    [flowLayout setMinimumInteritemSpacing:0];
+    [flowLayout setMinimumLineSpacing:0];
     
-    UITapGestureRecognizer *tapGes = [[UITapGestureRecognizer alloc] initWithTarget:self
-                                                                             action:@selector(tapAction)];
-    [_scrollView addGestureRecognizer:tapGes];
+    self.collectionView = [[UICollectionView alloc] initWithFrame:self.bounds
+                                             collectionViewLayout:flowLayout];
+    [self.collectionView setBackgroundColor:[UIColor clearColor]];
+    [self.collectionView setDelegate:self];
+    [self.collectionView setDataSource:self];
+    [self.collectionView setPagingEnabled:YES];
+    [self.collectionView setShowsHorizontalScrollIndicator:NO];
+    [self.collectionView registerClass:[PageCvCell class]
+            forCellWithReuseIdentifier:@"PageCvCell"];
+    [self addSubview:self.collectionView];
     
     _pageControl = [[UIPageControl alloc] initWithFrame:CGRectMake(0, frame.size.height-30, frame.size.width, 30)];
     _pageControl.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
@@ -64,6 +115,7 @@
     _startup = YES;
     _isCircle = YES;
 }
+
 
 - (DDPageType)getPageTypeFrom:(NSArray *)imageData
 {
@@ -108,61 +160,24 @@
     self.imageNameKey = key;
     self.type = type;
     
-    [_scrollView.subviews enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        [obj removeFromSuperview];
-    }];
     _pageControl.numberOfPages = [imageData count];
     _pageControl.currentPage   = 0;
     _imageData                = imageData;
-    NSMutableArray *newArrM   = [imageData mutableCopy];
+    _reformImageData   = [imageData mutableCopy];
     if (_isCircle) {
-        [newArrM insertObject:[imageData lastObject] atIndex:0];
-        [newArrM addObject:imageData[0]];
-        [_scrollView setContentOffset:CGPointMake(self.width, 0) animated:NO];
+        [_reformImageData insertObject:[imageData lastObject] atIndex:0];
+        [_reformImageData addObject:imageData[0]];
     }
-    _factImageCount = [newArrM count];
-    _scrollView.contentSize = CGSizeMake(self.width * _factImageCount, self.height);
-    
-    for (NSInteger i = 0; i < _factImageCount; i++) {
-        UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(i * self.width,
-                                                                               0,
-                                                                               self.width,
-                                                                               self.height)];
-        id imageObj = key ? newArrM[i][key] : newArrM[i];
-        
-        switch (type) {
-            case DDPage_Type_UIImage: //
-            {
-                [imageView setImage:imageObj];
-            }
-                break;
-            case DDPage_Type_UIImageData: //
-            {
-                [imageView setImage:[UIImage imageWithData:imageObj]];
-            }
-                break;
-            case DDPage_Type_ImageName: //
-            {
-                [imageView setImage:[UIImage imageNamed:imageObj]];
-            }
-                break;
-            case DDPage_Type_URL: //
-            {
-                [imageView sd_setImageWithURL:[imageObj toURL]
-                             placeholderImage:[UIImage imageNamed:self.placeholderName]];
-            }
-                break;
-            default:
-                break;
-        }
-        
-        imageView.contentMode = UIViewContentModeScaleAspectFill;
-        [_scrollView addSubview:imageView];
-    }
+    _factImageCount = [_reformImageData count];
     
     if (_startup) {
-        [self setStartup:YES];
+        //[self setStartup:YES];
     }
+    
+    [self.collectionView reloadData];
+    [self.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:1 inSection:0]
+                                atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally
+                                        animated:NO];
 }
 
 - (void)setStartup:(BOOL)startup
@@ -209,43 +224,29 @@
     if (_isCircle) {
         NSInteger offsetX = scrollView.contentOffset.x;
         if (offsetX > (_factImageCount-1) * self.width) {
-            [scrollView setContentOffset:CGPointMake(self.width, 0) animated:NO];
+            [self.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:1 inSection:0]
+                                        atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally
+                                                animated:NO];
         } else if (offsetX < self.width) {
-            [scrollView setContentOffset:CGPointMake((_factImageCount-1) * self.width, 0) animated:NO];
+            [self.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:_factImageCount-1 inSection:0]
+                                        atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally
+                                                animated:NO];
         }
     }
     
     [self updatePageIndex];
 }
 
-#pragma mark - tapAction
-
-- (void)tapAction
-{
-    if (self.pageControlViewBlock) {
-        NSInteger page = _pageControl.currentPage;
-        self.pageControlViewBlock(page, _imageData[page]);
-    }
-}
-
 #pragma mark - timerAction
 
 - (void)timerAction:(NSTimer *)sender
 {
-    NSInteger offsetX = _scrollView.contentOffset.x + 5;
-    
-    if (offsetX > (_factImageCount-1) * self.width) {
-        [_scrollView setContentOffset:CGPointMake(self.width, 0) animated:NO];
-        [_scrollView setContentOffset:CGPointMake(_scrollView.contentOffset.x+self.width, 0) animated:YES];
-    } else {
-        [_scrollView setContentOffset:CGPointMake(_scrollView.contentOffset.x+self.width, 0) animated:YES];
-    }
     
 }
 
 - (void)updatePageIndex
 {
-    NSInteger offsetX = _scrollView.contentOffset.x;
+    NSInteger offsetX = self.collectionView.contentOffset.x;
     
     if (!_isCircle) {
         _pageControl.currentPage = offsetX / self.width;
@@ -272,13 +273,63 @@
                                            repeats:YES];
 }
 
-/*
- // Only override drawRect: if you perform custom drawing.
- // An empty implementation adversely affects performance during animation.
- - (void)drawRect:(CGRect)rect
- {
- // Drawing code
- }
- */
+#pragma mark CollectionView Delegate & dataSource
+
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
+{
+    return _factImageCount;
+}
+
+- (PageCvCell *)collectionView:(UICollectionView *)collectionView
+        cellForItemAtIndexPath:(NSIndexPath *)indexPath;
+{
+    static NSString *CellIdentifier = @"PageCvCell";
+    PageCvCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:CellIdentifier
+                                                                 forIndexPath:indexPath];
+    cell.name.text = _reformImageData[indexPath.row];
+    //cell.imageView.backgroundColor = kRandomColor;
+    
+    id imageObj = self.imageNameKey ? _reformImageData[indexPath.row][self.imageNameKey] : _reformImageData[indexPath.row];
+    
+    switch (self.type) {
+        case DDPage_Type_UIImage: //
+        {
+            [cell.imageView setImage:imageObj];
+        }
+            break;
+        case DDPage_Type_UIImageData: //
+        {
+            [cell.imageView setImage:[UIImage imageWithData:imageObj]];
+        }
+            break;
+        case DDPage_Type_ImageName: //
+        {
+            [cell.imageView setImage:[UIImage imageNamed:imageObj]];
+        }
+            break;
+        case DDPage_Type_URL: //
+        {
+            [cell.imageView sd_setImageWithURL:[imageObj toURL]
+                              placeholderImage:[UIImage imageNamed:self.placeholderName]];
+        }
+            break;
+        default:
+            break;
+    }
+    
+    return cell;
+}
+
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (self.selectedBlock) {
+        self.selectedBlock(self.pageControl.currentPage, [self.reformImageData atIndex:indexPath.row]);
+    }
+}
+
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    return CGSizeMake(collectionView.width, collectionView.height);
+}
 
 @end

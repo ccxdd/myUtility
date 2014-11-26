@@ -25,7 +25,11 @@ static const void(^savePhotoBlock)(BOOL result);
     @try {
         if (xibName) {
             NSArray *xibArr = [[NSBundle mainBundle] loadNibNamed:xibName owner:nil options:nil];
-            return xibArr[index];
+            if (index >= 0) {
+                return xibArr[index];
+            } else {
+                return [xibArr lastObject];
+            }
         } else {
             NSLog(@"\n Error: viewForXibName:atIndex:");
             return nil;

@@ -14,13 +14,22 @@
 + (void)query:(BmobQuery *)query findWithSuccess:(void(^)(id responseObject))success;
 
 + (void)queryWithClassName:(NSString *)className
+                showHidden:(BOOL)showHidden
+                   success:(void(^)(id responseObject))success;
+
++ (void)queryWithClassName:(NSString *)className
+                showHidden:(BOOL)showHidden
+                     limit:(NSUInteger)limit
                    success:(void(^)(id responseObject))success;
 
 + (void)saveClassName:(NSString *)className
            parameters:(NSDictionary *)parameters
               success:(void(^)(id responseObject))success;
 
-+ (void)deleteObjectId:(NSString *)objectId
++ (void)apiWithName:(NSString *)name success:(void(^)(id responseObject))success;
+
++ (void)hiddenObjectId:(NSString *)objectId
+             boolValue:(BOOL)boolValue
              className:(NSString *)className
                success:(void(^)(id responseObject))success;
 
@@ -35,5 +44,10 @@
 + (void)uploadPathOrData:(id)obj
                className:(NSString *)className
              resultBlock:(void(^)(BmobFile *fileObj))resultBlock;
+
++ (void)updateAPI:(NSString *)apiName
+              key:(NSString *)key
+            value:(id)value
+          success:(void(^)(id responseObject))success;
 
 @end

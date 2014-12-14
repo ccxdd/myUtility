@@ -13,24 +13,7 @@
 
 const char leftHandlerKey, rightHandleKey;
 
-+ (id)storyboardName:(NSString *)name identifier:(NSString *)identifier
-{
-    UIViewController *classVC = nil;
-    
-    @try {
-        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:name bundle:nil];
-        if (identifier) {
-            classVC = [storyboard instantiateViewControllerWithIdentifier:identifier];
-        } else {
-            classVC = [storyboard instantiateInitialViewController];
-        }
-    }
-    @catch (NSException *exception) {
-        DLogError(@"%@", exception);
-    }
-    
-    return classVC;
-}
+#pragma mark - backButton
 
 - (void)backButtonWithImageName:(NSString *)imageName
 {
@@ -173,14 +156,14 @@ const char leftHandlerKey, rightHandleKey;
 
 #pragma mark - navigation
 
-- (void)popVC
+- (BOOL)isNavRootVC
 {
-    [self.navigationController popViewControllerAnimated:YES];
+    return ([self.navigationController.viewControllers count] == 1);
 }
 
-- (void)popToRootVC
+- (IBAction)dismissModal
 {
-    [self.navigationController popToRootViewControllerAnimated:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 /**
@@ -202,6 +185,18 @@ const char leftHandlerKey, rightHandleKey;
     return NO;
 }
 
+#pragma mark - POP
+
+- (void)popVC
+{
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+- (void)popToRootVC
+{
+    [self.navigationController popToRootViewControllerAnimated:YES];
+}
+
 /**
  *  返回到指定的类名中
  *
@@ -216,6 +211,8 @@ const char leftHandlerKey, rightHandleKey;
         }
     }
 }
+
+#pragma mark - PUSH
 
 - (void)pushVC:(UIViewController *)vc
 {
@@ -240,9 +237,48 @@ const char leftHandlerKey, rightHandleKey;
     [self pushToVC:classVC hideTabbar:isHide];
 }
 
-- (BOOL)isNavRootVC
+- (void)pushToVC:(UIViewController *)vc isBlurBg:(BOOL)isBlurBg
 {
-    return ([self.navigationController.viewControllers count] == 1);
+    [self pushToVC:vc isBlurBg:isBlurBg hideTabbar:vc.hidesBottomBarWhenPushed];
+}
+
+- (void)pushToVC:(UIViewController *)vc isBlurBg:(BOOL)isBlurBg hideTabbar:(BOOL)isHide
+{
+    if (isBlurBg) {
+        [vc.view setLightBlurBackground];
+    }
+    vc.hidesBottomBarWhenPushed = isHide;
+    [self pushVC:vc];
+}
+
+- (void)pushToStoryboardID:(NSString *)storyboardID customInfo:(id)customInfo isBlurBg:(BOOL)isBlurBg hideTabbar:(BOOL)isHide
+{
+    id classVC = [self storyboardID:storyboardID];
+    if ([classVC respondsToSelector:@selector(customInfo)]) {
+        [classVC setCustomInfo:customInfo];
+    }
+    [self pushToVC:classVC isBlurBg:isBlurBg hideTabbar:isHide];
+}
+
+#pragma mark - Storyboard
+
++ (id)storyboardName:(NSString *)name identifier:(NSString *)identifier
+{
+    UIViewController *classVC = nil;
+    
+    @try {
+        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:name bundle:nil];
+        if (identifier) {
+            classVC = [storyboard instantiateViewControllerWithIdentifier:identifier];
+        } else {
+            classVC = [storyboard instantiateInitialViewController];
+        }
+    }
+    @catch (NSException *exception) {
+        DLogError(@"%@", exception);
+    }
+    
+    return classVC;
 }
 
 - (id)storyboardID:(NSString *)identifier
@@ -253,6 +289,11 @@ const char leftHandlerKey, rightHandleKey;
 - (id)storyboardInitialVC
 {
     return [self.storyboard instantiateInitialViewController];
+}
+
+- (void)setBackgroundImage:(UIImage *)image blur:(CGFloat)blur tintColor:(UIColor *)tintColor
+{
+    [self.view setBackgroundImage:image blur:blur tintColor:tintColor];
 }
 
 @end

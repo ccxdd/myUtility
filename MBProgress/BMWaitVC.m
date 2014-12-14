@@ -339,33 +339,33 @@ static CGRect     popViewFrame;
     popViewBlock = completion;
     
     if (![[BMWaitVC AppDelegateWindow] viewWithTag:dPOP_TAG]) {
-        UIView *popBackView = [[UIView alloc] initWithFrame:[BMWaitVC AppDelegateWindow].bounds];
+        UIView *backView = [[UIView alloc] initWithFrame:[BMWaitVC AppDelegateWindow].bounds];
         if (backBlur > 0) {
-            [popBackView setBackgroundBlur:backBlur tintColor:backTint];
+            [backView setBackgroundBlur:backBlur tintColor:backTint];
         } else if (backTint) {
-            popBackView.backgroundColor = backTint;
+            backView.backgroundColor = backTint;
         }
-        popBackView.tag = dPOP_TAG;
-        [popBackView addSubview:popView];
+        backView.tag = dPOP_TAG;
+        [backView addSubview:popView];
         
         [popView alignPostiion:UIViewAlignPositionCenter offset:0];
         
         if (popBlur > 0) {
-            [popView setBackgroundBlur:backBlur tintColor:backTint];
+            [popView setBackgroundBlur:popBlur tintColor:popTint];
         } else if (popTint) {
             popView.backgroundColor = backTint;
         } else {
             [popView setLightBlurBackground];
         }
         
-        [[BMWaitVC AppDelegateWindow] addSubview:popBackView];
+        [[BMWaitVC AppDelegateWindow] addSubview:backView];
         popViewFrame = popView.frame;
-        [BMWaitVC sharedInstance].popBackView = popBackView;
+        [BMWaitVC sharedInstance].popBackView = backView;
         [BMWaitVC sharedInstance].popView = popView;
         
         UITapGestureRecognizer *tapGes = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(closePopView:)];
         tapGes.delegate = [self sharedInstance];
-        [popBackView addGestureRecognizer:tapGes];
+        [backView addGestureRecognizer:tapGes];
         
         if (animated) {
             [popView popScale_from:CGSizeMake(.5, .5) to:CGSizeMake(1, 1) velocity:CGSizeMake(5, 5) speed:15 bounciness:20 completion:^{

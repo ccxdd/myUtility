@@ -36,6 +36,12 @@
     return self;
 }
 
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+    self.name.frame = CGRectMake(0, self.height-35, self.width, 35);
+}
+
 - (void)setHighlighted:(BOOL)highlighted
 {
     [super setHighlighted:highlighted];
@@ -68,7 +74,7 @@
 
 - (void)awakeFromNib
 {
-    [self configPageCV:self.superview.bounds];
+    [self configPageCV:self.bounds];
 }
 
 - (void)dealloc
@@ -86,6 +92,13 @@
     return self;
 }
 
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+    self.collectionView.frame = self.bounds;
+    self.pageControl.width = self.width;
+}
+
 #pragma mark - configPageCV
 
 - (void)configPageCV:(CGRect)frame
@@ -96,7 +109,7 @@
     [flowLayout setMinimumInteritemSpacing:0];
     [flowLayout setMinimumLineSpacing:0];
     
-    self.collectionView = [[UICollectionView alloc] initWithFrame:self.bounds
+    self.collectionView = [[UICollectionView alloc] initWithFrame:CGRectZero
                                              collectionViewLayout:flowLayout];
     [self.collectionView setBackgroundColor:[UIColor clearColor]];
     [self.collectionView setDelegate:self];
@@ -175,9 +188,11 @@
     }
     
     [self.collectionView reloadData];
-    [self.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:1 inSection:0]
-                                atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally
-                                        animated:NO];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:0]
+                                    atScrollPosition:UICollectionViewScrollPositionLeft
+                                            animated:YES];
+    });
 }
 
 - (void)setStartup:(BOOL)startup

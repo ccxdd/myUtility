@@ -20,10 +20,17 @@
     }
 }
 
-- (instancetype)filterKey:(NSString *)key equalArray:(NSArray *)arr
+- (instancetype)filterKey:(NSString *)key equal:(id)object
 {
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K IN %@", key, arr];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K IN %@", key, object];
     return [self filteredArrayUsingPredicate:predicate];
+}
+
+- (instancetype)filterKey:(NSString *)key notEqual:(id)object
+{
+    NSMutableArray *mArray = [self mutableCopy];
+    [mArray removeObjectsInArray:[self filterKey:key equal:object]];
+    return mArray;
 }
 
 - (void)searchKey:(NSString *)key value:(NSString *)value completion:(void(^)(NSArray *resultArr))completion
@@ -32,6 +39,20 @@
     NSArray *resultArr = [self filteredArrayUsingPredicate:predicate];
     if (completion) {
         completion(resultArr);
+    }
+}
+
+- (NSString *)JSONString
+{
+    NSError *error;
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:self options:kNilOptions error:&error];
+    
+    if (!error) {
+        NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+        return [NSString stringWithFormat:@"%@", jsonString];
+    } else {
+        DLogError(@"dictionary to JSONString Error! error = %@", error);
+        return nil;
     }
 }
 

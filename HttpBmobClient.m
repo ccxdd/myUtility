@@ -9,6 +9,8 @@
 #import "HttpBmobClient.h"
 #import "BMWaitVC.h"
 
+#pragma mark - BmobClassField －
+
 @interface BmobClassField : NSObject
 
 @property (nonatomic, strong) NSArray *fields;
@@ -38,7 +40,11 @@
 
 @end
 
+#pragma mark - HttpBmobClient －
+
 @implementation HttpBmobClient
+
+#pragma mark - 查询
 
 + (void)query:(BmobQuery *)query findWithSuccess:(void(^)(id responseObject))success
 {
@@ -65,32 +71,26 @@
 }
 
 + (void)queryWithClassName:(NSString *)className
+                showHidden:(BOOL)showHidden
                    success:(void(^)(id responseObject))success
 {
-    if ([className isEqualToString:tCategory] || [className isEqualToString:tSubCategory]) {
-        id cacheObject = [Utility objectForKey:className];
-        if (cacheObject) {
-            if (success) {
-                success(cacheObject);
-            }
-        } else {
-            BmobQuery *query = [BmobQuery queryWithClassName:className];
-            query.limit = 1000;
-            [query whereKey:@"hidden" notEqualTo:@"1"];
-            [query orderByAscending:@"createdAt"];
-            [self query:query findWithSuccess:^(id responseObject) {
-                if (success) {
-                    success(responseObject);
-                }
-                [Utility setObject:responseObject forKey:className];
-            }];
-        }
-    } else {
-        BmobQuery *query = [BmobQuery queryWithClassName:className];
-        [query whereKey:@"hidden" notEqualTo:@"1"];
-        [query orderByAscending:@"createdAt"];
-        [self query:query findWithSuccess:success];
+    [self queryWithClassName:className showHidden:showHidden limit:0 success:success];
+}
+
++ (void)queryWithClassName:(NSString *)className
+                showHidden:(BOOL)showHidden
+                     limit:(NSUInteger)limit
+                   success:(void(^)(id responseObject))success
+{
+    BmobQuery *query = [BmobQuery queryWithClassName:className];
+    if (limit > 0) {
+        query.limit = limit;
     }
+    if (!showHidden) {
+        [query whereKey:@"hidden" notEqualTo:@"1"];
+    }
+    [query orderByAscending:@"createdAt"];
+    [self query:query findWithSuccess:success];
 }
 
 + (void)saveClassName:(NSString *)className
@@ -106,13 +106,13 @@
     [object saveAllWithDictionary:normalFields];
     [object saveAllWithDictionary:[numberFields valueToNSNumber]];
     
-    [self uploadFields:uploadFields className:tCategory resultBlock:^(NSDictionary *files){
+    [self uploadFields:uploadFields className:className resultBlock:^(NSDictionary *files){
         DLogSuccss(@"files = %@", files);
         [object saveAllWithDictionary:files];
         if (parameters[@"objectId"]) {
             [object updateInBackgroundWithResultBlock:^(BOOL isSuccessful, NSError *error) {
                 if (isSuccessful) {
-                    success(object);
+                    success([self convertBmobObj:object className:className]);
                 } else {
                     [self errorHandle:error];
                 }
@@ -120,7 +120,7 @@
         } else {
             [object saveInBackgroundWithResultBlock:^(BOOL isSuccessful, NSError *error) {
                 if (isSuccessful) {
-                    success(object);
+                    success([self convertBmobObj:object className:className]);
                 } else {
                     [self errorHandle:error];
                 }
@@ -130,12 +130,38 @@
     
 }
 
-+ (void)deleteObjectId:(NSString *)objectId
+#pragma mark - API
+
++ (void)apiWithName:(NSString *)name success:(void(^)(id responseObject))success
+{
+    [self queryWithClassName:name showHidden:NO success:^(id responseObject) {
+        if (success) {
+            success(responseObject[0]);
+        }
+    }];
+}
+
++ (void)updateAPI:(NSString *)apiName
+              key:(NSString *)key
+            value:(id)value
+          success:(void(^)(id responseObject))success
+{
+    [self queryWithClassName:apiName showHidden:YES limit:1 success:^(id responseObject) {
+        NSMutableDictionary *parameters = [@{key:value} mutableCopy];
+        [parameters setValue:responseObject[0][@"objectId"] forKey:@"objectId"];
+        [self saveClassName:apiName parameters:parameters success:success];
+    }];
+}
+
+#pragma mark - 隐藏记录
+
++ (void)hiddenObjectId:(NSString *)objectId
+             boolValue:(BOOL)boolValue
              className:(NSString *)className
                success:(void(^)(id responseObject))success
 {
     BmobObject *obj = [BmobObject objectWithoutDatatWithClassName:className objectId:objectId];
-    [obj setObject:@"1" forKey:@"hidden"];
+    [obj setObject:boolValue ? @"1" : @"0" forKey:@"hidden"];
     [obj updateInBackgroundWithResultBlock:^(BOOL isSuccessful, NSError *error) {
         if (isSuccessful) {
             success(@YES);
@@ -144,6 +170,8 @@
         }
     }];
 }
+
+#pragma mark - 上传
 
 + (void)uploadFields:(NSDictionary *)fields
            className:(NSString *)className
@@ -261,6 +289,8 @@
     return obj;
 }
 
+#pragma mark - classFields
+
 + (NSDictionary *)classFields
 {
     static dispatch_once_t pred;
@@ -268,11 +298,11 @@
     dispatch_once(&pred, ^{
         classFields = [NSMutableDictionary dictionary];
         
-        classFields[tCategory] = [BmobClassField classWithFields:@[@"name", @"subList"]
+        classFields[tCategory] = [BmobClassField classWithFields:@[@"name", @"subList", @"hidden"]
                                                     numberFields:nil
                                                     uploadFields:@[@"imageFile"]];
         
-        classFields[tSubCategory] = [BmobClassField classWithFields:@[@"name", @"productList"]
+        classFields[tSubCategory] = [BmobClassField classWithFields:@[@"name", @"productList", @"hidden"]
                                                        numberFields:nil
                                                        uploadFields:@[@"imageFile"]];
         
@@ -288,10 +318,23 @@
                                                                   @"discount",
                                                                   @"stock"]
                                                    uploadFields:nil];
+        classFields[API_StoreHomePage] = [BmobClassField classWithFields:@[@"advert",
+                                                                           @"categoryList",
+                                                                           @"recommendList"]
+                                                            numberFields:nil
+                                                            uploadFields:nil];
+        
+        classFields[tTag] = [BmobClassField classWithFields:@[@"name",
+                                                              @"showHome",
+                                                              @"productList"]
+                                               numberFields:@[@"homeCount"]
+                                               uploadFields:nil];
     });
     
     return classFields;
 }
+
+#pragma mark - errorHandle:
 
 + (void)errorHandle:(NSError *)error
 {

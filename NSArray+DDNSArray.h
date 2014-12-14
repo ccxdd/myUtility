@@ -20,7 +20,8 @@
  *
  *  @return NSArray
  */
-- (instancetype)filterKey:(NSString *)key equalArray:(NSArray *)arr;
+- (instancetype)filterKey:(NSString *)key equal:(id)object;
+- (instancetype)filterKey:(NSString *)key notEqual:(id)object;
 
 /**
  *  查询数组中是否包含指定的值
@@ -30,5 +31,12 @@
  *  @param completion NSArray
  */
 - (void)searchKey:(NSString *)key value:(NSString *)value completion:(void(^)(NSArray *resultArr))completion;
+
+/**
+ *  返回JSON字符串
+ *
+ *  @return NSString
+ */
+- (NSString *)JSONString;
 
 @end

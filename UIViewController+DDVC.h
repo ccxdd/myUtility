@@ -68,6 +68,33 @@
 - (void)pushToStoryboardName:(NSString *)SbName identifier:(NSString *)identifier hideTabbar:(BOOL)isHide;
 
 /**
+ *  Push从Storyboard中取出的VC
+ *
+ *  @param vc       要Push的VC
+ *  @param isBlurBg 是否模糊VC背景
+ */
+- (void)pushToVC:(UIViewController *)vc isBlurBg:(BOOL)isBlurBg;
+
+/**
+ *  Push从Storyboard中取出的VC
+ *
+ *  @param vc       要Push的VC
+ *  @param isBlurBg 是否模糊VC背景
+ *  @param isHide   是否隐藏tabbar
+ */
+- (void)pushToVC:(UIViewController *)vc isBlurBg:(BOOL)isBlurBg hideTabbar:(BOOL)isHide;
+
+/**
+ *  Push从Storyboard中取出的VC
+ *
+ *  @param storyboardID Storyboard中的ID
+ *  @param customInfo   要传递的值
+ *  @param isBlurBg     是否模糊VC背景
+ *  @param isHide       是否隐藏tabbar
+ */
+- (void)pushToStoryboardID:(NSString *)storyboardID customInfo:(id)customInfo isBlurBg:(BOOL)isBlurBg hideTabbar:(BOOL)isHide;
+
+/**
  *  是否存在pop栈中
  *
  *  @param className 类名
@@ -105,5 +132,10 @@
  *  @return VC
  */
 - (id)storyboardInitialVC;
+
+/**
+ *  dismissVC
+ */
+- (IBAction)dismissModal;
 
 @end

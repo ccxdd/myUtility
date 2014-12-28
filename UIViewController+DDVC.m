@@ -117,7 +117,7 @@ const char leftHandlerKey, rightHandleKey;
 
 #pragma mark - backAction
 
-- (void)backAction
+- (IBAction)backAction
 {
     [self.navigationController popViewControllerAnimated:YES];
 }
@@ -216,48 +216,36 @@ const char leftHandlerKey, rightHandleKey;
 
 - (void)pushVC:(UIViewController *)vc
 {
-    [self pushToVC:vc hideTabbar:vc.hidesBottomBarWhenPushed];
-}
-
-- (void)pushToVC:(UIViewController *)vc hideTabbar:(BOOL)isHide
-{
-    vc.hidesBottomBarWhenPushed = isHide;
     [self.navigationController pushViewController:vc animated:YES];
 }
 
-- (void)pushToStoryboardID:(NSString *)identifier hideTabbar:(BOOL)isHide
+- (void)pushToStoryboardID:(NSString *)identifier
 {
-    [self pushToVC:[self storyboardID:identifier] hideTabbar:isHide];
+    [self pushVC:[self storyboardID:identifier]];
 }
 
-- (void)pushToStoryboardName:(NSString *)SbName identifier:(NSString *)identifier hideTabbar:(BOOL)isHide
+- (void)pushToStoryboardName:(NSString *)SbName identifier:(NSString *)identifier
 {
     UIViewController *classVC = [UIViewController storyboardName:SbName
                                                       identifier:identifier];
-    [self pushToVC:classVC hideTabbar:isHide];
+    [self pushVC:classVC];
 }
 
 - (void)pushToVC:(UIViewController *)vc isBlurBg:(BOOL)isBlurBg
 {
-    [self pushToVC:vc isBlurBg:isBlurBg hideTabbar:vc.hidesBottomBarWhenPushed];
-}
-
-- (void)pushToVC:(UIViewController *)vc isBlurBg:(BOOL)isBlurBg hideTabbar:(BOOL)isHide
-{
     if (isBlurBg) {
         [vc.view setLightBlurBackground];
     }
-    vc.hidesBottomBarWhenPushed = isHide;
     [self pushVC:vc];
 }
 
-- (void)pushToStoryboardID:(NSString *)storyboardID customInfo:(id)customInfo isBlurBg:(BOOL)isBlurBg hideTabbar:(BOOL)isHide
+- (void)pushToStoryboardID:(NSString *)storyboardID customInfo:(id)customInfo isBlurBg:(BOOL)isBlurBg
 {
     id classVC = [self storyboardID:storyboardID];
     if ([classVC respondsToSelector:@selector(customInfo)]) {
         [classVC setCustomInfo:customInfo];
     }
-    [self pushToVC:classVC isBlurBg:isBlurBg hideTabbar:isHide];
+    [self pushToVC:classVC isBlurBg:isBlurBg];
 }
 
 #pragma mark - Storyboard

@@ -38,7 +38,7 @@
     picker.allowsEditing = allowsEditing;
     picker.delegate = [DDImageSelector sharedInstance];
     picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
-    [fromVC presentViewController:picker animated:YES completion:^{}];
+    [fromVC presentViewController:picker animated:YES completion:nil];
 }
 
 #pragma mark UIImagePickerControllerDelegate

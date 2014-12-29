@@ -82,12 +82,24 @@
                      limit:(NSUInteger)limit
                    success:(void(^)(id responseObject))success
 {
+    [self queryWithClassName:className showHidden:showHidden selectKeys:nil limit:limit success:success];
+}
+
++ (void)queryWithClassName:(NSString *)className
+                showHidden:(BOOL)showHidden
+                selectKeys:(NSArray *)selectKeys
+                     limit:(NSUInteger)limit
+                   success:(void(^)(id responseObject))success
+{
     BmobQuery *query = [BmobQuery queryWithClassName:className];
     if (limit > 0) {
         query.limit = limit;
     }
     if (!showHidden) {
         [query whereKey:@"hidden" notEqualTo:@"1"];
+    }
+    if (selectKeys) {
+        [query selectKeys:selectKeys];
     }
     [query orderByAscending:@"createdAt"];
     [self query:query findWithSuccess:success];
@@ -135,6 +147,15 @@
 + (void)apiWithName:(NSString *)name success:(void(^)(id responseObject))success
 {
     [self queryWithClassName:name showHidden:NO success:^(id responseObject) {
+        if (success) {
+            success(responseObject[0]);
+        }
+    }];
+}
+
++ (void)apiWithName:(NSString *)name selectKeys:(NSArray *)selectKeys success:(void(^)(id responseObject))success
+{
+    [self queryWithClassName:name showHidden:NO selectKeys:selectKeys limit:0 success:^(id responseObject) {
         if (success) {
             success(responseObject[0]);
         }

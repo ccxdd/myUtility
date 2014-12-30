@@ -301,8 +301,7 @@
     static NSString *CellIdentifier = @"PageCvCell";
     PageCvCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:CellIdentifier
                                                                  forIndexPath:indexPath];
-    cell.name.text = _reformImageData[indexPath.row];
-    //cell.imageView.backgroundColor = kRandomColor;
+    cell.imageView.backgroundColor = kRandomColor;
     
     id imageObj = self.imageNameKey ? _reformImageData[indexPath.row][self.imageNameKey] : _reformImageData[indexPath.row];
     
@@ -325,7 +324,7 @@
         case DDPage_Type_URL: //
         {
             [cell.imageView sd_setImageWithURL:[imageObj toURL]
-                              placeholderImage:[UIImage imageNamed:self.placeholderName]];
+                              placeholderImage:self.placeholderName ? [UIImage imageNamed:self.placeholderName] : nil];
         }
             break;
         default:

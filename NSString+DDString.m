@@ -438,7 +438,7 @@
     
     if (IOS7_OR_LATER) {
         labelsize = [self boundingRectWithSize:calcSize
-                                       options:NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesLineFragmentOrigin
+                                       options:NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading
                                     attributes:@{NSFontAttributeName: font}
                                        context:nil].size;
     } else {

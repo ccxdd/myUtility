@@ -11,8 +11,12 @@
 @interface GlassButton : UIButton
 
 @property (nonatomic, copy  ) NSString *colorStyle;
+@property (nonatomic, strong) UIColor  *borderColor;
 @property (nonatomic, assign) CGFloat  radius;
+@property (nonatomic, assign) CGFloat  borderWidth;
 
 + (instancetype)buttonWithStyle:(NSString *)style frame:(CGRect)frame;
+
+- (void)setTitleColor:(UIColor *)titleColor borderColor:(UIColor *)borderColor borderWidth:(CGFloat)borderWidth;
 
 @end

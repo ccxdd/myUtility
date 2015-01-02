@@ -28,27 +28,27 @@
 - (void)configButton
 {
     if (self.radius == 0) {
-        [self setCornerRadius:self.height/3];
+        [self setCornerRadius:self.height/3 borderColor:self.borderColor width:self.borderWidth];
     } else if (self.radius > 0) {
         [self setCornerRadius:self.radius];
     }
     
-    if ([self.colorStyle isEqualToString:@"r"]) {
+    if ([self.colorStyle isEqualToString:@"c"]) {
+        return;
+    } else if ([self.colorStyle isEqualToString:@"r"]) {
         self.backgroundColor = kGlassRed;
     } else if ([self.colorStyle isEqualToString:@"g"]) {
         self.backgroundColor = kGlassGreen;
     } else {
         self.backgroundColor = kGlassBlue;
     }
-    [self setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
 }
 
-/*
- // Only override drawRect: if you perform custom drawing.
- // An empty implementation adversely affects performance during animation.
- - (void)drawRect:(CGRect)rect {
- // Drawing code
- }
- */
+- (void)setTitleColor:(UIColor *)titleColor borderColor:(UIColor *)borderColor borderWidth:(CGFloat)borderWidth
+{
+    [self setTitleColor:titleColor forState:UIControlStateNormal];
+    self.borderColor = borderColor;
+    self.borderWidth = borderWidth;
+}
 
 @end

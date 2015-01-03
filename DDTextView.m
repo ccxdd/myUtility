@@ -26,7 +26,7 @@
     self.placeholderLabel = [[UILabel alloc] initWithFrame:CGRectMake(5, 5, self.frame.size.width, 20)];
     self.placeholderLabel.font = self.font;
     self.placeholderLabel.backgroundColor = [UIColor clearColor];
-    self.placeholderLabel.textColor = [UIColor colorWithWhite:.7 alpha:1];
+    self.placeholderLabel.textColor = [UIColor colorWithWhite:.5 alpha:1];
     self.placeholderLabel.text = self.placeholder;
     self.delegate = self;
     [self addSubview:self.placeholderLabel];
@@ -58,13 +58,25 @@
     self.placeholderLabel.font = font;
 }
 
+- (void)setText:(NSString *)text
+{
+    [self checkTextLength:text];;
+    
+    [super setText:text];
+}
+
 #pragma mark - textViewDidDidChange
 
 - (void)textViewDidDidChange:(NSNotification *)notification
 {
-    if (self.text.length > 0) {
+    [self checkTextLength:self.text];
+}
+
+- (void)checkTextLength:(NSString *)text
+{
+    if (text.length > 0) {
         self.placeholderLabel.hidden = YES;
-    } else if (self.text.length == 0) {
+    } else if (text.length == 0) {
         if (self.placeholder.length > 0) {
             self.placeholderLabel.hidden = NO;
         }
@@ -73,31 +85,22 @@
 
 #pragma mark UITextView Delegate
 
-- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
-{
-    if (range.location >= 260 || [text isEqualToString:@"\n"])
-    {
-        [self resignFirstResponder];
-        return  NO;
-    }
-    else
-    {
-        return YES;
-    }
-}
+//- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
+//{
+//    if (range.location >= 260 || [text isEqualToString:@"\n"])
+//    {
+//        [self resignFirstResponder];
+//        return  NO;
+//    }
+//    else
+//    {
+//        return YES;
+//    }
+//}
 
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
-
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect
-{
-    // Drawing code
-}
-*/
 
 @end

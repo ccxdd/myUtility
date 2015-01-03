@@ -101,8 +101,21 @@
     if (selectKeys) {
         [query selectKeys:selectKeys];
     }
-    [query orderByAscending:@"createdAt"];
+    [query orderByAscending:@"updatedAt"];
     [self query:query findWithSuccess:success];
+}
+
++ (void)queryWithObjectId:(NSString *)objectId
+                className:(NSString *)className
+                  success:(void(^)(id responseObject))success
+{
+    BmobQuery *query = [BmobQuery queryWithClassName:className];
+    [query whereKey:@"objectId" equalTo:objectId];
+    [self query:query findWithSuccess:^(id responseObject) {
+        if (success) {
+            success(responseObject[0]);
+        }
+    }];
 }
 
 + (void)saveClassName:(NSString *)className

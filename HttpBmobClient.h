@@ -28,6 +28,10 @@
                      limit:(NSUInteger)limit
                    success:(void(^)(id responseObject))success;
 
++ (void)queryWithObjectId:(NSString *)objectId
+                className:(NSString *)className
+                  success:(void(^)(id responseObject))success;
+
 + (void)saveClassName:(NSString *)className
            parameters:(NSDictionary *)parameters
               success:(void(^)(id responseObject))success;

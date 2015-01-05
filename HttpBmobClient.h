@@ -45,6 +45,8 @@
             value:(id)value
           success:(void(^)(id responseObject))success;
 
++ (void)apiToHomeCompletion:(void(^)(id responseObject))completion;
+
 + (void)hiddenObjectId:(NSString *)objectId
              boolValue:(BOOL)boolValue
              className:(NSString *)className

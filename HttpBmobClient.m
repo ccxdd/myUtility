@@ -101,7 +101,7 @@
     if (selectKeys) {
         [query selectKeys:selectKeys];
     }
-    [query orderByAscending:@"updatedAt"];
+    [query orderByDescending:@"updatedAt"];
     [self query:query findWithSuccess:success];
 }
 
@@ -110,7 +110,7 @@
                   success:(void(^)(id responseObject))success
 {
     BmobQuery *query = [BmobQuery queryWithClassName:className];
-    [query whereKey:@"objectId" equalTo:objectId];
+    [query whereKey:kObjectID equalTo:objectId];
     [self query:query findWithSuccess:^(id responseObject) {
         if (success) {
             success(responseObject[0]);
@@ -127,14 +127,14 @@
     NSDictionary *numberFields = [parameters filterKeys:classField.numberFields non:NO];
     NSDictionary *uploadFields = [parameters filterKeys:classField.uploadFields non:NO];
     DLogSuccss(@"normalFields = %@", normalFields);
-    BmobObject *object = [BmobObject objectWithoutDatatWithClassName:className objectId:parameters[@"objectId"]];
+    BmobObject *object = [BmobObject objectWithoutDatatWithClassName:className objectId:parameters[kObjectID]];
     [object saveAllWithDictionary:normalFields];
     [object saveAllWithDictionary:[numberFields valueToNSNumber]];
     
     [self uploadFields:uploadFields className:className resultBlock:^(NSDictionary *files){
         DLogSuccss(@"files = %@", files);
         [object saveAllWithDictionary:files];
-        if (parameters[@"objectId"]) {
+        if (parameters[kObjectID]) {
             [object updateInBackgroundWithResultBlock:^(BOOL isSuccessful, NSError *error) {
                 if (isSuccessful) {
                     success([self convertBmobObj:object className:className]);
@@ -182,8 +182,34 @@
 {
     [self queryWithClassName:apiName showHidden:YES limit:1 success:^(id responseObject) {
         NSMutableDictionary *parameters = [@{key:value} mutableCopy];
-        [parameters setValue:responseObject[0][@"objectId"] forKey:@"objectId"];
+        [parameters setValue:responseObject[0][kObjectID] forKey:kObjectID];
         [self saveClassName:apiName parameters:parameters success:success];
+    }];
+}
+
++ (void)apiToHomeCompletion:(void(^)(id responseObject))completion
+{
+    [self apiWithName:API_StoreHomePage success:^(NSMutableDictionary *homeDict) {
+        NSArray *productSection = [homeDict[@"recommendList"] valueForKeyPath:@"productList"];
+        NSMutableArray *product_id_array = [NSMutableArray array];
+        for (NSArray *list in productSection) {
+            [product_id_array addObjectsFromArray:list];
+        }
+        
+        BmobQuery *query = [BmobQuery queryWithClassName:tProduct];
+        [query whereKey:kObjectID containedIn:product_id_array];
+        [query whereKey:@"hidden" notEqualTo:@"1"];
+        [self query:query findWithSuccess:^(NSMutableArray *productList) {
+            
+            for (NSInteger i = 0; i < productSection.count; i++) {
+                homeDict[@"recommendList"][i][@"productList"] = [productList filterKey:kObjectID equal:productSection[i]];
+            }
+            
+            if (completion) {
+                completion(homeDict);
+            }
+        }];
+        
     }];
 }
 
@@ -292,7 +318,7 @@
 {
     __block NSMutableDictionary *mdict = [NSMutableDictionary dictionary];
     BmobClassField *classField = [self classFields][className];
-    [mdict setValue:BmobObj.objectId forKey:@"objectId"];
+    [mdict setValue:BmobObj.objectId forKey:kObjectID];
     
     [classField.fields enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         [mdict setValue:[self getObjFromBmob:[BmobObj objectForKey:obj]]

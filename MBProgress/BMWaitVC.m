@@ -297,8 +297,7 @@ static CGRect     popViewFrame;
     if (alertView.alertViewStyle == UIAlertViewStylePlainTextInput) {
         if (alertViewFieldBlock) {
             UITextField *field = [alertView textFieldAtIndex:0];
-            field.text.length > 0 ? alertViewFieldBlock(field, buttonIndex):nil;
-            //alertViewFieldBlock = nil;
+            alertViewFieldBlock(field, buttonIndex);
         }
     } else {
         if (alertViewBlock) {

@@ -284,4 +284,26 @@ const char leftHandlerKey, rightHandleKey;
     [self.view setBackgroundImage:image blur:blur tintColor:tintColor];
 }
 
++ (UIViewController *)currentVC
+{
+    UIWindow *window = [UIApplication sharedApplication].keyWindow;
+    UIViewController *rootVC = window.rootViewController;
+    UIViewController *currentVC;
+    
+    if ([rootVC isKindOfClass:[UITabBarController class]]) {
+        UIViewController *selectVC = [(UITabBarController *)rootVC selectedViewController];
+        if ([selectVC isKindOfClass:[UINavigationController class]]) {
+            currentVC = [[(UINavigationController *)selectVC viewControllers] lastObject];
+        } else {
+            currentVC = rootVC;
+        }
+    } else if ([rootVC isKindOfClass:[UINavigationController class]]) {
+        currentVC = [[(UINavigationController *)rootVC viewControllers] lastObject];
+    } else {
+        currentVC = rootVC;
+    }
+    
+    return currentVC;
+}
+
 @end

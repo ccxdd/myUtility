@@ -12,6 +12,8 @@
 
 + (id)storyboardName:(NSString *)name identifier:(NSString *)identifier;
 
++ (UIViewController *)currentVC;
+
 - (void)backButtonWithImageName:(NSString *)imageName;
 
 - (void)backButtonWithTitle:(NSString *)title;

@@ -202,7 +202,7 @@
         [self query:query findWithSuccess:^(NSMutableArray *productList) {
             
             for (NSInteger i = 0; i < productSection.count; i++) {
-                homeDict[@"recommendList"][i][@"productList"] = [productList filterKey:kObjectID equal:productSection[i]];
+                homeDict[@"recommendList"][i][@"productInfoList"] = [productList filterKey:kObjectID equal:productSection[i]];
             }
             
             if (completion) {

@@ -101,27 +101,20 @@
     return [resultArr count] > 0;
 }
 
+- (BOOL)inArray:(NSArray *)arr forKey:(NSString *)key
+{
+    return [arr filterKey:key equal:self].count > 0;
+}
+
 - (void)inArray:(NSArray *)arr
             key:(NSString *)key
      completion:(void(^)(NSInteger index))completion
 {
-    __block NSInteger index = -1;
-    
-    [arr enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        if (key) {
-            NSString *objValue = [NSString stringWithFormat:@"%@", obj[key]];
-            if ([objValue isEqualToString:[NSString stringWithFormat:@"%@", self]]) {
-                index = idx;
-                *stop = YES;
-            }
-        } else if ([obj isEqualToString:self]) {
-            index = idx;
-            *stop = YES;
-        }
-    }];
+    id item = [[arr filterKey:key equal:self] firstObject];
+    NSUInteger index = [arr indexOfObject:item];
     
     if (completion) {
-        completion(index);
+        completion(index == NSNotFound ? -1 : index);
     }
 }
 

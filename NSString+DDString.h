@@ -40,6 +40,8 @@
 
 - (BOOL)inArray:(NSArray *)arr;
 
+- (BOOL)inArray:(NSArray *)arr forKey:(NSString *)key;
+
 - (void)inArray:(NSArray *)arr
             key:(NSString *)key
      completion:(void(^)(NSInteger index))completion;

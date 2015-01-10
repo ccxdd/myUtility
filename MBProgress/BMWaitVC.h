@@ -55,6 +55,13 @@
 /**
  *  显示alertView
  *
+ *  @param message 显示文字
+ */
++ (void)showAlertMessage:(NSString *)message;
+
+/**
+ *  显示alertView
+ *
  *  @param message    显示文字
  *  @param alertBlock 回调block
  */
@@ -68,6 +75,11 @@
  *  @param alertBlock   回调block
  */
 + (void)showAlertMessage:(NSString *)message
+            buttonTitles:(NSArray *)buttonTitles
+              alertBlock:(void(^)(NSInteger buttonIndex))alertBlock;
+
++ (void)showAlertMessage:(NSString *)message
+                   title:(NSString *)title
             buttonTitles:(NSArray *)buttonTitles
               alertBlock:(void(^)(NSInteger buttonIndex))alertBlock;
 

@@ -157,6 +157,11 @@ static CGRect     popViewFrame;
     [self closeWaitView];
 }
 
++ (void)showAlertMessage:(NSString *)message
+{
+    [self showAlertMessage:message buttonTitles:nil alertBlock:nil];
+}
+
 + (void)showAlertMessage:(NSString *)message alertBlock:(void(^)(NSInteger buttonIndex))alertBlock
 {
     alertViewBlock = alertBlock;
@@ -167,14 +172,22 @@ static CGRect     popViewFrame;
             buttonTitles:(NSArray *)buttonTitles
               alertBlock:(void(^)(NSInteger buttonIndex))alertBlock
 {
+    [self showAlertMessage:message title:nil buttonTitles:buttonTitles alertBlock:alertBlock];
+}
+
++ (void)showAlertMessage:(NSString *)message
+                   title:(NSString *)title
+            buttonTitles:(NSArray *)buttonTitles
+              alertBlock:(void(^)(NSInteger buttonIndex))alertBlock
+{
     alertViewBlock = alertBlock;
     UIAlertView *alert;
     
     switch ([buttonTitles count]) {
         case 0: //
         {
-            alert = [[UIAlertView alloc] initWithTitle:message
-                                               message:nil
+            alert = [[UIAlertView alloc] initWithTitle:title ? title : message
+                                               message:title ? message : nil
                                               delegate:self
                                      cancelButtonTitle:@"确认"
                                      otherButtonTitles:nil, nil];
@@ -182,8 +195,8 @@ static CGRect     popViewFrame;
             break;
         case 1: //
         {
-            alert = [[UIAlertView alloc] initWithTitle:message
-                                               message:nil
+            alert = [[UIAlertView alloc] initWithTitle:title ? title : message
+                                               message:title ? message : nil
                                               delegate:self
                                      cancelButtonTitle:buttonTitles[0]
                                      otherButtonTitles:nil, nil];
@@ -191,8 +204,8 @@ static CGRect     popViewFrame;
             break;
         case 2:
         {
-            alert = [[UIAlertView alloc] initWithTitle:message
-                                               message:nil
+            alert = [[UIAlertView alloc] initWithTitle:title ? title : message
+                                               message:title ? message : nil
                                               delegate:self
                                      cancelButtonTitle:buttonTitles[0]
                                      otherButtonTitles:buttonTitles[1], nil];
@@ -283,7 +296,7 @@ static CGRect     popViewFrame;
 {
     UIWindow *window = [UIApplication sharedApplication].keyWindow;
     NSString *className = NSStringFromClass([window class]);
-    if (window == nil || [className isEqualToString:@"_UIModalItemHostingWindow"]) {
+    if (window == nil || [className isEqualToString:@"_UIModalItemHostingWindow"] || [className isEqualToString:@"_UIAlertControllerShimPresenterWindow"]) {
         window = [[UIApplication sharedApplication].windows objectAtIndex:0];
     }
     

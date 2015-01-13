@@ -347,51 +347,29 @@ static const void(^savePhotoBlock)(BOOL result);
              animated:(BOOL)animated duration:(NSTimeInterval)duration
 {
     UIView *superView = [self superview];
-    CGFloat nav_height = 0;
-    
-    if (!IOS7_OR_LATER) {
-        if (superView.height == kVIEW_HEIGHT) {
-            nav_height = -44;
-        }
-    }
     
     [self animated:animated duration:duration animations:^{
-        switch (position) {
-            case UIViewAlignPositionTop:
-            {
-                self.y = 0 + offset + nav_height;
-            }
-                break;
-            case UIViewAlignPositionLeft:
-            {
-                self.x = 0 + offset;
-            }
-                break;
-            case UIViewAlignPositionBottom:
-            {
-                self.y = superView.height - self.height + offset + nav_height;
-            }
-                break;
-            case UIViewAlignPositionRight:
-            {
-                self.x = superView.width - self.width + offset;
-            }
-                break;
-            case UIViewAlignPositionVerticalCenter:
-            {
-                self.center = CGPointMake(self.x, superView.midY);
-            }
-                break;
-            case UIViewAlignPositionHorizontalCenter:
-            {
-                self.center = CGPointMake(superView.midX, self.y);
-            }
-                break;
-            case UIViewAlignPositionCenter:
-            {
-                self.center = superView.center;
-            }
-                break;
+        
+        if (position & UIViewAlignPositionTop) {
+            self.y = 0 + offset;
+        }
+        if (position & UIViewAlignPositionLeft) {
+            self.x = 0 + offset;
+        }
+        if (position & UIViewAlignPositionBottom) {
+            self.y = superView.height - self.height - offset;
+        }
+        if (position & UIViewAlignPositionRight) {
+            self.x = superView.width - self.width - offset;
+        }
+        if (position & UIViewAlignPositionHorizontalCenter) {
+            self.x = (superView.width - self.width) / 2;
+        }
+        if (position & UIViewAlignPositionVerticalCenter) {
+            self.y = (superView.height - self.height) / 2;
+        }
+        if (position & UIViewAlignPositionCenter) {
+            self.center = superView.center;
         }
     }];
 }
@@ -457,7 +435,7 @@ static const void(^savePhotoBlock)(BOOL result);
 - (UIImage *)captureView1x
 {
     CGRect rect = self.frame;
-
+    
     UIGraphicsBeginImageContext(rect.size);
     if (IOS7_OR_LATER) {
         [self drawViewHierarchyInRect:self.bounds afterScreenUpdates:YES];

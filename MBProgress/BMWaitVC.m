@@ -16,7 +16,7 @@
 
 static const void(^alertViewBlock)(NSInteger buttonIndex);
 static const void(^alertViewFieldBlock)(UITextField *field, NSInteger buttonIndex);
-static const void(^popViewBlock)(void);
+static const void(^popViewBlock)(id userInfo);
 static NSUInteger kWaitViewCount = 0;
 static CGRect     popViewFrame;
 
@@ -336,14 +336,31 @@ static CGRect     popViewFrame;
 
 + (void)popView:(UIView *)popView
 {
-    [self popView:popView completion:nil];
+    [self popView:popView align:UIViewAlignPositionCenter offset:0 completion:nil];
+}
+
++ (void)popView:(UIView *)popView
+          align:(UIViewAlignPosition)align
+         offset:(CGFloat)offset
+     completion:(void(^)(id userInfo))completion
+{
+    [self popView:popView
+          popBlur:0
+          popTint:nil
+         backBlur:5
+         backTint:kUIColorRGBA(0, 0, 0, .3)
+            align:align
+           offset:offset
+         animated:YES completion:completion];
 }
 
 + (void)popView:(UIView *)popView
         popBlur:(CGFloat)popBlur popTint:(UIColor *)popTint
        backBlur:(CGFloat)backBlur backTint:(UIColor *)backTint
+          align:(UIViewAlignPosition)align
+         offset:(CGFloat)offset
        animated:(BOOL)animated
-     completion:(void(^)())completion
+     completion:(void(^)(id userInfo))completion
 {
     if (!popView) {
         return;
@@ -360,7 +377,7 @@ static CGRect     popViewFrame;
         backView.tag = dPOP_TAG;
         [backView addSubview:popView];
         
-        [popView alignPostiion:UIViewAlignPositionCenter offset:0];
+        [popView alignPostiion:align offset:offset];
         
         if (popBlur > 0) {
             [popView setBackgroundBlur:popBlur tintColor:popTint];
@@ -386,18 +403,17 @@ static CGRect     popViewFrame;
     }
 }
 
-+ (void)popView:(UIView *)popView completion:(void(^)())completion
-{
-    [self popView:popView popBlur:0 popTint:nil backBlur:0 backTint:kUIColorRGBA(127, 127, 127, .3)
-         animated:YES completion:completion];
-}
-
 + (void)closePopView:(UITapGestureRecognizer *)tapGes
 {
     [self closePopView];
 }
 
 + (void)closePopView
+{
+    [self closePopViewWithUserInfo:nil];
+}
+
++ (void)closePopViewWithUserInfo:(id)userInfo
 {
     UIView *popBackView = [BMWaitVC sharedInstance].popBackView;
     UIView *popView = [BMWaitVC sharedInstance].popView;
@@ -408,7 +424,7 @@ static CGRect     popViewFrame;
                 [popBackView removeFromSuperview];
                 if (popViewBlock) {
                     [Utility dispatch_afterDelayTime:0 block:^{
-                        popViewBlock();
+                        popViewBlock(userInfo ? userInfo : nil);
                     }];
                 }
             }];

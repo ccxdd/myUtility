@@ -38,9 +38,9 @@
 
 - (void)rightButtonAction:(id)sender;
 
-- (void)popVC;
+- (IBAction)popVC;
 
-- (void)popToRootVC;
+- (IBAction)popToRootVC;
 
 /**
  *  Push到VC

@@ -20,7 +20,7 @@ const char leftHandlerKey, rightHandleKey;
     UIBarButtonItem *backBtn = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:imageName]
                                                                 style:UIBarButtonItemStyleBordered
                                                                target:self
-                                                               action:@selector(backAction)];
+                                                               action:@selector(popVC)];
     [self.navigationItem setBackBarButtonItem:backBtn];
 }
 
@@ -29,7 +29,7 @@ const char leftHandlerKey, rightHandleKey;
     UIBarButtonItem *backBtn = [[UIBarButtonItem alloc] initWithTitle:title
                                                                 style:UIBarButtonItemStyleBordered
                                                                target:self
-                                                               action:@selector(backAction)];
+                                                               action:@selector(popVC)];
     [self.navigationItem setBackBarButtonItem:backBtn];
 }
 
@@ -115,13 +115,6 @@ const char leftHandlerKey, rightHandleKey;
     
 }
 
-#pragma mark - backAction
-
-- (IBAction)backAction
-{
-    [self.navigationController popViewControllerAnimated:YES];
-}
-
 #pragma mark - rightButtonAction
 
 - (void)rightButtonAction:(id)sender
@@ -187,12 +180,12 @@ const char leftHandlerKey, rightHandleKey;
 
 #pragma mark - POP
 
-- (void)popVC
+- (IBAction)popVC
 {
     [self.navigationController popViewControllerAnimated:YES];
 }
 
-- (void)popToRootVC
+- (IBAction)popToRootVC
 {
     [self.navigationController popToRootViewControllerAnimated:YES];
 }

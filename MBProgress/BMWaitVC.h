@@ -128,19 +128,41 @@
  *  弹出框
  *
  *  @param popView    想要弹出的View
- *  @param completion 回调
+ *  @param align      对齐方式
+ *  @param offset     到边界的距离
+ *  @param completion 关闭时回调
  */
-+ (void)popView:(UIView *)popView completion:(void(^)())completion;
++ (void)popView:(UIView *)popView
+          align:(UIViewAlignPosition)align
+         offset:(CGFloat)offset
+     completion:(void(^)(id userInfo))completion;
+
+/**
+ *  弹出框
+ *
+ *  @param popView    想要弹出的View
+ *  @param popBlur    弹出框的模糊值
+ *  @param popTint    弹出框的背景颜色
+ *  @param backBlur   背景的模糊值
+ *  @param backTint   背景颜色
+ *  @param align      对齐方式
+ *  @param offset     到边界的距离
+ *  @param animated   弹出动画
+ *  @param completion 关闭时回调
+ */
 + (void)popView:(UIView *)popView
         popBlur:(CGFloat)popBlur popTint:(UIColor *)popTint
        backBlur:(CGFloat)backBlur backTint:(UIColor *)backTint
+          align:(UIViewAlignPosition)align
+         offset:(CGFloat)offset
        animated:(BOOL)animated
-     completion:(void(^)())completion;
+     completion:(void(^)(id userInfo))completion;
 
 /**
  *  关闭PopView
  */
 + (void)closePopView;
++ (void)closePopViewWithUserInfo:(id)userInfo;
 
 @end
 

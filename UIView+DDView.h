@@ -8,14 +8,14 @@
 
 #import <UIKit/UIKit.h>
 
-typedef NS_ENUM (NSInteger, UIViewAlignPosition) {
-    UIViewAlignPositionTop,
-    UIViewAlignPositionLeft,
-    UIViewAlignPositionBottom,
-    UIViewAlignPositionRight,
-    UIViewAlignPositionCenter,
-    UIViewAlignPositionHorizontalCenter,
-    UIViewAlignPositionVerticalCenter,
+typedef NS_OPTIONS (NSUInteger, UIViewAlignPosition) {
+    UIViewAlignPositionTop              = 1 << 1,
+    UIViewAlignPositionLeft             = 1 << 2,
+    UIViewAlignPositionBottom           = 1 << 3,
+    UIViewAlignPositionRight            = 1 << 4,
+    UIViewAlignPositionCenter           = 1 << 5,
+    UIViewAlignPositionHorizontalCenter = 1 << 6,
+    UIViewAlignPositionVerticalCenter   = 1 << 7,
 };
 
 

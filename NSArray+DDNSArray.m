@@ -33,6 +33,21 @@
     return mArray;
 }
 
+- (instancetype)allValuesForKey:(NSString *)key
+{
+    if (!key) {
+        return nil;
+    }
+    
+    NSMutableArray *marr = [NSMutableArray array];
+    
+    for (NSDictionary *dict in self) {
+        [marr addObject:[dict objectForKey:key]];
+    }
+    
+    return marr;
+}
+
 - (void)searchKey:(NSString *)key value:(NSString *)value completion:(void(^)(NSArray *resultArr))completion
 {
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K contains[cd] %@", key, value];

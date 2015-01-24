@@ -15,13 +15,31 @@
 /**
  *  返回Key所存在的Arr
  *
- *  @param key 数组中的Key值
- *  @param arr 用来比较数组
+ *  @param key    数组中的Key值
+ *  @param object 用来比较数组
  *
  *  @return NSArray
  */
 - (instancetype)filterKey:(NSString *)key equal:(id)object;
+
+/**
+ *  返回Key所不存在的Arr
+ *
+ *  @param key    数组中的Key值
+ *  @param object 用来比较数组
+ *
+ *  @return NSArray
+ */
 - (instancetype)filterKey:(NSString *)key notEqual:(id)object;
+
+/**
+ *  返回数组里所指定的Key的所有值
+ *
+ *  @param key 数组中的Key
+ *
+ *  @return NSArray
+ */
+- (instancetype)allValuesForKey:(NSString *)key;
 
 /**
  *  查询数组中是否包含指定的值

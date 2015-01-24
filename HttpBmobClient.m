@@ -389,6 +389,13 @@
                                                               @"productList"]
                                                numberFields:@[@"homeCount"]
                                                uploadFields:nil];
+        
+        classFields[tOrder] = [BmobClassField classWithFields:@[@"contentList",
+                                                                @"state",
+                                                                @"discount",
+                                                                @"address"]
+                                                 numberFields:nil
+                                                 uploadFields:nil];
     });
     
     return classFields;
@@ -407,8 +414,9 @@
             message = @"网络连接失败";
         }
             break;
-        case 1: //
+        case 100: //
         {
+            message = @"服务器正忙请稍等";
         }
             break;
         case 2: //

@@ -319,6 +319,8 @@
     __block NSMutableDictionary *mdict = [NSMutableDictionary dictionary];
     BmobClassField *classField = [self classFields][className];
     [mdict setValue:BmobObj.objectId forKey:kObjectID];
+    [mdict setValue:[BmobObj.createdAt toString] forKey:kCreatedAt];
+    [mdict setValue:[BmobObj.updatedAt toString] forKey:kUpdatedAt];
     
     [classField.fields enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         [mdict setValue:[self getObjFromBmob:[BmobObj objectForKey:obj]]

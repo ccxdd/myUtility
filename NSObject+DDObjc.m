@@ -57,8 +57,14 @@
  */
 - (NSMutableDictionary *)getPropertyValues
 {
+    return [self getPropertyValuesEqualKeys:nil non:YES];
+}
+
+- (NSMutableDictionary *)getPropertyValuesEqualKeys:(NSArray *)keys non:(BOOL)non
+{
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-    [self.getPropertyObjects enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+    NSDictionary *uiClassDict = [self.getPropertyObjects existKeys:keys non:non];
+    [uiClassDict enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
         if ([obj isKindOfClass:[UILabel class]] ||
             [obj isKindOfClass:[UITextField class]] ||
             [obj isKindOfClass:[UITextView class]])
@@ -71,6 +77,10 @@
                  [obj isKindOfClass:[NSNumber class]])
         {
             [dict setValue:obj forKey:key];
+        }
+        else if ([obj isKindOfClass:[UISwitch class]])
+        {
+            [dict setValue:[obj isOn] ? @"1" : @"0" forKey:key];
         }
     }];
     
@@ -90,27 +100,33 @@
     }
     
     NSMutableDictionary *uiClassDict = self.getPropertyObjects;
-    NSMutableDictionary *objcClassDict = [NSMutableDictionary dictionaryWithDictionary:propertyObjects];
     
     [uiClassDict enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-        if ([propertyObjects objectForKey:key] &&
+        NSString *propertyValue = [propertyObjects objectForKey:key];
+        if (propertyValue &&
             ([obj isKindOfClass:[UILabel class]] ||
              [obj isKindOfClass:[UITextField class]] ||
              [obj isKindOfClass:[UITextView class]]))
         {
-            [obj setText:[propertyObjects objectForKey:key]];
-            [objcClassDict removeObjectForKey:key];
+            [obj setText:propertyValue];
+        }
+        else if (propertyValue && ([obj isKindOfClass:[UISwitch class]]))
+        {
+            [obj setOn:([propertyValue integerValue] == 1) animated:YES];
+        }
+        else if (propertyValue) {
+            @try {
+                [self setValue:propertyValue forKey:key];
+            }
+            @catch (NSException *exception) {
+                DLogError(@"key: %@ not found class %@", key, NSStringFromClass([obj class]));
+            }
         }
     }];
     
-    [objcClassDict enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-        @try {
-            [self setValue:[propertyObjects objectForKey:key] forKey:key];
-        }
-        @catch (NSException *exception) {
-            DLogError(@"key: %@ not found", key);
-        }
-    }];
+    [self setValue:propertyObjects[kObjectID] forKey:kObjectID];
+    [self setValue:propertyObjects[kUpdatedAt] forKey:kUpdatedAt];
+    [self setValue:propertyObjects[kCreatedAt] forKey:kCreatedAt];
 }
 
 #pragma mark - 验证输入项 -

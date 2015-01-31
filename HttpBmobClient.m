@@ -123,9 +123,9 @@
               success:(void(^)(id responseObject))success
 {
     BmobClassField *classField = [self classFields][className];
-    NSDictionary *normalFields = [parameters filterKeys:classField.fields non:NO];
-    NSDictionary *numberFields = [parameters filterKeys:classField.numberFields non:NO];
-    NSDictionary *uploadFields = [parameters filterKeys:classField.uploadFields non:NO];
+    NSDictionary *normalFields = [parameters existKeys:classField.fields non:NO];
+    NSDictionary *numberFields = [parameters existKeys:classField.numberFields non:NO];
+    NSDictionary *uploadFields = [parameters existKeys:classField.uploadFields non:NO];
     DLogSuccss(@"normalFields = %@", normalFields);
     BmobObject *object = [BmobObject objectWithoutDatatWithClassName:className objectId:parameters[kObjectID]];
     [object saveAllWithDictionary:normalFields];

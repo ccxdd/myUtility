@@ -13,23 +13,33 @@
 /**
  *  返回所有属性名
  *
- *  @return 属性列表
+ *  @return NSArray
  */
 - (NSArray *)getPropertyNames;
 
 /**
  *  返回属性字典
  *
- *  @return 字典
+ *  @return NSMutableDictionary
  */
 - (NSMutableDictionary *)getPropertyObjects;
 
 /**
  *  返回所有属性值
  *
- *  @return 字典
+ *  @return NSMutableDictionary
  */
 - (NSMutableDictionary *)getPropertyValues;
+
+/**
+ *  返回过滤后的属性值
+ *
+ *  @param keys 过滤的属性Key
+ *  @param non  是否取反
+ *
+ *  @return NSMutableDictionary
+ */
+- (NSMutableDictionary *)getPropertyValuesEqualKeys:(NSArray *)keys non:(BOOL)non;
 
 /**
  *  设置所有属性值

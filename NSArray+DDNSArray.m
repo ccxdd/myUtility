@@ -66,7 +66,7 @@
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
         return [NSString stringWithFormat:@"%@", jsonString];
     } else {
-        DLogError(@"dictionary to JSONString Error! error = %@", error);
+        DLogError(@"NSArray to JSONString Error! error = %@", error);
         return nil;
     }
 }

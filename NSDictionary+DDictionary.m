@@ -29,7 +29,7 @@
     return [[self JSONString] dataUsingEncoding:NSUTF8StringEncoding];
 }
 
-- (instancetype)filterKeys:(NSArray *)keys non:(BOOL)non
+- (instancetype)existKeys:(NSArray *)keys non:(BOOL)non
 {
     NSMutableDictionary *dict;
     

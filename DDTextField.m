@@ -25,6 +25,8 @@ static NSNumber *superViewProperty;
 @property (nonatomic, strong) UIDatePicker    *datePicker;
 @property (nonatomic, strong) UIImageView     *activeImageView;
 
+@property (nonatomic, assign) CGFloat keyBorad_Height;
+
 @end
 
 @implementation DDTextField
@@ -49,6 +51,13 @@ static NSNumber *superViewProperty;
 
 - (void)configDDTextField
 {
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillShow:)
+                                                 name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillHide:)
+                                                 name:UIKeyboardWillHideNotification object:nil];
+    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textFieldDidBeginEditing:)
                                                  name:UITextFieldTextDidBeginEditingNotification object:self];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textFieldDidEndEditing:)
@@ -79,6 +88,8 @@ static NSNumber *superViewProperty;
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UITextFieldTextDidBeginEditingNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UITextFieldTextDidEndEditingNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
 }
 
 + (instancetype)DDTextFieldWithFrame:(CGRect)frame
@@ -120,6 +131,20 @@ static NSNumber *superViewProperty;
     return ddf;
 }
 
+#pragma mark keyBoard
+
+- (void)keyboardWillShow:(NSNotification *)notification
+{
+    CGRect keyboardFrame;
+    [notification.userInfo[UIKeyboardFrameEndUserInfoKey] getValue:&keyboardFrame];
+    self.keyBorad_Height = CGRectGetHeight(keyboardFrame);
+}
+
+- (void)keyboardWillHide:(NSNotification *)notification
+{
+    superViewProperty = nil;
+}
+
 #pragma mark - UITextField notifications
 
 - (void)textFieldDidBeginEditing:(NSNotification *)notification
@@ -132,7 +157,7 @@ static NSNumber *superViewProperty;
     
     //调整坐标
     CGFloat y = 0;
-    float keyboardHeight = 216 + 44 + 30;
+    float keyboardHeight = self.keyBorad_Height + 44;
     float space = kSCREEN_HEIGHT - keyboardHeight - textField.frame.size.height;
     
     if ([fieldSuperView isKindOfClass:[UIScrollView class]]) {
@@ -154,8 +179,8 @@ static NSNumber *superViewProperty;
                 [scrollView setContentOffset:CGPointMake(0, y)];
             }];
         }
-        else if (fieldPoint.y < 84) {
-            y = fieldPoint.y - 84 + scrollView.contentOffset.y;
+        else if (fieldPoint.y < 64) {
+            y = fieldPoint.y - 64 + scrollView.contentOffset.y;
             [UIView animateWithDuration:0.5 animations:^{
                 [scrollView setContentOffset:CGPointMake(0, y)];
             }];
@@ -175,12 +200,12 @@ static NSNumber *superViewProperty;
             //}
             [fullView setY:fullView.y - y animated:YES duration:0.5];
         }
-        else if (fieldPoint.y < 84) {
+        else if (fieldPoint.y < 64) {
             UIView *fullView = [self superFullScreenView:textField];
             if (!superViewProperty) {
                 superViewProperty = @(fullView.frame.origin.y);
             }
-            y = fieldPoint.y - 84;
+            y = fieldPoint.y - 64;
             [fullView setY:fullView.y - y animated:YES duration:0.5];
         }
     }
@@ -274,12 +299,10 @@ static NSNumber *superViewProperty;
             UIScrollView *scrollView = (UIScrollView *)[self superview];
             [UIView animateWithDuration:0.5 animations:^{
                 scrollView.contentSize = CGSizeMake(scrollView.contentSize.width, [superViewProperty floatValue]);
-                superViewProperty = nil;
             }];
         } else if ([[self superview] isKindOfClass:[UIView class]]) {
             UIView *superView = [self superFullScreenView:self];
             [superView setY:[superViewProperty floatValue] animated:YES duration:0.5];
-            superViewProperty = nil;
         }
     }
     
@@ -289,6 +312,7 @@ static NSNumber *superViewProperty;
         self.text = [Utility dateToString:[_datePicker date]];
     }
     
+    superViewProperty = nil;
     [self resignFirstResponder];
     
 }
@@ -309,7 +333,7 @@ static NSNumber *superViewProperty;
             
         case DDTextField_TYPE_NUM:
         {
-            self.keyboardType = UIKeyboardTypeDecimalPad;
+            self.keyboardType = UIKeyboardTypeNumberPad;
         }
             break;
             
@@ -328,7 +352,7 @@ static NSNumber *superViewProperty;
         case DDTextField_TYPE_PWD_NUM:
         {
             self.secureTextEntry = YES;
-            self.keyboardType = UIKeyboardTypeDecimalPad;
+            self.keyboardType = UIKeyboardTypeNumberPad;
         }
             break;
             
@@ -344,7 +368,7 @@ static NSNumber *superViewProperty;
         case DDTextField_TYPE_DATE:
         {
             if (!_datePicker) {
-                _datePicker  = [[UIDatePicker alloc] initWithFrame:CGRectMake(0, 40, 320, 216)];
+                _datePicker  = [[UIDatePicker alloc] initWithFrame:CGRectMake(0, 40, kSCREEN_WIDTH, self.keyBorad_Height)];
                 _datePicker.datePickerMode = UIDatePickerModeDate;
                 [_datePicker handleControlEvent:UIControlEventValueChanged withBlock:^(id sender) {
                     self.text = [Utility dateToString:[sender date]];
@@ -357,7 +381,7 @@ static NSNumber *superViewProperty;
         case DDTextField_TYPE_PICKER:
         {
             if (!_pickerView) {
-                _pickerView  = [[UIPickerView alloc] initWithFrame:CGRectMake(0, 40, 320, 216)];
+                _pickerView  = [[UIPickerView alloc] initWithFrame:CGRectMake(0, 40, kSCREEN_WIDTH, self.keyBorad_Height)];
                 _pickerView.backgroundColor = [UIColor whiteColor];
                 _pickerView.showsSelectionIndicator = YES;
                 _pickerView.delegate = self;
@@ -440,8 +464,7 @@ static NSNumber *superViewProperty;
         //self.layer.backgroundColor = kUIColorRGBA(180, 0, 0, 0.7).CGColor;
         
         if (self.hitMessage) {
-            //[BMWaitVC showMessage:self.hitMessage];
-            [BMWaitVC showAlertMessage:self.hitMessage buttonTitles:nil alertBlock:nil];
+            [BMWaitVC showMessage:self.hitMessage];
         }
         return NO;
     } else {
@@ -455,7 +478,7 @@ static NSNumber *superViewProperty;
 
 - (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
 {
-	return 1;
+    return 1;
 }
 
 - (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component

@@ -22,7 +22,7 @@
  *
  *  @return 字典
  */
-- (instancetype)filterKeys:(NSArray *)keys non:(BOOL)non;
+- (instancetype)existKeys:(NSArray *)keys non:(BOOL)non;
 
 - (instancetype)valueToNSNumber;
 

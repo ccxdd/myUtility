@@ -53,15 +53,9 @@
                success:(void(^)(id responseObject))success;
 
 + (void)uploadDataArray:(NSArray *)dataArr
-              className:(NSString *)className
             resultBlock:(void(^)(NSMutableArray *urlArr))resultBlock;
 
-+ (void)uploadFields:(NSDictionary *)fields
-           className:(NSString *)className
-         resultBlock:(void(^)(NSDictionary *files))resultBlock;
-
 + (void)uploadPathOrData:(id)obj
-               className:(NSString *)className
-             resultBlock:(void(^)(BmobFile *fileObj))resultBlock;
+             resultBlock:(void(^)(NSString *filename, NSString *url))resultBlock;
 
 @end

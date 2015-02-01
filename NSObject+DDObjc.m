@@ -101,20 +101,21 @@
     
     NSMutableDictionary *uiClassDict = self.getPropertyObjects;
     
-    [uiClassDict enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-        NSString *propertyValue = [propertyObjects objectForKey:key];
-        if (propertyValue &&
-            ([obj isKindOfClass:[UILabel class]] ||
-             [obj isKindOfClass:[UITextField class]] ||
-             [obj isKindOfClass:[UITextView class]]))
+    for (NSString *key in [propertyObjects allKeys]) {
+        id obj = uiClassDict[key];
+        id propertyValue = propertyObjects[key];
+        
+        if ([obj isKindOfClass:[UILabel class]] ||
+            [obj isKindOfClass:[UITextField class]] ||
+            [obj isKindOfClass:[UITextView class]])
         {
             [obj setText:propertyValue];
         }
-        else if (propertyValue && ([obj isKindOfClass:[UISwitch class]]))
+        else if ([obj isKindOfClass:[UISwitch class]])
         {
             [obj setOn:([propertyValue integerValue] == 1) animated:YES];
         }
-        else if (propertyValue) {
+        else {
             @try {
                 [self setValue:propertyValue forKey:key];
             }
@@ -122,11 +123,7 @@
                 DLogError(@"key: %@ not found class %@", key, NSStringFromClass([obj class]));
             }
         }
-    }];
-    
-    [self setValue:propertyObjects[kObjectID] forKey:kObjectID];
-    [self setValue:propertyObjects[kUpdatedAt] forKey:kUpdatedAt];
-    [self setValue:propertyObjects[kCreatedAt] forKey:kCreatedAt];
+    }
 }
 
 #pragma mark - 验证输入项 -

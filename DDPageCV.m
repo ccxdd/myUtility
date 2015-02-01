@@ -323,8 +323,7 @@
             break;
         case DDPage_Type_URL: //
         {
-            [cell.imageView sd_setImageWithURL:[imageObj toURL]
-                              placeholderImage:self.placeholderName ? [UIImage imageNamed:self.placeholderName] : nil];
+            [cell.imageView loadImageData:imageObj];
         }
             break;
         default:

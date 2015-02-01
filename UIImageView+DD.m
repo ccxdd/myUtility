@@ -20,7 +20,13 @@
     }
     else if ([data isKindOfClass:[NSString class]]) {
         if ([data hasPrefix:@"http://"]) {
-            [self sd_setImageWithURL:[data toURL]];
+            NSString *fileName = [data lastPathComponent];
+            NSString *signUrl = [BmobProFile signUrlWithFilename:fileName
+                                                             url:data
+                                                       validTime:MN_HOUR
+                                                       accessKey:@"a55b4778d70bdbf22b31b9ceed39a18c"
+                                                       secretKey:nil];
+            [self sd_setImageWithURL:[signUrl toURL]];
         } else {
             self.image = [UIImage imageNamed:data];
         }

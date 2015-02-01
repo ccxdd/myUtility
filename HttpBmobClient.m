@@ -15,25 +15,21 @@
 
 @property (nonatomic, strong) NSArray *fields;
 @property (nonatomic, strong) NSArray *numberFields;
-@property (nonatomic, strong) NSArray *uploadFields;
 
 + (instancetype)classWithFields:(NSArray *)fields
-                   numberFields:(NSArray *)numberFields
-                   uploadFields:(NSArray *)uploadFields;
+                   numberFields:(NSArray *)numberFields;
 
 @end
 
 @implementation BmobClassField
 
 + (instancetype)classWithFields:(NSArray *)fields
-                   numberFields:(NSArray *)numberFields
-                   uploadFields:(NSArray *)uploadFields
+                   numberFields:(NSArray *)numberFields;
 {
     BmobClassField *classField = [super alloc];
     if (classField) {
         classField.fields = fields;
         classField.numberFields = numberFields;
-        classField.uploadFields = uploadFields;
     }
     return classField;
 }
@@ -125,34 +121,28 @@
     BmobClassField *classField = [self classFields][className];
     NSDictionary *normalFields = [parameters existKeys:classField.fields non:NO];
     NSDictionary *numberFields = [parameters existKeys:classField.numberFields non:NO];
-    NSDictionary *uploadFields = [parameters existKeys:classField.uploadFields non:NO];
     DLogSuccss(@"normalFields = %@", normalFields);
     BmobObject *object = [BmobObject objectWithoutDatatWithClassName:className objectId:parameters[kObjectID]];
     [object saveAllWithDictionary:normalFields];
     [object saveAllWithDictionary:[numberFields valueToNSNumber]];
     
-    [self uploadFields:uploadFields className:className resultBlock:^(NSDictionary *files){
-        DLogSuccss(@"files = %@", files);
-        [object saveAllWithDictionary:files];
-        if (parameters[kObjectID]) {
-            [object updateInBackgroundWithResultBlock:^(BOOL isSuccessful, NSError *error) {
-                if (isSuccessful) {
-                    success([self convertBmobObj:object className:className]);
-                } else {
-                    [self errorHandle:error];
-                }
-            }];
-        } else {
-            [object saveInBackgroundWithResultBlock:^(BOOL isSuccessful, NSError *error) {
-                if (isSuccessful) {
-                    success([self convertBmobObj:object className:className]);
-                } else {
-                    [self errorHandle:error];
-                }
-            }];
-        }
-    }];
-    
+    if (parameters[kObjectID]) {
+        [object updateInBackgroundWithResultBlock:^(BOOL isSuccessful, NSError *error) {
+            if (isSuccessful) {
+                success([self convertBmobObj:object className:className]);
+            } else {
+                [self errorHandle:error];
+            }
+        }];
+    } else {
+        [object saveInBackgroundWithResultBlock:^(BOOL isSuccessful, NSError *error) {
+            if (isSuccessful) {
+                success([self convertBmobObj:object className:className]);
+            } else {
+                [self errorHandle:error];
+            }
+        }];
+    }
 }
 
 #pragma mark - API
@@ -231,32 +221,9 @@
     }];
 }
 
-#pragma mark - 上传
-
-+ (void)uploadFields:(NSDictionary *)fields
-           className:(NSString *)className
-         resultBlock:(void(^)(NSDictionary *files))resultBlock
-{
-    if ([fields count]) {
-        __block NSMutableDictionary *files = [NSMutableDictionary dictionary];
-        __block NSInteger count = 0;
-        [fields enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-            [self uploadPathOrData:obj className:className resultBlock:^(BmobFile *fileObj) {
-                count++;
-                [files setValue:fileObj forKeyPath:key];
-                
-                if (count == [fields count]) {
-                    resultBlock(files);
-                }
-            }];
-        }];
-    } else {
-        resultBlock(nil);
-    }
-}
+#pragma mark - 文件上传
 
 + (void)uploadDataArray:(NSArray *)dataArr
-              className:(NSString *)className
             resultBlock:(void(^)(NSMutableArray *urlArr))resultBlock
 {
     if ([dataArr count]) {
@@ -267,10 +234,10 @@
             resultBlock([NSMutableArray arrayWithArray:dataArr]);
         } else {
             [dataArr enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-                [self uploadPathOrData:obj className:className resultBlock:^(BmobFile *fileObj) {
+                [self uploadPathOrData:obj resultBlock:^(NSString *filename, NSString *url) {
                     count++;
-                    if (fileObj) {
-                        [urlArr addObject:fileObj.url];
+                    if (url) {
+                        [urlArr addObject:url];
                     }
                     if (count == [dataArr count]) {
                         resultBlock(urlArr);
@@ -285,31 +252,43 @@
 }
 
 + (void)uploadPathOrData:(id)obj
-               className:(NSString *)className
-             resultBlock:(void(^)(BmobFile *fileObj))resultBlock
+             resultBlock:(void(^)(NSString *filename, NSString *url))resultBlock
 {
-    BmobFile *fileObj;
-    
     if ([obj isKindOfClass:[NSString class]]) {
-        fileObj = [[BmobFile alloc] initWithClassName:className
-                                         withFilePath:obj];
+        [BmobProFile uploadFileWithPath:obj
+                                  block:^(BOOL isSuccessful, NSError *error, NSString *filename, NSString *url) {
+                                      if (isSuccessful) {
+                                          resultBlock(filename, url);
+                                      } else {
+                                          [self errorHandle:error];
+                                      }
+                                      //打印文件名
+                                      NSLog(@"filename %@",filename);
+                                      //打印url
+                                      NSLog(@"url      %@",url);
+                                  } progress:^(CGFloat progress) {
+                                      DLog(@"progress = %f", progress);
+                                      [BMWaitVC showProgress:progress message:nil];
+                                  }];
     }
     else if ([obj isKindOfClass:[NSData class]]) {
-        fileObj = [[BmobFile alloc] initWithClassName:className
-                                         withFileName:@"file"
-                                         withFileData:obj];
+        [BmobProFile uploadFileWithFilename:[[Utility generateRandomOfNum:5] addSuffix:@".jpg"]
+                                   fileData:obj
+                                      block:^(BOOL isSuccessful, NSError *error, NSString *filename, NSString *url) {
+                                          if (isSuccessful) {
+                                              resultBlock(filename, url);
+                                          } else {
+                                              [self errorHandle:error];
+                                          }
+                                          //打印文件名
+                                          NSLog(@"filename %@",filename);
+                                          //打印url
+                                          NSLog(@"url %@",url);
+                                      } progress:^(CGFloat progress) {
+                                          DLog(@"progress = %f", progress);
+                                          [BMWaitVC showProgress:progress message:nil];
+                                      }];
     }
-    
-    [fileObj saveInBackground:^(BOOL isSuccessful, NSError *error) {
-        if (isSuccessful) {
-            resultBlock(fileObj);
-        } else {
-            [self errorHandle:error];
-        }
-    } withProgressBlock:^(float progress) {
-        DLog(@"%@ : progress = %f", className, progress);
-        [BMWaitVC showProgress:progress message:nil];
-    }];
 }
 
 #pragma mark - 转换BmobObject到NSDictionary -
@@ -323,7 +302,7 @@
     [mdict setValue:[BmobObj.updatedAt toString] forKey:kUpdatedAt];
     
     [classField.fields enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        [mdict setValue:[self getObjFromBmob:[BmobObj objectForKey:obj]]
+        [mdict setValue:[BmobObj objectForKey:obj]
                  forKey:obj];
     }];
     
@@ -334,21 +313,7 @@
         }
     }];
     
-    [classField.uploadFields enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        [mdict setValue:[self getObjFromBmob:[BmobObj objectForKey:obj]]
-                 forKey:obj];
-    }];
-    
     return mdict;
-}
-
-+ (id)getObjFromBmob:(id)obj
-{
-    if ([obj isKindOfClass:[BmobFile class]]) {
-        return [obj url];
-    }
-    
-    return obj;
 }
 
 #pragma mark - classFields
@@ -360,13 +325,11 @@
     dispatch_once(&pred, ^{
         classFields = [NSMutableDictionary dictionary];
         
-        classFields[tCategory] = [BmobClassField classWithFields:@[@"name", @"subList", @"hidden"]
-                                                    numberFields:nil
-                                                    uploadFields:@[@"imageFile"]];
+        classFields[tCategory] = [BmobClassField classWithFields:@[@"name", @"subList", @"hidden", @"imageUrl"]
+                                                    numberFields:nil];
         
-        classFields[tSubCategory] = [BmobClassField classWithFields:@[@"name", @"productList", @"hidden"]
-                                                       numberFields:nil
-                                                       uploadFields:@[@"imageFile"]];
+        classFields[tSubCategory] = [BmobClassField classWithFields:@[@"name", @"productList", @"hidden", @"imageUrl"]
+                                                       numberFields:nil];
         
         classFields[tProduct] = [BmobClassField classWithFields:@[@"name",
                                                                   @"describe",
@@ -378,26 +341,23 @@
                                                                   @"weight"]
                                                    numberFields:@[@"price",
                                                                   @"discount",
-                                                                  @"stock"]
-                                                   uploadFields:nil];
+                                                                  @"stock"]];
+        
         classFields[API_StoreHomePage] = [BmobClassField classWithFields:@[@"advert",
                                                                            @"categoryList",
                                                                            @"recommendList"]
-                                                            numberFields:nil
-                                                            uploadFields:nil];
+                                                            numberFields:nil];
         
         classFields[tTag] = [BmobClassField classWithFields:@[@"name",
                                                               @"showHome",
                                                               @"productList"]
-                                               numberFields:@[@"homeCount"]
-                                               uploadFields:nil];
+                                               numberFields:@[@"homeCount"]];
         
         classFields[tOrder] = [BmobClassField classWithFields:@[@"contentList",
                                                                 @"state",
                                                                 @"discount",
                                                                 @"address"]
-                                                 numberFields:nil
-                                                 uploadFields:nil];
+                                                 numberFields:nil];
     });
     
     return classFields;

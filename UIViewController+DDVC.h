@@ -43,6 +43,11 @@
 - (IBAction)popToRootVC;
 
 /**
+ *  endEditing
+ */
+- (IBAction)endEditing;
+
+/**
  *  Push到VC
  *
  *  @param vc     要Push的VC

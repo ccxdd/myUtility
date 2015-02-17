@@ -18,7 +18,7 @@ const char leftHandlerKey, rightHandleKey;
 - (void)backButtonWithImageName:(NSString *)imageName
 {
     UIBarButtonItem *backBtn = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:imageName]
-                                                                style:UIBarButtonItemStyleBordered
+                                                                style:UIBarButtonItemStylePlain
                                                                target:self
                                                                action:@selector(popVC)];
     [self.navigationItem setBackBarButtonItem:backBtn];
@@ -27,7 +27,7 @@ const char leftHandlerKey, rightHandleKey;
 - (void)backButtonWithTitle:(NSString *)title
 {
     UIBarButtonItem *backBtn = [[UIBarButtonItem alloc] initWithTitle:title
-                                                                style:UIBarButtonItemStyleBordered
+                                                                style:UIBarButtonItemStylePlain
                                                                target:self
                                                                action:@selector(popVC)];
     [self.navigationItem setBackBarButtonItem:backBtn];
@@ -41,7 +41,7 @@ const char leftHandlerKey, rightHandleKey;
 {
     
     UIBarButtonItem *rightBtn = [[UIBarButtonItem alloc] initWithImage:[self imageWithName:imageName renderingMode:renderingMode]
-                                                                 style:UIBarButtonItemStyleBordered
+                                                                 style:UIBarButtonItemStylePlain
                                                                 target:self
                                                                 action:@selector(rightButtonAction:)];
     [self.navigationItem setRightBarButtonItem:rightBtn];
@@ -62,7 +62,7 @@ const char leftHandlerKey, rightHandleKey;
 {
     
     UIBarButtonItem *rightBtn = [[UIBarButtonItem alloc] initWithTitle:title
-                                                                 style:UIBarButtonItemStyleBordered
+                                                                 style:UIBarButtonItemStylePlain
                                                                 target:self
                                                                 action:@selector(rightButtonAction:)];
     [self.navigationItem setRightBarButtonItem:rightBtn];
@@ -82,7 +82,7 @@ const char leftHandlerKey, rightHandleKey;
 {
     
     UIBarButtonItem *leftBtn = [[UIBarButtonItem alloc] initWithImage:[self imageWithName:imageName renderingMode:renderingMode]
-                                                                style:UIBarButtonItemStyleBordered
+                                                                style:UIBarButtonItemStylePlain
                                                                target:self
                                                                action:@selector(leftButtonAction:)];
     [self.navigationItem setLeftBarButtonItem:leftBtn];
@@ -103,7 +103,7 @@ const char leftHandlerKey, rightHandleKey;
 {
     
     UIBarButtonItem *leftBtn = [[UIBarButtonItem alloc] initWithTitle:title
-                                                                style:UIBarButtonItemStyleBordered
+                                                                style:UIBarButtonItemStylePlain
                                                                target:self
                                                                action:@selector(leftButtonAction:)];
     [self.navigationItem setLeftBarButtonItem:leftBtn];
@@ -157,6 +157,11 @@ const char leftHandlerKey, rightHandleKey;
 - (IBAction)dismissModal
 {
     [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (IBAction)endEditing
+{
+    [self.view endEditing:YES];
 }
 
 /**

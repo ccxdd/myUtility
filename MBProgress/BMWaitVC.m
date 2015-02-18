@@ -8,16 +8,13 @@
 //
 
 #import "BMWaitVC.h"
-#import "MBProgressHUD.h"
+#import "SVProgressHUD.h"
 
-#define dHUD_TAG                12344321
 #define dPOP_TAG                112233
-#define HUD_FONT                [UIFont systemFontOfSize:16]
 
 static const void(^alertViewBlock)(NSInteger buttonIndex);
 static const void(^alertViewFieldBlock)(UITextField *field, NSInteger buttonIndex);
 static const void(^popViewBlock)(id userInfo);
-static NSUInteger kWaitViewCount = 0;
 static CGRect     popViewFrame;
 
 @implementation BMWaitVC
@@ -36,125 +33,34 @@ static CGRect     popViewFrame;
 {
     self = [super init];
     if (self) {
-        useCount = 0;
+        
     }
     return self;
 }
 
-+ (MBProgressHUD *)MBProgressHUDFormWindows
-{
-    UIView *windows = [self AppDelegateWindow];
-    MBProgressHUD *HUD = (MBProgressHUD *)[windows viewWithTag:dHUD_TAG];
-    
-    if (HUD) {
-        return HUD;
-    } else {
-        HUD = [[MBProgressHUD alloc] initWithView:windows];
-        [windows addSubview:HUD];
-        HUD.tag = dHUD_TAG;
-        HUD.userInteractionEnabled = NO;
-        HUD.detailsLabelFont = HUD_FONT;
-        HUD.labelFont = HUD_FONT;
-    }
-    
-    return HUD;
-}
-
 + (void)showWaitView
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        
-        MBProgressHUD *HUD = [self MBProgressHUDFormWindows];
-        [HUD setMinSize:CGSizeMake(120, 120)];
-        HUD.labelText = @"请稍后";
-        [HUD show:YES];
-        kWaitViewCount++;
-        
-        UITapGestureRecognizer *hudGes = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissAction)];
-        [HUD addGestureRecognizer:hudGes];
-        
-        //            UILabel *lab = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 120, 20)];
-        //            [lab setText:@"点击取消"];
-        //            [lab setFont:[UIFont systemFontOfSize:14]];
-        //            [lab setBackgroundColor:[UIColor clearColor]];
-        //            [lab setTextColor:[UIColor lightGrayColor]];
-        //            [lab setTextAlignment:NSTextAlignmentCenter];
-        //            [lab setTag:dHUD_TAG+1];
-        //            lab.center = CGPointMake(HUD.center.x, HUD.center.y+50);
-        //            [HUD addSubview:lab];
-    });
-}
-
-+ (void)showMessage:(NSString *)message
-{
-    [self showMessage:message afterDelay:2];
-}
-
-+ (void)showMessage:(NSString *)message afterDelay:(NSTimeInterval)delay
-{
-    if (message) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            MBProgressHUD *HUD = [self MBProgressHUDFormWindows];
-            [HUD setMode:MBProgressHUDModeText];
-            HUD.detailsLabelText = message;
-            [HUD show:YES];
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                //DLog(@"HUD = %@", HUD);
-                [HUD hide:YES];
-            });
-        });
-    }
-}
-
-+ (void)showProgress:(double)progress
-{
-    [self showProgress:progress message:@"请稍后"];
-}
-
-+ (void)showProgress:(double)progress message:(NSString *)message
-{
-    if (progress < 1) {
-        
-        //DLog(@"progress = %f", progress);
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            MBProgressHUD *HUD = [self MBProgressHUDFormWindows];
-            HUD.mode = MBProgressHUDModeDeterminate;
-            HUD.progress = progress;
-            HUD.labelText = message;
-            UITapGestureRecognizer *hudGes = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissAction)];
-            [HUD addGestureRecognizer:hudGes];
-        });
-    }
+    [SVProgressHUD show];
 }
 
 + (void)closeWaitView
 {
-    if (kWaitViewCount > 1) {
-        kWaitViewCount--;
-        return;
-    }
-    
-    double time = 1;
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(time * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        MBProgressHUD *hud = (MBProgressHUD *)[[self AppDelegateWindow] viewWithTag:dHUD_TAG];
-        if (hud) {
-            //DLog(@"HUD = %@", hud);
-            [hud hide:YES];
-            kWaitViewCount = 0;
-        }
-    });
+    [SVProgressHUD dismiss];
 }
 
-+ (void)dismissAction
++ (void)showMessage:(NSString *)message
 {
-    DLog(@"MBProgress dismiss!");
-    if ([[self sharedInstance] waitViewDelegate] && [[[self sharedInstance] waitViewDelegate] respondsToSelector:@selector(waitViewClickEvent)])
-    {
-        [[[self sharedInstance] waitViewDelegate] waitViewClickEvent];
-    }
-    
-    [self closeWaitView];
+    [SVProgressHUD showInfoWithStatus:message];
+}
+
++ (void)showProgress:(double)progress
+{
+    [SVProgressHUD showProgress:progress status:@"请稍后"];
+}
+
++ (void)showProgress:(double)progress message:(NSString *)message
+{
+    [SVProgressHUD showProgress:progress status:message];
 }
 
 + (void)showAlertMessage:(NSString *)message
@@ -266,28 +172,6 @@ static CGRect     popViewFrame;
     [actionSheet setCancelButtonIndex:actionSheet.numberOfButtons-1];
     [actionSheet setDestructiveButtonIndex:actionSheet.numberOfButtons-1];
     [actionSheet showInView:[self AppDelegateWindow]];
-}
-
-- (NSInteger)useCount
-{
-    return useCount;
-}
-
-- (void)setUseCount:(NSInteger)value
-{
-    useCount = value;
-}
-
-- (void)incCount
-{
-    useCount++;
-    //DLog(@"incCount = %d", useCount);
-}
-
-- (void)decCount
-{
-    useCount--;
-    //DLog(@"decCount = %d", useCount);
 }
 
 #pragma mark - AppDelegateWindow

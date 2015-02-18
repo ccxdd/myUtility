@@ -17,9 +17,6 @@
 @end
 
 @interface BMWaitVC : NSObject <UIAlertViewDelegate, UIActionSheetDelegate>
-{
-    NSInteger useCount;
-}
 
 @property (nonatomic, assign) id<WaitViewDelegate> waitViewDelegate;
 @property (nonatomic, weak) UIView *popView;
@@ -33,14 +30,6 @@
  *  @param message 显示文字
  */
 + (void)showMessage:(NSString *)message;
-
-/**
- *  显示文字提示框
- *
- *  @param message 显示文字
- *  @param delay   显示时间
- */
-+ (void)showMessage:(NSString *)message afterDelay:(NSTimeInterval)delay;
 
 /**
  *  显示等待框

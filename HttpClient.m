@@ -51,8 +51,7 @@ static NSString * const BaseURLString = @"http://localhost:8000";
         
     } failure:^(NSURLSessionDataTask *task, NSError *error) {
         if (error.userInfo[@"NSLocalizedDescription"]) {
-            [BMWaitVC showMessage:error.userInfo[@"NSLocalizedDescription"]
-                       afterDelay:2];
+            [BMWaitVC showMessage:error.userInfo[@"NSLocalizedDescription"]];
             DLogError(@"%@", error);
         }
     }];
@@ -70,15 +69,13 @@ static NSString * const BaseURLString = @"http://localhost:8000";
             DLogSuccss(@"%@", responseObject);
             success(responseObject);
         } else {
-            [BMWaitVC showMessage:responseObject[@"errors"]
-                       afterDelay:2];
+            [BMWaitVC showMessage:responseObject[@"errors"]];
             DLogError(@"%@", responseObject);
         }
         
     } failure:^(NSURLSessionDataTask *task, NSError *error) {
         if (error.userInfo[@"NSLocalizedDescription"]) {
-            [BMWaitVC showMessage:error.userInfo[@"NSLocalizedDescription"]
-                       afterDelay:2];
+            [BMWaitVC showMessage:error.userInfo[@"NSLocalizedDescription"]];
             DLogError(@"%@", error);
         }
     }];

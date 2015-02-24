@@ -23,23 +23,49 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
+        self.clipsToBounds = YES;
         self.imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
         self.imageView.contentMode = UIViewContentModeScaleAspectFill;
         [self.contentView addSubview:self.imageView];
         
-        self.name = [[UILabel alloc] initWithFrame:CGRectMake(0, frame.size.height-35, frame.size.width, 35)];
-        self.name.font = [UIFont systemFontOfSize:12];
-        self.name.textColor = [UIColor whiteColor];
-        self.name.backgroundColor = [UIColor colorWithWhite:0 alpha:.7];
-        [self.contentView addSubview:self.name];
+        self.imageView.translatesAutoresizingMaskIntoConstraints = NO;
+        
+        [self addConstraint:[NSLayoutConstraint constraintWithItem:self.imageView
+                                                         attribute:NSLayoutAttributeTop
+                                                         relatedBy:NSLayoutRelationEqual
+                                                            toItem:self
+                                                         attribute:NSLayoutAttributeTop
+                                                        multiplier:1
+                                                          constant:0]];
+        [self addConstraint:[NSLayoutConstraint constraintWithItem:self.imageView
+                                                         attribute:NSLayoutAttributeLeading
+                                                         relatedBy:NSLayoutRelationEqual
+                                                            toItem:self
+                                                         attribute:NSLayoutAttributeLeading
+                                                        multiplier:1
+                                                          constant:0]];
+        [self addConstraint:[NSLayoutConstraint constraintWithItem:self
+                                                         attribute:NSLayoutAttributeBottom
+                                                         relatedBy:NSLayoutRelationEqual
+                                                            toItem:self.imageView
+                                                         attribute:NSLayoutAttributeBottom
+                                                        multiplier:1
+                                                          constant:0]];
+        [self addConstraint:[NSLayoutConstraint constraintWithItem:self
+                                                         attribute:NSLayoutAttributeTrailing
+                                                         relatedBy:NSLayoutRelationEqual
+                                                            toItem:self.imageView
+                                                         attribute:NSLayoutAttributeTrailing
+                                                        multiplier:1
+                                                          constant:0]];
+        
+//        self.name = [[UILabel alloc] initWithFrame:CGRectMake(0, frame.size.height-35, frame.size.width, 35)];
+//        self.name.font = [UIFont systemFontOfSize:12];
+//        self.name.textColor = [UIColor whiteColor];
+//        self.name.backgroundColor = [UIColor colorWithWhite:0 alpha:.7];
+//        [self.contentView addSubview:self.name];
     }
     return self;
-}
-
-- (void)layoutSubviews
-{
-    [super layoutSubviews];
-    self.name.frame = CGRectMake(0, self.height-35, self.width, 35);
 }
 
 - (void)setHighlighted:(BOOL)highlighted
@@ -59,12 +85,13 @@
 
 @interface DDPageCV () <UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout>
 
-@property (nonatomic, strong) UIPageControl    *pageControl;
+@property (nonatomic, weak) IBOutlet UICollectionView *collectionView;
+@property (nonatomic, weak) IBOutlet UIPageControl    *pageControl;
+
 @property (nonatomic, strong) NSTimer          *timer;
 @property (nonatomic, copy  ) NSString         *imageNameKey;
 @property (nonatomic, assign) NSInteger        factImageCount;
 @property (nonatomic, assign) DDPageType       type;
-@property (nonatomic, strong) UICollectionView *collectionView;
 @property (nonatomic, assign) BOOL             lockStatus;
 @property (nonatomic, strong) NSMutableArray   *reformImageData;
 
@@ -74,7 +101,8 @@
 
 - (void)awakeFromNib
 {
-    [self configPageCV:self.bounds];
+    [super awakeFromNib];
+    [self configPageCV];
 }
 
 - (void)dealloc
@@ -82,47 +110,16 @@
     self.startup = NO;
 }
 
-- (id)initWithFrame:(CGRect)frame
-{
-    self = [super initWithFrame:frame];
-    if (self) {
-        // Initialization code
-        [self configPageCV:frame];
-    }
-    return self;
-}
-
-- (void)layoutSubviews
-{
-    [super layoutSubviews];
-    self.collectionView.frame = self.bounds;
-    self.pageControl.width = self.width;
-}
-
 #pragma mark - configPageCV
 
-- (void)configPageCV:(CGRect)frame
+- (void)configPageCV
 {
-    UICollectionViewFlowLayout *flowLayout = [[UICollectionViewFlowLayout alloc] init];
-    //[flowLayout setItemSize:CGSizeMake(frame.size.width, frame.size.height)];
-    [flowLayout setScrollDirection:UICollectionViewScrollDirectionHorizontal];
-    [flowLayout setMinimumInteritemSpacing:0];
-    [flowLayout setMinimumLineSpacing:0];
-    
-    self.collectionView = [[UICollectionView alloc] initWithFrame:CGRectZero
-                                             collectionViewLayout:flowLayout];
     [self.collectionView setBackgroundColor:[UIColor clearColor]];
-    [self.collectionView setDelegate:self];
-    [self.collectionView setDataSource:self];
     [self.collectionView setPagingEnabled:YES];
     [self.collectionView setShowsHorizontalScrollIndicator:NO];
     [self.collectionView registerClass:[PageCvCell class]
             forCellWithReuseIdentifier:@"PageCvCell"];
-    [self addSubview:self.collectionView];
     
-    _pageControl = [[UIPageControl alloc] initWithFrame:CGRectMake(0, frame.size.height-30, frame.size.width, 30)];
-    _pageControl.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
-    [self addSubview:_pageControl];
     //timer
     _timeInterval = 5;
     _startup = YES;
@@ -248,7 +245,7 @@
                                                 animated:NO];
         }
     }
-    
+
     [self updatePageIndex];
 }
 

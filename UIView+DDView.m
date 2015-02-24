@@ -300,12 +300,12 @@ static const void(^savePhotoBlock)(BOOL result);
 
 - (void)setCornerRadius:(CGFloat)radius
 {
-    [self setCornerRadius:radius borderColor:nil width:0];
+    [self setCornerRadius:radius borderColor:nil width:self.layer.borderWidth];
 }
 
 - (void)setBorderColor:(UIColor *)borderColor width:(CGFloat)width
 {
-    [self setCornerRadius:0 borderColor:nil width:0];
+    [self setCornerRadius:self.layer.cornerRadius borderColor:borderColor width:width];
 }
 
 - (void)setCornerRadius:(CGFloat)radius borderColor:(UIColor *)borderColor width:(CGFloat)width

@@ -34,12 +34,12 @@
     }
     
     if ([self.colorStyle isEqualToString:@"c"]) {
-        return;
+        self.backgroundColor = kClearColor;
     } else if ([self.colorStyle isEqualToString:@"r"]) {
         self.backgroundColor = kGlassRed;
     } else if ([self.colorStyle isEqualToString:@"g"]) {
         self.backgroundColor = kGlassGreen;
-    } else {
+    } else if ([self.colorStyle isEqualToString:@"b"]) {
         self.backgroundColor = kGlassBlue;
     }
 }

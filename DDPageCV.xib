@@ -23,22 +23,37 @@
                         <outlet property="delegate" destination="iN0-l3-epB" id="AJy-7q-qob"/>
                     </connections>
                 </collectionView>
-                <pageControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" numberOfPages="3" translatesAutoresizingMaskIntoConstraints="NO" id="Jkg-hg-btn">
-                    <rect key="frame" x="8" y="123" width="304" height="37"/>
+                <pageControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" numberOfPages="4" translatesAutoresizingMaskIntoConstraints="NO" id="Jkg-hg-btn">
+                    <rect key="frame" x="0.0" y="140" width="320" height="20"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="20" id="YHf-Nd-16F"/>
+                        <constraint firstAttribute="width" constant="100" id="obW-hC-eF8"/>
+                    </constraints>
+                    <variation key="default">
+                        <mask key="constraints">
+                            <exclude reference="obW-hC-eF8"/>
+                        </mask>
+                    </variation>
                 </pageControl>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
             <constraints>
-                <constraint firstAttribute="trailing" secondItem="Jkg-hg-btn" secondAttribute="trailing" constant="8" id="VlT-8A-TqF"/>
+                <constraint firstAttribute="trailing" secondItem="Jkg-hg-btn" secondAttribute="trailing" id="VlT-8A-TqF"/>
                 <constraint firstItem="jof-lG-nMQ" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="cMt-5e-sG6"/>
                 <constraint firstAttribute="trailing" secondItem="jof-lG-nMQ" secondAttribute="trailing" id="cYF-nQ-lIi"/>
                 <constraint firstAttribute="bottom" secondItem="jof-lG-nMQ" secondAttribute="bottom" id="efn-Nj-lIk"/>
                 <constraint firstItem="Jkg-hg-btn" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="8" id="fzh-Z8-w1v"/>
                 <constraint firstAttribute="bottom" secondItem="Jkg-hg-btn" secondAttribute="bottom" id="mAK-Ff-5Pp"/>
                 <constraint firstItem="jof-lG-nMQ" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="seu-o4-rtY"/>
+                <constraint firstItem="Jkg-hg-btn" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="tLF-rz-fWL"/>
             </constraints>
             <nil key="simulatedStatusBarMetrics"/>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <variation key="default">
+                <mask key="constraints">
+                    <exclude reference="fzh-Z8-w1v"/>
+                </mask>
+            </variation>
             <connections>
                 <outlet property="collectionView" destination="jof-lG-nMQ" id="n5R-yd-xOy"/>
                 <outlet property="pageControl" destination="Jkg-hg-btn" id="ftx-Ai-BOc"/>

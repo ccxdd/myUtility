@@ -20,8 +20,7 @@
      **/
     
     //如果使用服务中配置的app信息，请把初始化代码改为下面的初始化方法。
-    NSString *shareKey = @"5afac1fbebb5";
-    [ShareSDK registerApp:shareKey useAppTrusteeship:YES];
+    [ShareSDK registerApp:kShareKey useAppTrusteeship:YES];
     
     [ShareSDK setUIStyle:SSUIStyleiOS7];
     

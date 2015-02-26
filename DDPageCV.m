@@ -24,46 +24,35 @@
     self = [super initWithFrame:frame];
     if (self) {
         self.clipsToBounds = YES;
-        self.imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
+        
+        self.imageView = [UIImageView new];
         self.imageView.contentMode = UIViewContentModeScaleAspectFill;
         [self.contentView addSubview:self.imageView];
         
+        self.name = [UILabel new];
+        self.name.font = [UIFont systemFontOfSize:12];
+        self.name.textColor = [UIColor whiteColor];
+        self.name.backgroundColor = [UIColor colorWithWhite:0 alpha:.7];
+        self.name.hidden = YES;
+        [self.contentView addSubview:self.name];
+        
+        NSDictionary *views = @{@"imageView":self.imageView,
+                                @"label":self.name};
         self.imageView.translatesAutoresizingMaskIntoConstraints = NO;
+        self.name.translatesAutoresizingMaskIntoConstraints = NO;
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[imageView]|"
+                                                                     options:0 metrics:nil
+                                                                       views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[imageView]|"
+                                                                     options:0 metrics:nil
+                                                                       views:views]];
         
-        [self addConstraint:[NSLayoutConstraint constraintWithItem:self.imageView
-                                                         attribute:NSLayoutAttributeTop
-                                                         relatedBy:NSLayoutRelationEqual
-                                                            toItem:self
-                                                         attribute:NSLayoutAttributeTop
-                                                        multiplier:1
-                                                          constant:0]];
-        [self addConstraint:[NSLayoutConstraint constraintWithItem:self.imageView
-                                                         attribute:NSLayoutAttributeLeading
-                                                         relatedBy:NSLayoutRelationEqual
-                                                            toItem:self
-                                                         attribute:NSLayoutAttributeLeading
-                                                        multiplier:1
-                                                          constant:0]];
-        [self addConstraint:[NSLayoutConstraint constraintWithItem:self
-                                                         attribute:NSLayoutAttributeBottom
-                                                         relatedBy:NSLayoutRelationEqual
-                                                            toItem:self.imageView
-                                                         attribute:NSLayoutAttributeBottom
-                                                        multiplier:1
-                                                          constant:0]];
-        [self addConstraint:[NSLayoutConstraint constraintWithItem:self
-                                                         attribute:NSLayoutAttributeTrailing
-                                                         relatedBy:NSLayoutRelationEqual
-                                                            toItem:self.imageView
-                                                         attribute:NSLayoutAttributeTrailing
-                                                        multiplier:1
-                                                          constant:0]];
-        
-//        self.name = [[UILabel alloc] initWithFrame:CGRectMake(0, frame.size.height-35, frame.size.width, 35)];
-//        self.name.font = [UIFont systemFontOfSize:12];
-//        self.name.textColor = [UIColor whiteColor];
-//        self.name.backgroundColor = [UIColor colorWithWhite:0 alpha:.7];
-//        [self.contentView addSubview:self.name];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[label]|"
+                                                                     options:0 metrics:nil
+                                                                       views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[label(35)]|"
+                                                                     options:0 metrics:nil
+                                                                       views:views]];
     }
     return self;
 }
@@ -245,7 +234,7 @@
                                                 animated:NO];
         }
     }
-
+    
     [self updatePageIndex];
 }
 

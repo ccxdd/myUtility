@@ -8,7 +8,7 @@
 
 #import "HttpClient.h"
 
-static NSString * const BaseURLString = @"http://localhost:8000";
+static NSString * const BaseURLString = @"http://api.isuperlife.com/api";
 
 @implementation HttpClient
 
@@ -81,31 +81,9 @@ static NSString * const BaseURLString = @"http://localhost:8000";
     }];
 }
 
-#pragma mark - 注册
-
-- (void)userRegisterWithUserName:(NSString *)userName
-                        nickName:(NSString *)nickName
-                        password:(NSString *)password
-                         success:(void(^)(id responseObject))success
+- (void)productCategory:(void(^)(id responseObject))success
 {
-    NSDictionary *parameters = @{@"userName": userName,
-                                 @"nickName": nickName,
-                                 @"password": password};
-    
-    [self GenericPOST:@"user_reg" parameters:parameters success:success];
+    [self GenericGET:@"ProductCategory" parameters:nil success:success];
 }
-
-#pragma mark - 登录
-
-- (void)userLoginWithUserName:(NSString *)userName
-                     password:(NSString *)password
-                      success:(void(^)(id responseObject))success
-{
-    NSDictionary *parameters = @{@"userName": userName,
-                                 @"password": password};
-    
-    [self GenericPOST:@"user_login" parameters:parameters success:success];
-}
-
 
 @end

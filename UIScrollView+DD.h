@@ -29,4 +29,15 @@
 
 - (void)contentHeightToFit:(UIViewController *)vc tabbar:(BOOL)tabBar offset:(CGFloat)offset;
 
+#pragma mark - 上拉、下拉刷新
+
+- (void)addPullToRefreshWithHandler:(void(^)())handler;
+- (void)addInfinityScrollWithHandler:(void(^)())handler;
+
+- (void)beginPullToRefresh;
+- (void)endPullToRefresh;
+
+- (void)beginInfinityScroll;
+- (void)endInfinityScroll;
+
 @end

@@ -7,6 +7,9 @@
 //
 
 #import "UIScrollView+DD.h"
+#import "UIScrollView+INSPullToRefresh.h"
+#import "INSLappsyPullToRefresh.h"
+#import "INSLappsyInfiniteIndicator.h"
 
 @implementation UIScrollView (DD)
 
@@ -144,6 +147,68 @@
     }];
     
     return bottom;
+}
+
+#pragma mark - 上拉、下拉刷新
+
+- (void)addPullToRefreshWithHandler:(void(^)())handler;
+{
+    [self ins_addPullToRefreshWithHeight:60.0 handler:^(UIScrollView *scrollView) {
+        if (handler) {
+            handler();
+        }
+    }];
+    
+    self.ins_pullToRefreshBackgroundView.preserveContentInset = NO;
+    
+    if (!self.ins_pullToRefreshBackgroundView.delegate) {
+        CGRect defaultFrame = CGRectMake(0, 0, 24, 24);
+        UIView <INSPullToRefreshBackgroundViewDelegate> *pullToRefresh = [[INSLappsyPullToRefresh alloc] initWithFrame:defaultFrame];
+        self.ins_pullToRefreshBackgroundView.delegate = pullToRefresh;
+        [self.ins_pullToRefreshBackgroundView addSubview:pullToRefresh];
+    }
+}
+
+- (void)addInfinityScrollWithHandler:(void(^)())handler
+{
+    [self ins_addInfinityScrollWithHeight:60.0 handler:^(UIScrollView *scrollView) {
+        if (handler) {
+            handler();
+        }
+    }];
+    
+    self.ins_infiniteScrollBackgroundView.preserveContentInset = NO;
+    
+    if (!self.ins_infiniteScrollBackgroundView.delegate) {
+        CGRect defaultFrame = CGRectMake(0, 0, 24, 24);
+        UIView <INSAnimatable> *infinityIndicator = [[INSLappsyInfiniteIndicator alloc] initWithFrame:defaultFrame];
+        [self.ins_infiniteScrollBackgroundView addSubview:infinityIndicator];
+        [infinityIndicator startAnimating];
+    }
+}
+
+- (void)beginPullToRefresh
+{
+    [self ins_beginPullToRefresh];
+}
+
+- (void)endPullToRefresh
+{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(.8 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self ins_endPullToRefresh];
+    });
+}
+
+- (void)beginInfinityScroll
+{
+    [self ins_beginInfinityScroll];
+}
+
+- (void)endInfinityScroll
+{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(.8 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self ins_endInfinityScroll];
+    });
 }
 
 @end

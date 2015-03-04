@@ -193,6 +193,19 @@
     }
 }
 
+- (NSString *)toChinaDigital
+{
+    if ([self isInteger]) {
+        NSLocale *locale = [[NSLocale alloc] initWithLocaleIdentifier:@"zh"];
+        NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
+        numberFormatter.locale = locale;
+        numberFormatter.numberStyle = NSNumberFormatterSpellOutStyle;
+        return [numberFormatter stringFromNumber:[self toNSNumber]];
+    } else {
+        return self;
+    }
+}
+
 - (NSNumber *)toNSNumber
 {
     return @([self doubleValue]);

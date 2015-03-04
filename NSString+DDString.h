@@ -67,6 +67,13 @@
  */
 - (NSString *)thousandSeparator:(BOOL)decimal;
 
+/**
+ *  转成中文数字
+ *
+ *  @return NSString
+ */
+- (NSString *)toChinaDigital;
+
 - (NSNumber *)toNSNumber;
 
 - (NSString *)yyyymmdd;

@@ -145,7 +145,8 @@
     CGFloat rowHeight = 0;
     
     if (self.heightForRowAtIndexPath) {
-        rowHeight =  self.heightForRowAtIndexPath(indexPath);
+        id item = [self itemAtIndexPath:indexPath sectionKey:self.sectionKey rowKey:nil];
+        rowHeight =  self.heightForRowAtIndexPath(indexPath, item);
     } else {
         rowHeight =  tableView.rowHeight;
     }

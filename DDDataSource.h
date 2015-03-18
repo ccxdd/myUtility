@@ -38,7 +38,7 @@
 @property (nonatomic, copy) void      (^didSelectRowAtCustom)(NSIndexPath *indexPath);
 @property (nonatomic, copy) void      (^didSelectRowAtIndexPath)(NSIndexPath *indexPath, id item);
 @property (nonatomic, copy) void      (^didDeselectRowAtIndexPath)(NSIndexPath *indexPath, id item);
-@property (nonatomic, copy) CGFloat   (^heightForRowAtIndexPath)(NSIndexPath *indexPath);
+@property (nonatomic, copy) CGFloat   (^heightForRowAtIndexPath)(NSIndexPath *indexPath, id item);
 
 - (id)initWithTableData:(NSArray *)tableData
          cellIdentifier:(NSString *)cellIdentifier

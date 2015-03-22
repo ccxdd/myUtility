@@ -53,8 +53,12 @@
 
 #pragma mark - 登陆 -
 
-+ (void)loginOfSinaWeiboCompletion:(void(^)(SSSinaWeiboUser *userInfo))completion;
++ (void)loginOfSinaWeiboCompletion:(void(^)(id userInfo))completion;
++ (void)loginOfWeiXinCompletion:(void(^)(id userInfo))completion;
++ (void)loginOfQQCompletion:(void(^)(id userInfo))completion;
 
-+ (void)logoutSinaWeiboAuthCompletion:(void(^)())completion;
+#pragma mark - 注销 -
+
++ (void)logoutAuthCompletion:(void(^)())completion;
 
 @end

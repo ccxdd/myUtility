@@ -277,21 +277,40 @@
                           }];
 }
 
-+ (void)loginOfSinaWeiboCompletion:(void(^)(SSSinaWeiboUser *userInfo))completion
++ (void)loginOfSinaWeiboCompletion:(void(^)(id userInfo))completion
 {
-    [ShareSDK getUserInfoWithType:ShareTypeSinaWeibo authOptions:nil
+    [self loginShareType:ShareTypeSinaWeibo completion:completion];
+}
+
++ (void)loginOfWeiXinCompletion:(void(^)(id userInfo))completion
+{
+    [self loginShareType:ShareTypeWeixiSession completion:completion];
+}
+
++ (void)loginOfQQCompletion:(void(^)(id userInfo))completion
+{
+    [self loginShareType:ShareTypeQQ completion:completion];
+}
+
++ (void)loginShareType:(ShareType)type completion:(void(^)(id userInfo))completion
+{
+    [ShareSDK getUserInfoWithType:type authOptions:nil
                            result:^(BOOL result, id<ISSPlatformUser> userInfo, id<ICMErrorInfo> error) {
                                if (result) {
-                                   completion ? completion((SSSinaWeiboUser *)userInfo) : nil;
+                                   DLogSuccss(@"[userInfo sourceData] = %@", [userInfo sourceData]);
+                                   completion ? completion(userInfo) : nil;
                                } else {
                                    DLogError(@"error code = %ld, description = %@", [error errorCode], [error errorDescription]);
                                }
                            }];
 }
 
-+ (void)logoutSinaWeiboAuthCompletion:(void(^)())completion
++ (void)logoutAuthCompletion:(void(^)())completion
 {
     [ShareSDK cancelAuthWithType:ShareTypeSinaWeibo];
+    [ShareSDK cancelAuthWithType:ShareTypeWeixiSession];
+    [ShareSDK cancelAuthWithType:ShareTypeQQ];
+    
     completion ? completion() : nil;
 }
 

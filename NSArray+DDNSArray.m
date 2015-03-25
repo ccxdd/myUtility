@@ -15,15 +15,19 @@
     if (self.count > index) {
         return self[index];
     } else {
-        NSLog(@"\n NSArray Execption: index = %ld", (long)index);
+        NSLog(@"\n Execption: index = %@", @(index));
         return nil;
     }
 }
 
 - (instancetype)filterKey:(NSString *)key equal:(id)object
 {
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K IN %@", key, object];
-    return [self filteredArrayUsingPredicate:predicate];
+    if (object) {
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K IN %@", key, object];
+        return [self filteredArrayUsingPredicate:predicate];
+    }
+    
+    return nil;
 }
 
 - (instancetype)filterKey:(NSString *)key notEqual:(id)object
@@ -39,11 +43,7 @@
         return nil;
     }
     
-    NSMutableArray *marr = [NSMutableArray array];
-    
-    for (NSDictionary *dict in self) {
-        [marr addObject:[dict objectForKey:key]];
-    }
+    NSMutableArray *marr = [self valueForKeyPath:key];
     
     return marr;
 }

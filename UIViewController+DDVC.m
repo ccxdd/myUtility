@@ -288,20 +288,24 @@ const char leftHandlerKey, rightHandleKey;
     UIViewController *rootVC = window.rootViewController;
     UIViewController *currentVC;
     
+    UIViewController* (^currentVC_Block)(UIViewController *vc) =  ^UIViewController* (UIViewController *vc) {
+        if ([vc isKindOfClass:[UINavigationController class]]) {
+            return [[(UINavigationController *)vc viewControllers] lastObject];
+        } else {
+            return vc;
+        }
+    };
+    
     if ([rootVC isKindOfClass:[UITabBarController class]]) {
         UIViewController *selectVC = [(UITabBarController *)rootVC selectedViewController];
-        if ([selectVC isKindOfClass:[UINavigationController class]]) {
-            currentVC = [[(UINavigationController *)selectVC viewControllers] lastObject];
-        } else {
-            currentVC = rootVC;
-        }
-    } else if ([rootVC isKindOfClass:[UINavigationController class]]) {
-        currentVC = [[(UINavigationController *)rootVC viewControllers] lastObject];
+        currentVC = currentVC_Block(selectVC);
     } else {
-        currentVC = rootVC;
+        currentVC = currentVC_Block(rootVC);
     }
     
     return currentVC;
 }
+
+
 
 @end

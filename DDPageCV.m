@@ -289,7 +289,7 @@
                                                                  forIndexPath:indexPath];
     cell.imageView.backgroundColor = kRandomColor;
     
-    id imageObj = self.imageNameKey ? _reformImageData[indexPath.row][self.imageNameKey] : _reformImageData[indexPath.row];
+    id imageObj = self.imageNameKey ? [_reformImageData[indexPath.row] valueForKey:self.imageNameKey] : _reformImageData[indexPath.row];
     
     switch (self.type) {
         case DDPage_Type_UIImage: //
@@ -309,7 +309,8 @@
             break;
         case DDPage_Type_URL: //
         {
-            [cell.imageView loadImageData:imageObj];
+            NSString *imageURL = self.urlPrefix ? [self.urlPrefix addSuffix:imageObj] : imageObj;
+            [cell.imageView loadImageData:imageURL];
         }
             break;
         default:

@@ -38,6 +38,19 @@
     return [NSURL URLWithString:self];
 }
 
+- (void)openURLWithMessage:(NSString *)message
+{
+    if (message) {
+        [BMWaitVC showAlertMessage:message alertBlock:^(NSInteger buttonIndex) {
+            if (buttonIndex) {
+                [[UIApplication sharedApplication] openURL:[self toURL]];
+            }
+        }];
+    } else {
+        [[UIApplication sharedApplication] openURL:[self toURL]];
+    }
+}
+
 - (NSURLRequest *)toRequest
 {
     return [NSURLRequest requestWithURL:[self toURL]];

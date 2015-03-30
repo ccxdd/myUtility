@@ -120,4 +120,11 @@
  */
 - (CGSize)calcSizeFromFont:(UIFont *)font width:(NSInteger)width;
 
+/**
+ *  打开网址
+ *
+ *  @param message 打开前消息提示
+ */
+- (void)openURLWithMessage:(NSString *)message;
+
 @end

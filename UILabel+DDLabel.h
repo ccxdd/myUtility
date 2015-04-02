@@ -1,6 +1,6 @@
 //
 //  UILabel+DDLabel.h
-//  WenStore
+//  App_jucaifu
 //
 //  Created by ccxdd on 14-7-17.
 //  Copyright (c) 2014年 ccxdd. All rights reserved.
@@ -38,7 +38,11 @@
 
 - (void)textPrefix:(NSString *)string;
 
+- (void)textPrefix:(NSString *)string color:(UIColor *)color font:(UIFont *)font;
+
 - (void)textSuffix:(NSString *)string;
+
+- (void)textSuffix:(NSString *)string color:(UIColor *)color font:(UIFont *)font;
 
 /**
  *  千位分隔:是否保留2位小数

@@ -1,6 +1,6 @@
 //
 //  UILabel+DDLabel.m
-//  WenStore
+//  App_jucaifu
 //
 //  Created by ccxdd on 14-7-17.
 //  Copyright (c) 2014年 ccxdd. All rights reserved.
@@ -76,9 +76,21 @@
     self.text = [self.text addPrefix:string];
 }
 
+- (void)textPrefix:(NSString *)string color:(UIColor *)color font:(UIFont *)font
+{
+    self.text = [self.text addPrefix:string];
+    [self attribFindText:string color:color font:font];
+}
+
 - (void)textSuffix:(NSString *)string
 {
     self.text = [self.text addSuffix:string];
+}
+
+- (void)textSuffix:(NSString *)string color:(UIColor *)color font:(UIFont *)font
+{
+    self.text = [self.text addSuffix:string];
+    [self attribFindText:string color:color font:font];
 }
 
 - (void)thousandSeparator:(BOOL)decimal

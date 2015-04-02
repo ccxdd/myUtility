@@ -74,14 +74,13 @@
 
 @interface DDPageCV () <UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout>
 
-@property (nonatomic, weak) IBOutlet UICollectionView *collectionView;
-@property (nonatomic, weak) IBOutlet UIPageControl    *pageControl;
+@property (nonatomic, strong) IBOutlet UICollectionView *collectionView;
+@property (nonatomic, strong) IBOutlet UIPageControl    *pageControl;
 
 @property (nonatomic, strong) NSTimer          *timer;
 @property (nonatomic, copy  ) NSString         *imageNameKey;
 @property (nonatomic, assign) NSInteger        factImageCount;
 @property (nonatomic, assign) DDPageType       type;
-@property (nonatomic, assign) BOOL             lockStatus;
 @property (nonatomic, strong) NSMutableArray   *reformImageData;
 
 @end
@@ -103,11 +102,53 @@
 
 - (void)configPageCV
 {
-    [self.collectionView setBackgroundColor:[UIColor clearColor]];
-    [self.collectionView setPagingEnabled:YES];
-    [self.collectionView setShowsHorizontalScrollIndicator:NO];
-    [self.collectionView registerClass:[PageCvCell class]
-            forCellWithReuseIdentifier:@"PageCvCell"];
+    //CollectionView
+    //vfl
+    NSDictionary *views = @{@"collView":self.collectionView,
+                            @"pageControl":self.pageControl};
+    
+    if (!self.collectionView) {
+        
+        UICollectionViewFlowLayout *flowLayout = [[UICollectionViewFlowLayout alloc] init];
+        [flowLayout setScrollDirection:UICollectionViewScrollDirectionHorizontal];
+        [flowLayout setMinimumLineSpacing:0];
+        [flowLayout setMinimumInteritemSpacing:0];
+        [flowLayout setSectionInset:UIEdgeInsetsZero];
+        
+        self.collectionView = [[UICollectionView alloc] initWithFrame:self.bounds
+                                                 collectionViewLayout:flowLayout];
+        [self.collectionView setDelegate:self];
+        [self.collectionView setDataSource:self];
+        [self.collectionView setBackgroundColor:[UIColor clearColor]];
+        [self.collectionView setPagingEnabled:YES];
+        [self.collectionView setShowsHorizontalScrollIndicator:NO];
+        [self.collectionView registerClass:[PageCvCell class]
+                forCellWithReuseIdentifier:@"PageCvCell"];
+        [self addSubview:self.collectionView];
+        
+        self.collectionView.translatesAutoresizingMaskIntoConstraints = NO;
+        self.pageControl.translatesAutoresizingMaskIntoConstraints = NO;
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[collView]|"
+                                                                     options:0 metrics:nil
+                                                                       views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[collView]|"
+                                                                     options:0 metrics:nil
+                                                                       views:views]];
+    }
+    
+    //PageControl
+    
+    if (!self.pageControl) {
+        self.pageControl = [UIPageControl new];
+        [self addSubview:self.pageControl];
+        
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[pageControl]|"
+                                                                     options:0 metrics:nil
+                                                                       views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[pageControl(20)]|"
+                                                                     options:0 metrics:nil
+                                                                       views:views]];
+    }
     
     //timer
     _timeInterval = 5;
@@ -170,14 +211,14 @@
     _factImageCount = [_reformImageData count];
     
     if (_startup) {
-        //[self setStartup:YES];
+        [self setStartup:YES];
     }
     
     [self.collectionView reloadData];
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:0]
-                                    atScrollPosition:UICollectionViewScrollPositionLeft
-                                            animated:YES];
+                                    atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally
+                                            animated:NO];
     });
 }
 
@@ -222,7 +263,7 @@
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
-    if (_isCircle) {
+    if (self.isCircle && self.factImageCount) {
         NSInteger offsetX = scrollView.contentOffset.x;
         if (offsetX > (_factImageCount-1) * self.width) {
             [self.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:1 inSection:0]
@@ -236,13 +277,6 @@
     }
     
     [self updatePageIndex];
-}
-
-#pragma mark - timerAction
-
-- (void)timerAction:(NSTimer *)sender
-{
-    
 }
 
 - (void)updatePageIndex
@@ -260,6 +294,25 @@
         } else {
             _pageControl.currentPage = index - 1;
         }
+    }
+}
+
+#pragma mark - timerAction
+
+- (void)timerAction:(NSTimer *)sender
+{
+    if (self.isCircle) {
+        NSIndexPath *indexPath = [[self.collectionView indexPathsForVisibleItems] firstObject];
+        if (indexPath.item == self.factImageCount-1) {
+            [self.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:1 inSection:0]
+                                        atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally
+                                                animated:NO];
+            indexPath = [NSIndexPath indexPathForItem:1 inSection:0];
+        }
+        
+        [self.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:indexPath.item+1 inSection:0]
+                                    atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally
+                                            animated:YES];
     }
 }
 
@@ -287,7 +340,6 @@
     static NSString *CellIdentifier = @"PageCvCell";
     PageCvCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:CellIdentifier
                                                                  forIndexPath:indexPath];
-    cell.imageView.backgroundColor = kRandomColor;
     
     id imageObj = self.imageNameKey ? [_reformImageData[indexPath.row] valueForKey:self.imageNameKey] : _reformImageData[indexPath.row];
     
@@ -310,7 +362,7 @@
         case DDPage_Type_URL: //
         {
             NSString *imageURL = self.urlPrefix ? [self.urlPrefix addSuffix:imageObj] : imageObj;
-            [cell.imageView loadImageData:imageURL];
+            [cell.imageView sd_setImageWithURL:[imageURL toURL]];
         }
             break;
         default:

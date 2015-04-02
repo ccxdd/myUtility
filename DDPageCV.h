@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 
 typedef NS_ENUM(NSInteger, DDPageType) {
-    DDPage_Type_None,
+    DDPage_Type_None = 0,
     DDPage_Type_UIImage,
     DDPage_Type_UIImageData,
     DDPage_Type_ImageName,

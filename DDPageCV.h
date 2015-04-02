@@ -18,6 +18,9 @@ typedef NS_ENUM(NSInteger, DDPageType) {
 
 @interface DDPageCV : UIView
 
+@property (nonatomic, strong) IBOutlet UICollectionView *collectionView;
+@property (nonatomic, strong) IBOutlet UIPageControl    *pageControl;
+
 @property (nonatomic, strong) NSArray        *imageData;
 @property (nonatomic, assign) BOOL           showPageControl;
 @property (nonatomic, assign) BOOL           isCircle;

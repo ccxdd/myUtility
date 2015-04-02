@@ -74,9 +74,6 @@
 
 @interface DDPageCV () <UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout>
 
-@property (nonatomic, strong) IBOutlet UICollectionView *collectionView;
-@property (nonatomic, strong) IBOutlet UIPageControl    *pageControl;
-
 @property (nonatomic, strong) NSTimer          *timer;
 @property (nonatomic, copy  ) NSString         *imageNameKey;
 @property (nonatomic, assign) NSInteger        factImageCount;
@@ -103,12 +100,8 @@
 - (void)configPageCV
 {
     //CollectionView
-    //vfl
-    NSDictionary *views = @{@"collView":self.collectionView,
-                            @"pageControl":self.pageControl};
     
     if (!self.collectionView) {
-        
         UICollectionViewFlowLayout *flowLayout = [[UICollectionViewFlowLayout alloc] init];
         [flowLayout setScrollDirection:UICollectionViewScrollDirectionHorizontal];
         [flowLayout setMinimumLineSpacing:0];
@@ -126,8 +119,8 @@
                 forCellWithReuseIdentifier:@"PageCvCell"];
         [self addSubview:self.collectionView];
         
+        NSDictionary *views = @{@"collView":self.collectionView};
         self.collectionView.translatesAutoresizingMaskIntoConstraints = NO;
-        self.pageControl.translatesAutoresizingMaskIntoConstraints = NO;
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[collView]|"
                                                                      options:0 metrics:nil
                                                                        views:views]];
@@ -142,6 +135,8 @@
         self.pageControl = [UIPageControl new];
         [self addSubview:self.pageControl];
         
+        NSDictionary *views = @{@"pageControl":self.pageControl};
+        self.pageControl.translatesAutoresizingMaskIntoConstraints = NO;
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[pageControl]|"
                                                                      options:0 metrics:nil
                                                                        views:views]];
@@ -208,18 +203,22 @@
         [_reformImageData insertObject:[imageData lastObject] atIndex:0];
         [_reformImageData addObject:imageData[0]];
     }
-    _factImageCount = [_reformImageData count];
+    self.factImageCount = [_reformImageData count];
     
     if (_startup) {
         [self setStartup:YES];
     }
     
-    [self.collectionView reloadData];
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:0]
-                                    atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally
-                                            animated:NO];
-    });
+    if (_isCircle) {
+        [self.collectionView reloadData];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:0]
+                                        atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally
+                                                animated:NO];
+        });
+    } else {
+        [self.collectionView reloadData];
+    }
 }
 
 - (void)setStartup:(BOOL)startup
@@ -227,7 +226,6 @@
     _startup = startup;
     
     if (startup) {
-        _isCircle = YES;
         _timer = [self pageControlTimer];
     } else {
         [_timer invalidate];
@@ -265,12 +263,12 @@
 {
     if (self.isCircle && self.factImageCount) {
         NSInteger offsetX = scrollView.contentOffset.x;
-        if (offsetX > (_factImageCount-1) * self.width) {
+        if (offsetX > (self.factImageCount-1) * self.width) {
             [self.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:1 inSection:0]
                                         atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally
                                                 animated:NO];
         } else if (offsetX < self.width) {
-            [self.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:_factImageCount-1 inSection:0]
+            [self.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:self.factImageCount-1 inSection:0]
                                         atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally
                                                 animated:NO];
         }
@@ -289,7 +287,7 @@
         NSInteger index = offsetX / self.width;
         if (index == 1) {
             _pageControl.currentPage = 0;
-        } else if (index > _factImageCount-2) {
+        } else if (index > self.factImageCount-2) {
             _pageControl.currentPage = 0;
         } else {
             _pageControl.currentPage = index - 1;
@@ -301,16 +299,27 @@
 
 - (void)timerAction:(NSTimer *)sender
 {
-    if (self.isCircle) {
-        NSIndexPath *indexPath = [[self.collectionView indexPathsForVisibleItems] firstObject];
-        if (indexPath.item == self.factImageCount-1) {
-            [self.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:1 inSection:0]
-                                        atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally
-                                                animated:NO];
-            indexPath = [NSIndexPath indexPathForItem:1 inSection:0];
+    if (self.factImageCount) {
+        
+        NSIndexPath *currentIndexPath = [[self.collectionView indexPathsForVisibleItems] firstObject];
+        
+        if (self.isCircle) {
+            if (currentIndexPath.item == self.factImageCount-1) {
+                [self.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:1 inSection:0]
+                                            atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally
+                                                    animated:NO];
+                currentIndexPath = [NSIndexPath indexPathForItem:1 inSection:0];
+            }
+        } else {
+            if (currentIndexPath.item == self.imageData.count-1) {
+                [self.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:0 inSection:0]
+                                            atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally
+                                                    animated:YES];
+                return;
+            }
         }
         
-        [self.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:indexPath.item+1 inSection:0]
+        [self.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:currentIndexPath.item+1 inSection:0]
                                     atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally
                                             animated:YES];
     }
@@ -331,7 +340,7 @@
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
-    return _factImageCount;
+    return self.factImageCount;
 }
 
 - (PageCvCell *)collectionView:(UICollectionView *)collectionView

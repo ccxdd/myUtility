@@ -371,7 +371,11 @@
         case DDPage_Type_URL: //
         {
             NSString *imageURL = self.urlPrefix ? [self.urlPrefix addSuffix:imageObj] : imageObj;
-            [cell.imageView sd_setImageWithURL:[imageURL toURL]];
+            if (self.placeholderName) {
+                [cell.imageView sd_setImageWithURL:[imageURL toURL] placeholderImage:[UIImage imageNamed:self.placeholderName]];
+            } else {
+                [cell.imageView sd_setImageWithURL:[imageURL toURL]];
+            }
         }
             break;
         default:

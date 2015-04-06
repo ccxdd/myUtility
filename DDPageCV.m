@@ -210,11 +210,16 @@
     }
     
     if (_isCircle) {
+        NSIndexPath *currIndexPath = [[self.collectionView indexPathsForVisibleItems] firstObject];
+        if (!currIndexPath) {
+            currIndexPath = [NSIndexPath indexPathForRow:1 inSection:0];
+        }
         [self.collectionView reloadData];
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:0]
+            [self.collectionView scrollToItemAtIndexPath:currIndexPath
                                         atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally
                                                 animated:NO];
+            [self updatePageIndex];
         });
     } else {
         [self.collectionView reloadData];
@@ -257,7 +262,7 @@
     [self setImageData:self.imageData type:self.type key:self.imageNameKey];
 }
 
-#pragma mark scrollView delegate
+#pragma mark - scrollView delegate
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
@@ -276,6 +281,18 @@
     
     [self updatePageIndex];
 }
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
+{
+    self.startup = YES;
+}
+
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
+{
+    self.startup = NO;
+}
+
+#pragma mark - 刷新Page指示
 
 - (void)updatePageIndex
 {
@@ -329,14 +346,15 @@
 {
     [_timer invalidate];
     _timer = nil;
-    return [NSTimer scheduledTimerWithTimeInterval:self.timeInterval
+    _timer = [NSTimer scheduledTimerWithTimeInterval:self.timeInterval
                                             target:self
                                           selector:@selector(timerAction:)
                                           userInfo:nil
                                            repeats:YES];
+    return _timer;
 }
 
-#pragma mark CollectionView Delegate & dataSource
+#pragma mark - CollectionView Delegate & dataSource
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {

@@ -10,7 +10,7 @@
 
 static NSNumber *superViewProperty;
 
-@interface DDTextField () <UIPickerViewDataSource, UIPickerViewDelegate>
+@interface DDTextField () <UIPickerViewDataSource, UIPickerViewDelegate, UITextFieldDelegate>
 {
     id confirmField;
 }
@@ -58,10 +58,11 @@ static NSNumber *superViewProperty;
                                              selector:@selector(keyboardWillHide:)
                                                  name:UIKeyboardWillHideNotification object:nil];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textFieldDidBeginEditing:)
-                                                 name:UITextFieldTextDidBeginEditingNotification object:self];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textFieldDidEndEditing:)
-                                                 name:UITextFieldTextDidEndEditingNotification object:self];
+//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textFieldDidBeginEditing:)
+//                                                 name:UITextFieldTextDidBeginEditingNotification object:self];
+//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textFieldDidEndEditing:)
+//                                                 name:UITextFieldTextDidEndEditingNotification object:self];
+    self.delegate = self;
     self.hitMessage = self.placeholder;
     self.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
     
@@ -147,9 +148,9 @@ static NSNumber *superViewProperty;
 
 #pragma mark - UITextField notifications
 
-- (void)textFieldDidBeginEditing:(NSNotification *)notification
+- (void)textFieldDidBeginEditing:(DDTextField *)textField
 {
-    DDTextField *textField = (DDTextField*)[notification object];
+    //DDTextField *textField = (DDTextField*)[notification object];
     UIView *fieldSuperView = [textField superview];
     
     [self setInputAccessoryView:self.toolbar];
@@ -225,9 +226,9 @@ static NSNumber *superViewProperty;
     [self setBarButtonNeedsDisplayAtTag:textField.textFieldsIndex];
 }
 
-- (void)textFieldDidEndEditing:(NSNotification *)notification
+- (void)textFieldDidEndEditing:(DDTextField *)textField
 {
-    DDTextField *textField = (DDTextField*)[notification object];
+    //DDTextField *textField = (DDTextField*)[notification object];
     //BOOL isValid = [self isValid];
     
     self.activeImageView.hidden = YES;
@@ -236,6 +237,16 @@ static NSNumber *superViewProperty;
     if (self.didEndEditingBlock) {
         self.didEndEditingBlock(self, NO);
     }
+}
+
+- (BOOL)textFieldShouldBeginEditing:(DDTextField *)textField
+{
+    if (self.shouldBeginEditingBlock) {
+        self.shouldBeginEditingBlock(textField);
+        return NO;
+    }
+    
+    return YES;
 }
 
 - (void)setConfirmField:(id)field

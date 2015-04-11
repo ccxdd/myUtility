@@ -127,4 +127,6 @@
  */
 - (void)openURLWithMessage:(NSString *)message;
 
+- (NSAttributedString *)toFont:(UIFont *)font color:(UIColor *)color;
+
 @end

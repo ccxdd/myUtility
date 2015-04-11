@@ -467,4 +467,22 @@
     return labelsize;
 }
 
+- (NSAttributedString *)toFont:(UIFont *)font color:(UIColor *)color
+{
+    NSString *attribText = self;
+    UIColor *attribColor = color ? color : [UIColor blackColor];
+    NSRange attribRange  = NSMakeRange(0, self.length);
+    UIFont *attribFont   = font ? font : [UIFont systemFontOfSize:14];
+    
+    NSMutableAttributedString *attribString = [[NSMutableAttributedString alloc] initWithString:attribText];
+    
+    [attribString addAttributes:@{
+                                  NSForegroundColorAttributeName : attribColor,
+                                  NSFontAttributeName : attribFont
+                                  }
+                          range:attribRange];
+    
+    return attribString;
+}
+
 @end

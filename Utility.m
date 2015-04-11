@@ -1632,11 +1632,7 @@ static CGRect oldframe;
 
 + (void)executeResultBlock:(id)sender identifier:(NSString *)identifier
 {
-    void(^blockObj)(id) = executeBlockDict[identifier];
-    
-    if (blockObj) {
-        blockObj(sender);
-    }
+    [self executeResultBlock:sender after:0 identifier:identifier];
 }
 
 + (void)executeResultBlock:(id)sender after:(NSTimeInterval)secs identifier:(NSString *)identifier

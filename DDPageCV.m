@@ -13,7 +13,7 @@
 @interface PageCvCell : UICollectionViewCell
 
 @property (strong, nonatomic) UIImageView *imageView;
-@property (strong, nonatomic) UILabel *name;
+@property (strong, nonatomic) UILabel     *name;
 
 @end
 
@@ -74,11 +74,15 @@
 
 @interface DDPageCV () <UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout>
 
-@property (nonatomic, strong) NSTimer          *timer;
-@property (nonatomic, copy  ) NSString         *imageNameKey;
-@property (nonatomic, assign) NSInteger        factImageCount;
-@property (nonatomic, assign) DDPageType       type;
-@property (nonatomic, strong) NSMutableArray   *reformImageData;
+@property (nonatomic, strong) NSTimer        *timer;
+@property (nonatomic, copy  ) NSString       *imageNameKey;
+@property (nonatomic, assign) NSInteger      factImageCount;
+@property (nonatomic, assign) DDPageType     type;
+@property (nonatomic, strong) NSMutableArray *reformImageData;
+@property (nonatomic, assign) NSUInteger     plugInPosition;
+@property (nonatomic, copy  ) NSString       *plugInName;
+
+@property (nonatomic, copy) void(^plugInCellBlock)(id);
 
 @end
 
@@ -186,32 +190,40 @@
 
 - (void)setImageData:(NSArray *)imageData type:(DDPageType)type key:(NSString *)key
 {
-    if ([imageData count] < 1 || type == DDPage_Type_None) {
+    if (([imageData count] < 1 || type == DDPage_Type_None) && !self.plugInName) {
         DLog(@"DDPageCV imageData none!");
         return;
     }
     
-    _imageData = imageData;
+    _imageData = [imageData copy];
     self.imageNameKey = key;
     self.type = type;
     
-    _pageControl.numberOfPages = [imageData count];
-    _pageControl.currentPage   = 0;
-    _imageData                = imageData;
-    _reformImageData   = [imageData mutableCopy];
-    if (_isCircle) {
-        [_reformImageData insertObject:[imageData lastObject] atIndex:0];
-        [_reformImageData addObject:imageData[0]];
+    if (self.plugInName) {
+        NSMutableArray *newImageData = [NSMutableArray arrayWithArray:_imageData];
+        if ([newImageData count] > self.plugInPosition) {
+            [newImageData insertObject:self.plugInName atIndex:self.plugInPosition];
+            _imageData = newImageData;
+        } else {
+            [newImageData addObject:self.plugInName];
+            _imageData = newImageData;
+        }
     }
+    
+    _pageControl.numberOfPages = [_imageData count];
+    _pageControl.currentPage   = 0;
+    _reformImageData   = [_imageData mutableCopy];
+    
+    if (_isCircle && [_imageData count] > 1) {
+        [_reformImageData insertObject:[_imageData lastObject] atIndex:0];
+        [_reformImageData addObject:_imageData[0]];
+    }
+    
     self.factImageCount = [_reformImageData count];
     
-    if (_startup) {
-        [self setStartup:YES];
-    }
-    
-    if (_isCircle) {
+    if (_isCircle && self.factImageCount > 1) {
         NSIndexPath *currIndexPath = [[self.collectionView indexPathsForVisibleItems] firstObject];
-        if (!currIndexPath) {
+        if (currIndexPath.row == 0) {
             currIndexPath = [NSIndexPath indexPathForRow:1 inSection:0];
         }
         [self.collectionView reloadData];
@@ -224,17 +236,40 @@
     } else {
         [self.collectionView reloadData];
     }
+    
+    if (_startup) {
+        [self setStartup:YES];
+    }
+}
+
+- (void)registerNibCell:(NSString *)cellName atPosition:(NSUInteger)position cellBlock:(void(^)(id))cellBlock
+{
+    if (cellName) {
+        [self.collectionView registerNib:[UIView nibWithName:cellName] forCellWithReuseIdentifier:cellName];
+        self.plugInName = cellName;
+        self.plugInPosition = position;
+        self.plugInCellBlock = cellBlock;
+        [self setImageData:self.imageData type:self.type key:self.imageNameKey];
+    }
 }
 
 - (void)setStartup:(BOOL)startup
 {
     _startup = startup;
     
-    if (startup) {
+    if (startup && self.factImageCount > 1) {
         _timer = [self pageControlTimer];
+        [self reloadData];
     } else {
         [_timer invalidate];
         _timer = nil;
+    }
+}
+
+- (void)reloadData
+{
+    if (self.factImageCount) {
+        [self.collectionView reloadData];
     }
 }
 
@@ -347,10 +382,10 @@
     [_timer invalidate];
     _timer = nil;
     _timer = [NSTimer scheduledTimerWithTimeInterval:self.timeInterval
-                                            target:self
-                                          selector:@selector(timerAction:)
-                                          userInfo:nil
-                                           repeats:YES];
+                                              target:self
+                                            selector:@selector(timerAction:)
+                                            userInfo:nil
+                                             repeats:YES];
     return _timer;
 }
 
@@ -361,43 +396,59 @@
     return self.factImageCount;
 }
 
-- (PageCvCell *)collectionView:(UICollectionView *)collectionView
-        cellForItemAtIndexPath:(NSIndexPath *)indexPath;
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView
+                  cellForItemAtIndexPath:(NSIndexPath *)indexPath;
 {
-    static NSString *CellIdentifier = @"PageCvCell";
-    PageCvCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:CellIdentifier
-                                                                 forIndexPath:indexPath];
+    NSString *CellIdentifier;
+    id item = _reformImageData[indexPath.row];
     
-    id imageObj = self.imageNameKey ? [_reformImageData[indexPath.row] valueForKey:self.imageNameKey] : _reformImageData[indexPath.row];
+    if ([item isKindOfClass:[NSString class]] && [item isEqualToString:self.plugInName]) {
+        CellIdentifier = self.plugInName;
+    } else {
+        CellIdentifier = @"PageCvCell";
+    }
     
-    switch (self.type) {
-        case DDPage_Type_UIImage: //
-        {
-            [cell.imageView setImage:imageObj];
-        }
-            break;
-        case DDPage_Type_UIImageData: //
-        {
-            [cell.imageView setImage:[UIImage imageWithData:imageObj]];
-        }
-            break;
-        case DDPage_Type_ImageName: //
-        {
-            [cell.imageView setImage:[UIImage imageNamed:imageObj]];
-        }
-            break;
-        case DDPage_Type_URL: //
-        {
-            NSString *imageURL = self.urlPrefix ? [self.urlPrefix addSuffix:imageObj] : imageObj;
-            if (self.placeholderName) {
-                [cell.imageView sd_setImageWithURL:[imageURL toURL] placeholderImage:[UIImage imageNamed:self.placeholderName]];
-            } else {
-                [cell.imageView sd_setImageWithURL:[imageURL toURL]];
+    UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:CellIdentifier
+                                                                           forIndexPath:indexPath];
+    
+    if (![cell isKindOfClass:[PageCvCell class]]) {
+        self.plugInCellBlock ? self.plugInCellBlock(cell) : nil;
+    } else {
+        
+        PageCvCell *pageCell = (PageCvCell *)cell;
+        
+        id imageObj = self.imageNameKey ? [_reformImageData[indexPath.row] valueForKey:self.imageNameKey] : _reformImageData[indexPath.row];
+        
+        switch (self.type) {
+            case DDPage_Type_UIImage: //
+            {
+                [pageCell.imageView setImage:imageObj];
             }
+                break;
+            case DDPage_Type_UIImageData: //
+            {
+                [pageCell.imageView setImage:[UIImage imageWithData:imageObj]];
+            }
+                break;
+            case DDPage_Type_ImageName: //
+            {
+                [pageCell.imageView setImage:[UIImage imageNamed:imageObj]];
+            }
+                break;
+            case DDPage_Type_URL: //
+            {
+                NSString *imageURL = self.urlPrefix ? [self.urlPrefix addSuffix:imageObj] : imageObj;
+                if (self.placeholderName) {
+                    [pageCell.imageView sd_setImageWithURL:[imageURL toURL]
+                                          placeholderImage:[UIImage imageNamed:self.placeholderName]];
+                } else {
+                    [pageCell.imageView sd_setImageWithURL:[imageURL toURL]];
+                }
+            }
+                break;
+            default:
+                break;
         }
-            break;
-        default:
-            break;
     }
     
     return cell;

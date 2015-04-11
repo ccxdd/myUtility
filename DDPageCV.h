@@ -35,4 +35,8 @@ typedef NS_ENUM(NSInteger, DDPageType) {
 
 - (DDPageType)getPageTypeFrom:(NSArray *)imageData;
 
+- (void)registerNibCell:(NSString *)cellName atPosition:(NSUInteger)position cellBlock:(void(^)(id))cellBlock;
+
+- (void)reloadData;
+
 @end

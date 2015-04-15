@@ -44,7 +44,7 @@
 
 - (void)inArray:(NSArray *)arr
             key:(NSString *)key
-     completion:(void(^)(NSInteger index))completion;
+     completion:(void(^)(NSUInteger index))completion;
 
 + (NSString *)documentPath;
 

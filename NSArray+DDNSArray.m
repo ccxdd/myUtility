@@ -48,6 +48,13 @@
     return marr;
 }
 
+- (void)searchObject:(id)object completion:(void(^)(NSUInteger index))completion
+{
+    if (object && completion) {
+        completion([self indexOfObject:object]);
+    }
+}
+
 - (void)searchKey:(NSString *)key value:(NSString *)value completion:(void(^)(NSArray *resultArr))completion
 {
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K contains[cd] %@", key, value];

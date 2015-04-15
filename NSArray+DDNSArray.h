@@ -42,6 +42,14 @@
 - (instancetype)allValuesForKey:(NSString *)key;
 
 /**
+ *  查找数组中的值
+ *
+ *  @param object     查询对像
+ *  @param completion callback
+ */
+- (void)searchObject:(id)object completion:(void(^)(NSUInteger index))completion;
+
+/**
  *  查询数组中是否包含指定的值
  *
  *  @param key        字典中的键

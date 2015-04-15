@@ -121,13 +121,12 @@
 
 - (void)inArray:(NSArray *)arr
             key:(NSString *)key
-     completion:(void(^)(NSInteger index))completion
+     completion:(void(^)(NSUInteger index))completion
 {
-    id item = [[arr filterKey:key equal:self] firstObject];
-    NSUInteger index = [arr indexOfObject:item];
-    
     if (completion) {
-        completion(index == NSNotFound ? -1 : index);
+        id item = [[arr filterKey:key equal:self] firstObject];
+        NSUInteger index = [arr indexOfObject:item];
+        completion(index);
     }
 }
 

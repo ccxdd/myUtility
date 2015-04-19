@@ -57,7 +57,14 @@
 
 - (void)searchKey:(NSString *)key value:(NSString *)value completion:(void(^)(NSArray *resultArr))completion
 {
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K contains[cd] %@", key, value];
+    NSPredicate *predicate;
+    
+    if (key) {
+        predicate = [NSPredicate predicateWithFormat:@"%K contains[cd] %@", key, value];
+    } else {
+        predicate = [NSPredicate predicateWithFormat:@"SELF contains[cd] %@", value];
+    }
+    
     NSArray *resultArr = [self filteredArrayUsingPredicate:predicate];
     if (completion) {
         completion(resultArr);

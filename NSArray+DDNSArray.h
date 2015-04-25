@@ -12,6 +12,8 @@
 
 - (id)atIndex:(NSUInteger)index;
 
+- (void)indexItemWithKey:(NSString *)key equal:(id)object completion:(void(^)(NSUInteger index, id item))completion;
+
 /**
  *  返回Key所存在的Arr
  *

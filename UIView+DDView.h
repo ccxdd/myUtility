@@ -29,6 +29,9 @@ typedef NS_OPTIONS (NSUInteger, UIViewAlignPosition) {
 @property (nonatomic, assign          ) CGSize  size;
 @property (nonatomic, assign, readonly) CGFloat x1;
 @property (nonatomic, assign, readonly) CGFloat y1;
+@property (nonatomic, assign) IBInspectable CGFloat cornerRadius;
+@property (nonatomic, assign) IBInspectable CGFloat borderWidth;
+@property (nonatomic, assign) IBInspectable UIColor *borderColor;
 
 /**
  *  返回Xib中首个View
@@ -136,13 +139,6 @@ typedef NS_OPTIONS (NSUInteger, UIViewAlignPosition) {
 - (void)setAlpha:(CGFloat)alpha duration:(NSTimeInterval)duration;
 
 - (void)setFrame:(CGRect)frame animated:(BOOL)animated duration:(NSTimeInterval)duration;
-
-/**
- *  设置边角半径
- *
- *  @param radius 半径
- */
-- (void)setCornerRadius:(CGFloat)radius;
 
 /**
  *  设置边角半径、边框颜色及边框宽度

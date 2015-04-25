@@ -40,7 +40,7 @@
 
 - (BOOL)inArray:(NSArray *)arr;
 
-- (BOOL)inArray:(NSArray *)arr forKey:(NSString *)key;
+- (BOOL)inArray:(NSArray *)arr key:(NSString *)key;
 
 - (void)inArray:(NSArray *)arr
             key:(NSString *)key

@@ -8,6 +8,7 @@
 
 #import "UIView+DDView.h"
 #import <QuartzCore/QuartzCore.h>
+#import <objc/runtime.h>
 
 #define kDuation    0.3f
 
@@ -300,12 +301,40 @@ static const void(^savePhotoBlock)(BOOL result);
 
 - (void)setCornerRadius:(CGFloat)radius
 {
-    [self setCornerRadius:radius borderColor:nil width:self.layer.borderWidth];
+    self.layer.cornerRadius = radius;
+    self.clipsToBounds = YES;
+}
+
+- (CGFloat)cornerRadius
+{
+    return self.layer.cornerRadius;
+}
+
+- (void)setBorderWidth:(CGFloat)borderWidth
+{
+    self.layer.borderWidth = borderWidth;
+    self.clipsToBounds = YES;
+}
+
+- (CGFloat)borderWidth
+{
+    return self.layer.borderWidth;
+}
+
+- (void)setBorderColor:(UIColor *)borderColor
+{
+    self.layer.borderColor = borderColor.CGColor;
+    self.clipsToBounds = YES;
+}
+
+- (UIColor *)borderColor
+{
+    return [UIColor colorWithCGColor:self.layer.borderColor];
 }
 
 - (void)setBorderColor:(UIColor *)borderColor width:(CGFloat)width
 {
-    [self setCornerRadius:self.layer.cornerRadius borderColor:borderColor width:width];
+    [self setCornerRadius:self.cornerRadius borderColor:borderColor width:width];
 }
 
 - (void)setCornerRadius:(CGFloat)radius borderColor:(UIColor *)borderColor width:(CGFloat)width

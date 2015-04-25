@@ -114,7 +114,7 @@
     return [resultArr count] > 0;
 }
 
-- (BOOL)inArray:(NSArray *)arr forKey:(NSString *)key
+- (BOOL)inArray:(NSArray *)arr key:(NSString *)key
 {
     return [arr filterKey:key equal:self].count > 0;
 }
@@ -124,9 +124,13 @@
      completion:(void(^)(NSUInteger index))completion
 {
     if (completion) {
-        id item = [[arr filterKey:key equal:self] firstObject];
-        NSUInteger index = [arr indexOfObject:item];
-        completion(index);
+        NSArray *resultArr = [arr filterKey:key equal:self];
+        if (resultArr.count == 1) {
+            NSUInteger index = [arr indexOfObject:[resultArr firstObject]];
+            completion(index);
+        } else {
+            DLogError(@"存在更多：%@", resultArr);
+        }
     }
 }
 
@@ -454,14 +458,10 @@
     CGSize calcSize = CGSizeMake(width,MAXFLOAT);
     CGSize labelsize = CGSizeZero;
     
-    if (IOS7_OR_LATER) {
-        labelsize = [self boundingRectWithSize:calcSize
-                                       options:NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading
-                                    attributes:@{NSFontAttributeName: font}
-                                       context:nil].size;
-    } else {
-        labelsize = [self sizeWithFont:font constrainedToSize:calcSize lineBreakMode:NSLineBreakByWordWrapping];
-    }
+    labelsize = [self boundingRectWithSize:calcSize
+                                   options:NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading
+                                attributes:@{NSFontAttributeName: font}
+                                   context:nil].size;
     
     return labelsize;
 }

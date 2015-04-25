@@ -15,16 +15,28 @@
     if (self.count > index) {
         return self[index];
     } else {
-        NSLog(@"\n Execption: index = %@", @(index));
+        DLogError(@"\n Execption: index = %@", @(index));
         return nil;
     }
+}
+
+- (void)indexItemWithKey:(NSString *)key equal:(id)object completion:(void(^)(NSUInteger index, id item))completion
+{
+    [object inArray:self key:key completion:^(NSUInteger index) {
+        if (index != NSNotFound) {
+            !completion ?: completion(index, [self atIndex:index]);
+        } else {
+            !completion ?: completion(index, nil);
+        }
+    }];
 }
 
 - (instancetype)filterKey:(NSString *)key equal:(id)object
 {
     if (object) {
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K IN %@", key, object];
-        return [self filteredArrayUsingPredicate:predicate];
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K == %@", key, object];
+        NSArray *result = [self filteredArrayUsingPredicate:predicate];
+        return result;
     }
     
     return nil;

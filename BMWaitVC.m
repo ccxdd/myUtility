@@ -50,7 +50,9 @@ static CGRect     popViewFrame;
 
 + (void)showMessage:(NSString *)message
 {
-    [SVProgressHUD showInfoWithStatus:message];
+    if (message.length) {
+        [SVProgressHUD showInfoWithStatus:message];
+    }
 }
 
 + (void)showProgress:(double)progress

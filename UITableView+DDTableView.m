@@ -85,4 +85,39 @@
     }
 }
 
+- (CGFloat)heightForCellWithIdentifier:(NSString *)identifier configuration:(void(^)(id cell))configuration
+{
+    UITableViewCell *cell = [self dequeueReusableCellWithIdentifier:identifier];
+    
+    [cell prepareForReuse];
+    
+    if (configuration) {
+        configuration(cell);
+    }
+    
+    for (id item in cell.getPropertyObjects.allValues) {
+        if ([item isKindOfClass:[UILabel class]]) {
+            UILabel *lab = item;
+            lab.preferredMaxLayoutWidth = lab.width - 1;
+        }
+    }
+    
+    CGSize fittingSize = [cell.contentView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize];
+    
+    // Add 1px extra space for separator line if needed, simulating default UITableViewCell.
+    if (self.separatorStyle != UITableViewCellSeparatorStyleNone) {
+        fittingSize.height += 1.0 / [UIScreen mainScreen].scale;
+    }
+    
+    return fittingSize.height;
+}
+
+- (void)registerCellWithNibArray:(NSArray *)nibArray
+{
+    for (NSString *identifier in nibArray) {
+        UINib *nib = [UINib nibWithNibName:identifier bundle:nil];
+        [self registerNib:nib forCellReuseIdentifier:identifier];
+    }
+}
+
 @end

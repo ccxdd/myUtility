@@ -50,4 +50,21 @@
 
 - (void)multipleSelection:(BOOL)multipleSelection;
 
+/**
+ *  Cell自适应
+ *
+ *  @param identifier    cell identifier
+ *  @param configuration block
+ *
+ *  @return cell height
+ */
+- (CGFloat)heightForCellWithIdentifier:(NSString *)identifier configuration:(void(^)(id cell))configuration;
+
+/**
+ *  注册Cell(nib名字默认和identifier相同)
+ *
+ *  @param nibArray Nib Names
+ */
+- (void)registerCellWithNibArray:(NSArray *)nibArray;
+
 @end

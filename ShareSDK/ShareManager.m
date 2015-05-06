@@ -289,7 +289,7 @@
 
 + (void)loginOfQQCompletion:(void(^)(id userInfo))completion
 {
-    [self loginShareType:ShareTypeQQ completion:completion];
+    [self loginShareType:ShareTypeQQSpace completion:completion];
 }
 
 + (void)loginShareType:(ShareType)type completion:(void(^)(id userInfo))completion
@@ -309,7 +309,7 @@
 {
     [ShareSDK cancelAuthWithType:ShareTypeSinaWeibo];
     [ShareSDK cancelAuthWithType:ShareTypeWeixiSession];
-    [ShareSDK cancelAuthWithType:ShareTypeQQ];
+    [ShareSDK cancelAuthWithType:ShareTypeQQSpace];
     
     completion ? completion() : nil;
 }

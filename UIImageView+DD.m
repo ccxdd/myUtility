@@ -20,7 +20,7 @@
     }
     else if ([data isKindOfClass:[NSString class]]) {
         if ([data hasPrefix:@"http://"]) {
-            [self sd_setImageWithURL:[data toURL]];
+            [self sd_setImageWithURL:[data toURL] placeholderImage:[UIImage imageNamed:@"placeholder_image"]];
         } else {
             self.image = [UIImage imageNamed:data];
         }

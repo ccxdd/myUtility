@@ -45,7 +45,19 @@ static CGRect     popViewFrame;
 
 + (void)closeWaitView
 {
-    [SVProgressHUD dismiss];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [SVProgressHUD dismiss];
+    });
+}
+
++ (void)showSuccessMessage:(NSString *)message
+{
+    [SVProgressHUD showSuccessWithStatus:message];
+}
+
++ (void)showErrorMessage:(NSString *)message
+{
+    [SVProgressHUD showErrorWithStatus:message];
 }
 
 + (void)showMessage:(NSString *)message

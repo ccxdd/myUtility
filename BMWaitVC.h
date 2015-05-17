@@ -27,7 +27,7 @@
 /**
  *  显示文字提示框
  *
- *  @param message 显示文字
+ *  @param message 提示文字
  */
 + (void)showMessage:(NSString *)message;
 
@@ -42,16 +42,30 @@
 + (void)closeWaitView;
 
 /**
+ *  显示成功状态框
+ *
+ *  @param message 提示文字
+ */
++ (void)showSuccessMessage:(NSString *)message;
+
+/**
+ *  显示出错状态框
+ *
+ *  @param message 提示文字
+ */
++ (void)showErrorMessage:(NSString *)message;
+
+/**
  *  显示alertView
  *
- *  @param message 显示文字
+ *  @param message 提示文字
  */
 + (void)showAlertMessage:(NSString *)message;
 
 /**
  *  显示alertView
  *
- *  @param message    显示文字
+ *  @param message    提示文字
  *  @param alertBlock 回调block
  */
 + (void)showAlertMessage:(NSString *)message alertBlock:(void(^)(NSInteger buttonIndex))alertBlock;
@@ -59,7 +73,7 @@
 /**
  *  显示自定义按钮标题alertView
  *
- *  @param message      显示的文字
+ *  @param message      提示文字
  *  @param buttonTitles 按钮标题
  *  @param alertBlock   回调block
  */
@@ -81,7 +95,7 @@
 /**
  *  显示actionSheet
  *
- *  @param message      显示文字
+ *  @param message      提示文字
  *  @param buttonTitles 按钮标题
  *  @param keyName      字典类型的key若不是填nil
  *  @param alertBlock   回调block

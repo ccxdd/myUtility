@@ -1554,7 +1554,7 @@ static CGRect oldframe;
     CGSize calcSize = CGSizeMake(width,MAXFLOAT);
     CGSize labelsize = CGSizeZero;
     
-    if (IOS7_OR_LATER) {
+    if (iOS7_OR_LATER) {
         labelsize = [str boundingRectWithSize:calcSize
                                       options:NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesLineFragmentOrigin
                                    attributes:@{NSFontAttributeName: font}

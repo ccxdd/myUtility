@@ -40,24 +40,27 @@
         self.geocoder                        = [[CLGeocoder alloc] init];
         self.locationManager.desiredAccuracy = kCLLocationAccuracyBest;
         self.locationManager.delegate        = self;
-        self.locationManager.distanceFilter  = 30.0f;
+        self.locationManager.distanceFilter  = 10.0f;
+        if ([self.locationManager respondsToSelector:@selector(requestWhenInUseAuthorization)]) {
+            [self.locationManager requestWhenInUseAuthorization];
+        }
     }
     return self;
 }
 
 #pragma mark - start
 
-- (void)start:(void(^)(NSDictionary *addressDictionary))completeBlock
++ (void)start:(void(^)(NSDictionary *addressInfo))completeBlock
 {
-    self.startCompleteBlock = completeBlock;
-    [self.locationManager startUpdatingLocation];
+    [DDLocationManager ddLocationManager].startCompleteBlock = completeBlock;
+    [[DDLocationManager ddLocationManager].locationManager startUpdatingLocation];
 }
 
 #pragma mark - stop
 
-- (void)stop
++ (void)stop
 {
-    [self.locationManager stopUpdatingLocation];
+    [[DDLocationManager ddLocationManager].locationManager stopUpdatingLocation];
 }
 
 - (CLLocation *)location
@@ -87,9 +90,8 @@
     CLLocation *location = [locations lastObject];
     if (location) {
         [self geocoderFromLocation:location complete:^{
-            [self stop];
+            [DDLocationManager stop];
         }];
-        
     }
 }
 
@@ -102,18 +104,35 @@
             case kCLErrorDenied:
             {
                 [manager stopUpdatingLocation];
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"定位未开启" message:@"请在 设置->隐私->定位服务 里开启" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"确定", nil];
-                [alert show];
-                if (self.startCompleteBlock) {
-                    self.startCompleteBlock(@{@"error": error});
+                if (iOS8_OR_LATER) {
+                    [BMWaitVC showAlertMessage:@"点击［确定］将跳转到设定" title:@"定位服务未开启" buttonTitles:@[@"取消", @"确定"] alertBlock:^(NSInteger buttonIndex) {
+                        if (buttonIndex) {
+                            [[UIApplication sharedApplication] openURL:[NSURL URLWithString: UIApplicationOpenSettingsURLString]];
+                        }
+                    }];
+                } else {
+                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"定位服务未开启" message:@"请在 设置->隐私->定位服务 里开启" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"确定", nil];
+                    [alert show];
                 }
             }
-                
                 break;
             case kCLErrorLocationUnknown:
                 break;
             default:
                 break;
+        }
+    }
+}
+
+- (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
+{
+    if (iOS8_OR_LATER) {
+        if (status == kCLAuthorizationStatusAuthorizedAlways || status == kCLAuthorizationStatusAuthorizedWhenInUse) {
+            [[DDLocationManager ddLocationManager].locationManager startUpdatingLocation];
+        }
+    } else {
+        if (status == kCLAuthorizationStatusAuthorized) {
+            [[DDLocationManager ddLocationManager].locationManager startUpdatingLocation];
         }
     }
 }
@@ -134,15 +153,10 @@
                 self.startCompleteBlock(placemark.addressDictionary);
             }
         } else {
-            DLog(@"error = %@", error);
-            if (self.startCompleteBlock) {
-                self.startCompleteBlock(@{@"error": error});
-            }
+            DLogError(@"error = %@", error);
         }
         //block
-        if (completeBlock) {
-            completeBlock();
-        }
+        !completeBlock ?: completeBlock();
     }];
 }
 

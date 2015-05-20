@@ -449,7 +449,7 @@ static const void(^savePhotoBlock)(BOOL result);
     } else {
         UIGraphicsBeginImageContext(rect.size);
     }
-    if (IOS7_OR_LATER) {
+    if (iOS7_OR_LATER) {
         [self drawViewHierarchyInRect:self.bounds afterScreenUpdates:YES];
     } else {
         CGContextRef context = UIGraphicsGetCurrentContext();
@@ -466,7 +466,7 @@ static const void(^savePhotoBlock)(BOOL result);
     CGRect rect = self.frame;
     
     UIGraphicsBeginImageContext(rect.size);
-    if (IOS7_OR_LATER) {
+    if (iOS7_OR_LATER) {
         [self drawViewHierarchyInRect:self.bounds afterScreenUpdates:YES];
     } else {
         CGContextRef context = UIGraphicsGetCurrentContext();

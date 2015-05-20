@@ -16,10 +16,8 @@
 @property (nonatomic, readonly) CLLocationDegrees latitude;
 @property (nonatomic, readonly) CLLocationDegrees longitude;
 
-+ (instancetype)ddLocationManager;
++ (void)start:(void(^)(NSDictionary *addressInfo))completeBlock;
 
-- (void)start:(void(^)(NSDictionary *addressDictionary))completeBlock;
-
-- (void)stop;
++ (void)stop;
 
 @end

@@ -16,13 +16,13 @@
 @property (nonatomic, strong) CLGeocoder        *geocoder;
 @property (nonatomic, copy  ) NSString          *currentAddress;
 
-@property (nonatomic, copy) void(^startCompleteBlock)(NSDictionary *addressDictionary);
+@property (nonatomic, copy) void(^startCompleteBlock)(CLPlacemark *placemark);
 
 @end
 
 @implementation DDLocationManager
 
-+ (instancetype)ddLocationManager
++ (instancetype)shareInstance
 {
     static dispatch_once_t pred = 0;
     __strong static id _sharedObject = nil;
@@ -50,17 +50,17 @@
 
 #pragma mark - start
 
-+ (void)start:(void(^)(NSDictionary *addressInfo))completeBlock
++ (void)start:(void(^)(CLPlacemark *placemark))completeBlock
 {
-    [DDLocationManager ddLocationManager].startCompleteBlock = completeBlock;
-    [[DDLocationManager ddLocationManager].locationManager startUpdatingLocation];
+    [DDLocationManager shareInstance].startCompleteBlock = [completeBlock copy];
+    [[DDLocationManager shareInstance].locationManager startUpdatingLocation];
 }
 
 #pragma mark - stop
 
 + (void)stop
 {
-    [[DDLocationManager ddLocationManager].locationManager stopUpdatingLocation];
+    [[DDLocationManager shareInstance].locationManager stopUpdatingLocation];
 }
 
 - (CLLocation *)location
@@ -105,13 +105,13 @@
             {
                 [manager stopUpdatingLocation];
                 if (iOS8_OR_LATER) {
-                    [BMWaitVC showAlertMessage:@"点击［确定］将跳转到设定" title:@"定位服务未开启" buttonTitles:@[@"取消", @"确定"] alertBlock:^(NSInteger buttonIndex) {
+                    [BMWaitVC showAlertMessage:@"点击［确定］将打开定位设置界面" title:@"定位服务未开启" buttonTitles:@[@"取消", @"确定"] alertBlock:^(NSInteger buttonIndex) {
                         if (buttonIndex) {
-                            [[UIApplication sharedApplication] openURL:[NSURL URLWithString: UIApplicationOpenSettingsURLString]];
+                            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
                         }
                     }];
                 } else {
-                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"定位服务未开启" message:@"请在 设置->隐私->定位服务 里开启" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"确定", nil];
+                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"定位服务未开启" message:@"请在 设置->隐私->定位服务 里开启定位" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"确定", nil];
                     [alert show];
                 }
             }
@@ -128,11 +128,11 @@
 {
     if (iOS8_OR_LATER) {
         if (status == kCLAuthorizationStatusAuthorizedAlways || status == kCLAuthorizationStatusAuthorizedWhenInUse) {
-            [[DDLocationManager ddLocationManager].locationManager startUpdatingLocation];
+            [self.locationManager startUpdatingLocation];
         }
     } else {
         if (status == kCLAuthorizationStatusAuthorized) {
-            [[DDLocationManager ddLocationManager].locationManager startUpdatingLocation];
+            [self.locationManager startUpdatingLocation];
         }
     }
 }
@@ -148,9 +148,9 @@
             CLPlacemark *placemark = [placemarks firstObject];
             if (self.startCompleteBlock) {
                 DLog(@"placemark = %@", placemark.addressDictionary);
-                DLog(@"地址 = %@", placemark.addressDictionary[@"Name"]);
-                self.currentAddress = placemark.addressDictionary[@"Name"];
-                self.startCompleteBlock(placemark.addressDictionary);
+                DLog(@"地址 = %@", placemark.name);
+                self.currentAddress = placemark.name;
+                self.startCompleteBlock(placemark);
             }
         } else {
             DLogError(@"error = %@", error);
@@ -158,6 +158,12 @@
         //block
         !completeBlock ?: completeBlock();
     }];
+}
+
++ (void)placeNameWithLocation:(CLLocation *)location completion:(void(^)(CLPlacemark *placemark))completeBlock
+{
+    [DDLocationManager shareInstance].startCompleteBlock = [completeBlock copy];
+    [[DDLocationManager shareInstance] geocoderFromLocation:location complete:nil];
 }
 
 @end

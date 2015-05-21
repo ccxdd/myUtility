@@ -126,7 +126,7 @@
     CGFloat tabBarH = 0;
     
     if (vc.tabBarController) {
-        tabBarH = tabBar ? 49 : (IOS7_OR_LATER ? -49 : 0);
+        tabBarH = tabBar ? 49 : (iOS7_OR_LATER ? -49 : 0);
     }
     
     self.contentSizeHeight = screentPoint.y + tabBarH + self.contentOffset.y + offset;

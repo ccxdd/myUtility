@@ -109,7 +109,7 @@
         fittingSize.height += 1.0 / [UIScreen mainScreen].scale;
     }
     
-    return fittingSize.height;
+    return fittingSize.height + 1;
 }
 
 - (void)registerCellWithNibArray:(NSArray *)nibArray

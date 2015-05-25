@@ -1559,8 +1559,6 @@ static CGRect oldframe;
                                       options:NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesLineFragmentOrigin
                                    attributes:@{NSFontAttributeName: font}
                                       context:nil].size;
-    } else {
-        labelsize = [str sizeWithFont:font constrainedToSize:calcSize lineBreakMode:NSLineBreakByWordWrapping];
     }
     
     return labelsize;

@@ -405,7 +405,7 @@
     if ([item isKindOfClass:[NSString class]] && [item isEqualToString:self.plugInName]) {
         CellIdentifier = self.plugInName;
     } else {
-        CellIdentifier = @"PageCvCell";
+        CellIdentifier = [PageCvCell dd_className];
     }
     
     UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:CellIdentifier

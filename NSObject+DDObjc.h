@@ -11,6 +11,13 @@
 @interface NSObject (DDObjc)
 
 /**
+ *  返回类名
+ *
+ *  @return NSString
+ */
++ (NSString *)dd_className;
+
+/**
  *  返回所有属性名
  *
  *  @return NSArray

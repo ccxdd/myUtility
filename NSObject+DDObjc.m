@@ -11,6 +11,11 @@
 
 @implementation NSObject (DDObjc)
 
++ (NSString *)dd_className
+{
+    return NSStringFromClass(self);
+}
+
 #pragma mark - 返回所有属性名
 /**
  *  返回所有属性名

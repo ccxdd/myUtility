@@ -13,7 +13,7 @@
 
 + (NSString *)dd_className
 {
-    return NSStringFromClass(self);
+    return NSStringFromClass([self class]);
 }
 
 #pragma mark - 返回所有属性名

@@ -8,9 +8,35 @@
 
 #import "DDDataSource.h"
 
+#pragma mark - DDDataSourceCellItem -
+
+@implementation DDDataSourceCellItem
+
++ (instancetype)cellItemWithClass:(Class)cellClass isNib:(BOOL)isNib
+{
+    DDDataSourceCellItem *item = [DDDataSourceCellItem new];
+    item.cellClass = cellClass;
+    item.isNib = isNib;
+    
+    return item;
+}
+
+- (void)setCellClass:(Class)cellClass isNib:(BOOL)isNib
+{
+    _cellClass = cellClass;
+    _isNib = isNib;
+}
+
+@end
+
+#pragma mark - DDDataSource -
+
 @interface DDDataSource ()
 
-@property (nonatomic, copy  ) NSString                   *cellIdentifier;
+@property (nonatomic, copy  ) NSString            *cellIdentifier;
+//mulitCell
+@property (nonatomic, strong) NSMutableDictionary *registerCell;
+@property (nonatomic, copy) void (^multipleCellBlock)(NSIndexPath *indexPath, DDDataSourceCellItem *cellItem);
 
 @end
 
@@ -23,14 +49,29 @@
     self = [super init];
     
     if (self) {
-        self.tableData          = [NSMutableArray arrayWithArray:tableData];
-        self.cellIdentifier     = cellIdentifier;
-        self.cellForRowAtIndexPath = cellForRowAtIndexPath;
-        self.isAllowEdit = NO;
-        _totalHeight = 0;
+        _tableData             = [NSMutableArray arrayWithArray:tableData];
+        _cellIdentifier        = cellIdentifier;
+        _cellForRowAtIndexPath = [cellForRowAtIndexPath copy];
+        _isAllowEdit           = NO;
+        _totalHeight           = 0;
     }
     
     return self;
+}
+
++ (id)tableData:(NSArray *)tableData
+   multipleCell:(void (^)(NSIndexPath *indexPath, DDDataSourceCellItem *cellItem))multipleCell
+cellForRowAtIndexPath:(void (^)(id cell, NSIndexPath *indexPath, id item))cellForRowAtIndexPath
+{
+    DDDataSource *dds = [DDDataSource new];
+    
+    dds.tableData             = [NSMutableArray arrayWithArray:tableData];
+    dds.multipleCellBlock     = [multipleCell copy];
+    dds.cellForRowAtIndexPath = [cellForRowAtIndexPath copy];
+    dds.isAllowEdit           = NO;
+    dds.registerCell          = [NSMutableDictionary dictionary];
+    
+    return dds;
 }
 
 - (void)setTableData:(NSMutableArray *)tableData
@@ -44,8 +85,8 @@
 {
     _totalHeight = 0;
     
-    if (self.numberOfSectionsInTableView) {
-        return self.numberOfSectionsInTableView(self.tableData);
+    if (_numberOfSectionsInTableView) {
+        return _numberOfSectionsInTableView(_tableData);
     } else {
         return 1;
     }
@@ -54,13 +95,13 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     @try {
-        if (self.numberOfRowsInSection) {
-            return self.numberOfRowsInSection(section, [self itemAtSection:section sectionKey:self.sectionKey]);
-        } else if (self.numberOfSectionsInTableView) {
-            NSArray *sectionArr = [self itemAtSection:section sectionKey:self.sectionKey];
+        if (_numberOfRowsInSection) {
+            return _numberOfRowsInSection(section, [self itemAtSection:section sectionKey:_sectionKey]);
+        } else if (_numberOfSectionsInTableView) {
+            NSArray *sectionArr = [self itemAtSection:section sectionKey:_sectionKey];
             return [sectionArr count];
         } else {
-            return [self.tableData count];
+            return [_tableData count];
         }
     }
     @catch (NSException *exception) {
@@ -72,29 +113,48 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *cell;
-    id cellItem;
+    id cellIndexItem;
     
     @try {
-        if (!self.cellForIndexPath) {
-            cell = [tableView dequeueReusableCellWithIdentifier:self.cellIdentifier forIndexPath:indexPath];
+        if (_multipleCellBlock) {
+            DDDataSourceCellItem *cellItem = [DDDataSourceCellItem new];
+            _multipleCellBlock(indexPath, cellItem);
+            if (cellItem.cellClass) {
+                NSString *cellIdentifier = NSStringFromClass(cellItem.cellClass);
+                if (!_registerCell[cellIdentifier]) {
+                    if (cellItem.isNib) {
+                        [tableView registerNib:[UINib nibWithNibName:cellIdentifier bundle:nil]
+                        forCellReuseIdentifier:cellIdentifier];
+                        _registerCell[cellIdentifier] = cellItem.cellClass;
+                    } else {
+                        [tableView registerClass:cellItem.cellClass
+                          forCellReuseIdentifier:cellIdentifier];
+                    }
+                }
+                cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
+            } else {
+                @throw [NSException exceptionWithName:@"DDDataSource Exception" reason:@"Register Cell Error!!!" userInfo:nil];
+            }
+        } else if (!_cellForIndexPath) {
+            cell = [tableView dequeueReusableCellWithIdentifier:_cellIdentifier forIndexPath:indexPath];
         } else {
-            cell = [tableView dequeueReusableCellWithIdentifier:self.cellIdentifier];
+            cell = [tableView dequeueReusableCellWithIdentifier:_cellIdentifier];
             if (!cell) {
-                cell = self.cellForIndexPath(indexPath);
+                cell = _cellForIndexPath(indexPath);
             }
         }
     }
     @catch (NSException *exception) {
         DLog(@"\n exception:%@", NSStringFromSelector(_cmd));
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault
-                                      reuseIdentifier:self.cellIdentifier];
+                                      reuseIdentifier:NSStringFromClass([UITableViewCell class])];
     }
     
-    if (self.cellForRowAtCustom) {
-        self.cellForRowAtCustom(cell, indexPath);
-    } else if (self.cellForRowAtIndexPath) {
-        cellItem = [self itemAtIndexPath:indexPath sectionKey:self.sectionKey rowKey:nil];
-        self.cellForRowAtIndexPath(cell, indexPath, cellItem);
+    if (_cellForRowAtCustom) {
+        _cellForRowAtCustom(cell, indexPath);
+    } else if (_cellForRowAtIndexPath) {
+        cellIndexItem = [self itemAtIndexPath:indexPath sectionKey:_sectionKey rowKey:nil];
+        _cellForRowAtIndexPath(cell, indexPath, cellIndexItem);
     }
     
     return cell;
@@ -103,29 +163,29 @@
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        id item = [self itemAtIndexPath:indexPath sectionKey:self.sectionKey rowKey:nil];
-        [self.tableData removeObjectAtIndex:indexPath.row];
+        id item = [self itemAtIndexPath:indexPath sectionKey:_sectionKey rowKey:nil];
+        [_tableData removeObjectAtIndex:indexPath.row];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-        if (self.deleteRowAtIndexPath) {
-            self.deleteRowAtIndexPath(indexPath, item);
+        if (_deleteRowAtIndexPath) {
+            _deleteRowAtIndexPath(indexPath, item);
         }
     }
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (self.canEditRowAtIndexPath) {
-        id item = [self itemAtIndexPath:indexPath sectionKey:self.sectionKey rowKey:nil];
-        return self.canEditRowAtIndexPath(indexPath, item);
+    if (_canEditRowAtIndexPath) {
+        id item = [self itemAtIndexPath:indexPath sectionKey:_sectionKey rowKey:nil];
+        return _canEditRowAtIndexPath(indexPath, item);
     }
     
-    return self.isAllowEdit;
+    return _isAllowEdit;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
-    if (self.titleForHeaderInSection) {
-        return self.titleForHeaderInSection(section, [self.tableData atIndex:section]);
+    if (_titleForHeaderInSection) {
+        return _titleForHeaderInSection(section, [_tableData atIndex:section]);
     } else {
         return nil;
     }
@@ -133,8 +193,8 @@
 
 - (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section
 {
-    if (self.titleForFooterInSection) {
-        return self.titleForFooterInSection(section, [self.tableData atIndex:section]);
+    if (_titleForFooterInSection) {
+        return _titleForFooterInSection(section, [_tableData atIndex:section]);
     } else {
         return nil;
     }
@@ -144,9 +204,9 @@
 {
     CGFloat rowHeight = 0;
     
-    if (self.heightForRowAtIndexPath) {
-        id item = [self itemAtIndexPath:indexPath sectionKey:self.sectionKey rowKey:nil];
-        rowHeight =  self.heightForRowAtIndexPath(indexPath, item);
+    if (_heightForRowAtIndexPath) {
+        id item = [self itemAtIndexPath:indexPath sectionKey:_sectionKey rowKey:nil];
+        rowHeight =  _heightForRowAtIndexPath(indexPath, item);
     } else {
         rowHeight =  tableView.rowHeight;
     }
@@ -158,8 +218,8 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section;
 {
-    if (self.heightForHeaderInSection) {
-        return self.heightForHeaderInSection(section, [self.tableData atIndex:section]);
+    if (_heightForHeaderInSection) {
+        return _heightForHeaderInSection(section, [_tableData atIndex:section]);
     } else {
         return 0;
     }
@@ -167,8 +227,8 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
 {
-    if (self.heightForFooterInSection) {
-        return self.heightForFooterInSection(section, [self.tableData atIndex:section]);
+    if (_heightForFooterInSection) {
+        return _heightForFooterInSection(section, [_tableData atIndex:section]);
     } else {
         return 0;
     }
@@ -176,8 +236,8 @@
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
-    if (self.viewForHeaderInSection) {
-        return self.viewForHeaderInSection(section, [self.tableData atIndex:section]);
+    if (_viewForHeaderInSection) {
+        return _viewForHeaderInSection(section, [_tableData atIndex:section]);
     } else {
         return nil;
     }
@@ -185,8 +245,8 @@
 
 - (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
 {
-    if (self.viewForFooterInSection) {
-        return self.viewForFooterInSection(section, [self.tableData atIndex:section]);
+    if (_viewForFooterInSection) {
+        return _viewForFooterInSection(section, [_tableData atIndex:section]);
     } else {
         return nil;
     }
@@ -200,28 +260,28 @@
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
     }
     
-    if (self.didSelectRowAtCustom) {
-        self.didSelectRowAtCustom(indexPath);
-    } else if (self.didSelectRowAtIndexPath) {
-        cellItem = [self itemAtIndexPath:indexPath sectionKey:self.sectionKey rowKey:self.rowKey];
-        self.didSelectRowAtIndexPath(indexPath, cellItem);
+    if (_didSelectRowAtCustom) {
+        _didSelectRowAtCustom(indexPath);
+    } else if (_didSelectRowAtIndexPath) {
+        cellItem = [self itemAtIndexPath:indexPath sectionKey:_sectionKey rowKey:_rowKey];
+        _didSelectRowAtIndexPath(indexPath, cellItem);
     }
 }
 
 - (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (self.didDeselectRowAtIndexPath) {
+    if (_didDeselectRowAtIndexPath) {
         id cellItem;
-        cellItem = [self itemAtIndexPath:indexPath sectionKey:self.sectionKey rowKey:self.rowKey];
-        self.didDeselectRowAtIndexPath(indexPath, cellItem);
+        cellItem = [self itemAtIndexPath:indexPath sectionKey:_sectionKey rowKey:_rowKey];
+        _didDeselectRowAtIndexPath(indexPath, cellItem);
     }
 }
 
 - (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (self.editingStyleForRowAtIndexPath) {
-        return self.editingStyleForRowAtIndexPath(indexPath);
-    } else if (self.isAllowEdit && tableView.allowsMultipleSelection) {
+    if (_editingStyleForRowAtIndexPath) {
+        return _editingStyleForRowAtIndexPath(indexPath);
+    } else if (_isAllowEdit && tableView.allowsMultipleSelection) {
         return UITableViewCellEditingStyleDelete|UITableViewCellEditingStyleInsert;
     }
     
@@ -230,8 +290,8 @@
 
 - (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView
 {
-    if (self.sectionIndexTitlesForTableView) {
-        return self.sectionIndexTitlesForTableView();
+    if (_sectionIndexTitlesForTableView) {
+        return _sectionIndexTitlesForTableView();
     }
     
     return nil;
@@ -247,11 +307,11 @@
     id value;
     
     @try {
-        if (self.numberOfSectionsInTableView) {
+        if (_numberOfSectionsInTableView && _tableData.count > 1) {
             if (sectionKey) {
-                value = [self.tableData atIndex:section][sectionKey];
+                value = [_tableData atIndex:section][sectionKey];
             } else {
-                value = [self.tableData atIndex:section];
+                value = [_tableData atIndex:section];
             }
         }
     }
@@ -265,27 +325,27 @@
 
 - (id)itemAtIndexPath:(NSIndexPath *)indexPath sectionKey:(NSString *)sectionKey rowKey:(NSString *)rowKey
 {
-    if (!self.tableData.count) {
+    if (!_tableData.count) {
         return nil;
     }
     
     id value;
     
     @try {
-        if (self.numberOfSectionsInTableView) {
+        if (_numberOfSectionsInTableView) {
             if (sectionKey && rowKey) {
-                value = self.tableData[indexPath.section][sectionKey][indexPath.row][rowKey];
+                value = _tableData[indexPath.section][sectionKey][indexPath.row][rowKey];
             } else if (sectionKey) {
-                value = self.tableData[indexPath.section][sectionKey][indexPath.row];
+                value = _tableData[indexPath.section][sectionKey][indexPath.row];
             } else if (rowKey) {
-                value = self.tableData[indexPath.section][indexPath.row][rowKey];
+                value = _tableData[indexPath.section][indexPath.row][rowKey];
             } else {
-                value = self.tableData[indexPath.section][indexPath.row];
+                value = _tableData[indexPath.section][indexPath.row];
             }
         } else if (rowKey) {
-            value = self.tableData[indexPath.row][rowKey];
+            value = _tableData[indexPath.row][rowKey];
         } else {
-            value = self.tableData[indexPath.row];
+            value = _tableData[indexPath.row];
         }
     }
     @catch (NSException *exception) {
@@ -297,3 +357,5 @@
 }
 
 @end
+
+

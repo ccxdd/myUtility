@@ -557,7 +557,25 @@ static const void(^savePhotoBlock)(BOOL result);
 {
     UIImage *newImage = [[UIView screenWindow] captureView1xInRect:self.frame];
     [self setBackgroundImage:newImage blur:blur tintColor:tintColor];
+}
+
+- (void)addTapGesBlock:(void(^)(UITapGestureRecognizer *tapGes))gesBlock
+{
+    if (!gesBlock) return;
     
+    UITapGestureRecognizer *tapGes = objc_getAssociatedObject(self, _cmd);
+    if (!tapGes) {
+        UITapGestureRecognizer *tapGes = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapGesAction:)];
+        [self addGestureRecognizer:tapGes];
+        objc_setAssociatedObject(self, _cmd, tapGes, OBJC_ASSOCIATION_RETAIN);
+    }
+    objc_setAssociatedObject(self, @selector(tapGesAction:), gesBlock, OBJC_ASSOCIATION_COPY);
+}
+
+- (void)tapGesAction:(UITapGestureRecognizer *)sender
+{
+    void(^gesBlock)(id) = objc_getAssociatedObject(self, _cmd);
+    !gesBlock ?: gesBlock(sender);
 }
 
 @end

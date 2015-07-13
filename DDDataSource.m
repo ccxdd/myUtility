@@ -12,6 +12,15 @@
 
 @implementation DDDataSourceCellItem
 
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        self.isNib = YES;
+    }
+    return self;
+}
+
 + (instancetype)cellItemWithClass:(Class)cellClass isNib:(BOOL)isNib
 {
     DDDataSourceCellItem *item = [DDDataSourceCellItem new];
@@ -119,22 +128,8 @@ cellForRowAtIndexPath:(void (^)(id cell, NSIndexPath *indexPath, id item))cellFo
         if (_multipleCellBlock) {
             DDDataSourceCellItem *cellItem = [DDDataSourceCellItem new];
             _multipleCellBlock(indexPath, cellItem);
-            if (cellItem.cellClass) {
-                NSString *cellIdentifier = NSStringFromClass(cellItem.cellClass);
-                if (!_registerCell[cellIdentifier]) {
-                    if (cellItem.isNib) {
-                        [tableView registerNib:[UINib nibWithNibName:cellIdentifier bundle:nil]
-                        forCellReuseIdentifier:cellIdentifier];
-                        _registerCell[cellIdentifier] = cellItem.cellClass;
-                    } else {
-                        [tableView registerClass:cellItem.cellClass
-                          forCellReuseIdentifier:cellIdentifier];
-                    }
-                }
-                cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
-            } else {
-                @throw [NSException exceptionWithName:@"DDDataSource Exception" reason:@"Register Cell Error!!!" userInfo:nil];
-            }
+            NSString *cellIdentifier = NSStringFromClass(cellItem.cellClass);
+            cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
         } else if (!_cellForIndexPath) {
             cell = [tableView dequeueReusableCellWithIdentifier:_cellIdentifier forIndexPath:indexPath];
         } else {
@@ -203,6 +198,26 @@ cellForRowAtIndexPath:(void (^)(id cell, NSIndexPath *indexPath, id item))cellFo
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     CGFloat rowHeight = 0;
+    
+    if (_multipleCellBlock) {
+        DDDataSourceCellItem *cellItem = [DDDataSourceCellItem new];
+        _multipleCellBlock(indexPath, cellItem);
+        if (cellItem.cellClass) {
+            NSString *cellIdentifier = NSStringFromClass(cellItem.cellClass);
+            if (!_registerCell[cellIdentifier]) {
+                if (cellItem.isNib) {
+                    [tableView registerNib:[UINib nibWithNibName:cellIdentifier bundle:nil]
+                    forCellReuseIdentifier:cellIdentifier];
+                    _registerCell[cellIdentifier] = cellItem.cellClass;
+                } else {
+                    [tableView registerClass:cellItem.cellClass
+                      forCellReuseIdentifier:cellIdentifier];
+                }
+            }
+        } else {
+            @throw [NSException exceptionWithName:@"DDDataSource Exception" reason:@"Register Cell Error!!!" userInfo:nil];
+        }
+    }
     
     if (_heightForRowAtIndexPath) {
         id item = [self itemAtIndexPath:indexPath sectionKey:_sectionKey rowKey:nil];

@@ -248,4 +248,6 @@ typedef NS_OPTIONS (NSUInteger, UIViewAlignPosition) {
 
 - (void)setBackgroundBlur:(CGFloat)blur tintColor:(UIColor *)tintColor;
 
+- (void)addTapGesBlock:(void(^)(UITapGestureRecognizer *tapGes))gesBlock;
+
 @end

@@ -162,30 +162,34 @@
 
 - (NSString *)stringToIndex:(NSUInteger)to
 {
-    if (self.length > to) {
+    if (self.length >= to) {
         return [self substringToIndex:to];
     } else {
-        return @"";
+        NSLog(@"============= Error:%@ =============", NSStringFromSelector(_cmd));
+        return self;
     }
 }
 
 - (NSString *)stringFromIndex:(NSUInteger)from;
 {
-    if (self.length > from) {
+    if (self.length >= from) {
         return [self substringFromIndex:from];
     } else {
-        return @"";
+        NSLog(@"============= Error:%@ =============", NSStringFromSelector(_cmd));
+        return self;
     }
 }
 
 - (NSString *)insert:(NSString *)string index:(NSUInteger)index
 {
-    if (self.length > index) {
+    if (self.length >= index) {
         return [[[self stringToIndex:index] addSuffix:string] addSuffix:[self stringFromIndex:index]];
     } else {
-        return @"";
+        NSLog(@"============= Error:%@ =============", NSStringFromSelector(_cmd));
+        return self;
     }
 }
+
 
 - (NSString *)replaceFrom:(NSUInteger)from to:(NSUInteger)to with:(NSString *)string
 {
@@ -193,7 +197,8 @@
         NSString *sub = [self substringWithRange:NSMakeRange(from, to-from)];
         return [self stringByReplacingOccurrencesOfString:sub withString:string];
     } else {
-        return @"";
+        NSLog(@"============= Error:%@ =============", NSStringFromSelector(_cmd));
+        return self;
     }
 }
 

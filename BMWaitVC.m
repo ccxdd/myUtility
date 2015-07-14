@@ -263,7 +263,7 @@ static CGRect     popViewFrame;
     if (!popView) {
         return;
     }
-    popViewBlock = completion;
+    popViewBlock = [completion copy];
     
     if (![[BMWaitVC AppDelegateWindow] viewWithTag:dPOP_TAG]) {
         UIView *backView = [[UIView alloc] initWithFrame:[BMWaitVC AppDelegateWindow].bounds];

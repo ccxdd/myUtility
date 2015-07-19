@@ -29,6 +29,8 @@
  */
 - (void)attribFindText:(NSString *)text color:(UIColor *)color font:(UIFont *)font;
 
+- (void)addAttribText:(NSString *)text color:(UIColor *)color font:(UIFont *)font;
+
 /**
  *  添加下划线
  *

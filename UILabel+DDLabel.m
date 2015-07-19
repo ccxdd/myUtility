@@ -36,6 +36,22 @@
     self.attributedText = attribString;
 }
 
+- (void)addAttribText:(NSString *)text color:(UIColor *)color font:(UIFont *)font
+{
+    UIColor *attribColor = color ? color : self.textColor;
+    UIFont *attribFont   = font ? font : self.font;
+    
+    NSMutableAttributedString *attribString = [[NSMutableAttributedString alloc] initWithString:text];
+    [attribString addAttributes:@{
+                                  NSForegroundColorAttributeName : attribColor,
+                                  NSFontAttributeName : attribFont
+                                  }
+                          range:NSMakeRange(0, text.length)];
+    NSMutableAttributedString *newAttribStr = [[NSMutableAttributedString alloc] initWithAttributedString:self.attributedText];
+    [newAttribStr appendAttributedString:attribString];
+    self.attributedText = newAttribStr;
+}
+
 /**
  *  指定要富文本字符串
  *

@@ -306,6 +306,21 @@ const char leftHandlerKey, rightHandleKey;
     return currentVC;
 }
 
+- (void)presentVC:(UIViewController *)vc
+         animated: (BOOL)flag
+       completion:(void (^)(void))completion
+       vcCallback:(void(^)(id parm1, id parm2))vcCallback
+{
+    [self presentViewController:vc animated:flag completion:completion];
+    [vc setCallbackBlock:vcCallback];
+}
 
+- (void)pushVC:(UIViewController *)vc
+      animated: (BOOL)animated
+    vcCallback:(void(^)(id parm1, id parm2))vcCallback
+{
+    [self.navigationController pushViewController:vc animated:animated];
+    [vc setCallbackBlock:vcCallback];
+}
 
 @end

@@ -200,4 +200,19 @@
     }];
 }
 
+#pragma mark - 通用回调 -
+
+- (void)setCallbackBlock:(void (^)(id parm1, id parm2))callbackBlock
+{
+    if (callbackBlock) {
+        objc_setAssociatedObject(self, @selector(setCallbackBlock:), callbackBlock, OBJC_ASSOCIATION_COPY_NONATOMIC);
+    }
+}
+
+- (void)executeCallback:(id)parm1 parm2:(id)parm2
+{
+    void(^aBlock)(id, id) = objc_getAssociatedObject(self, @selector(setCallbackBlock:));
+    !aBlock ?: aBlock(parm1, parm2);
+}
+
 @end

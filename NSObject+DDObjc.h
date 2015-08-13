@@ -77,4 +77,14 @@
 
 - (void)batchFindObject:(Class)objClass inArray:(NSArray *)arr completion:(void(^)(id arrObj))completion;
 
+/**
+ *  设置回调
+ */
+- (void)setCallbackBlock:(void (^)(id parm1, id parm2))callbackBlock;
+
+/**
+ *  执行回调
+ */
+- (void)executeCallback:(id)parm1 parm2:(id)parm2;
+
 @end

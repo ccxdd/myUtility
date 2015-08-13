@@ -130,4 +130,13 @@
  */
 - (IBAction)dismissModal;
 
+- (void)presentVC:(UIViewController *)vc
+         animated: (BOOL)flag
+       completion:(void (^)(void))completion
+       vcCallback:(void(^)(id parm1, id parm2))vcCallback;
+
+- (void)pushVC:(UIViewController *)vc
+      animated: (BOOL)animated
+    vcCallback:(void(^)(id parm1, id parm2))vcCallback;
+
 @end
